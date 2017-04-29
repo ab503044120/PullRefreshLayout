@@ -378,7 +378,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (headerView != null) {
+                if (headerView != null&&refreshing) {
                     headerView.onPullFinish();
                 }
             }
