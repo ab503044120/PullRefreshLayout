@@ -9,6 +9,7 @@ import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,8 +52,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     // RefreshView Over Flow Height
     private float pullFlowHeight = 0;
-
-    private float allMoveDistance = 0;
 
     // Drag Action
     private int currentAction = -1;
@@ -219,6 +218,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (moveDistance < 0) {
                 moveDistance = 0;
             }
+            if (moveDistance > pullFlowHeight) {
+                moveDistance = pullFlowHeight;
+            }
 
             if (moveDistance == 0) {
                 isConfirm = false;
@@ -249,6 +251,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             moveDistance -= distanceY;
             if (moveDistance < 0) {
                 moveDistance = 0;
+            }
+            if (moveDistance > pullFlowHeight) {
+                moveDistance = pullFlowHeight;
             }
 
             if (moveDistance == 0) {
@@ -391,7 +396,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerView != null) {
             headerView.onPullReset();
         }
-        allMoveDistance = 0;
         refreshing = false;
         moveDistance = 0;
         isConfirm = false;
@@ -461,7 +465,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (footerView != null) {
             footerView.onPullReset();
         }
-        allMoveDistance = 0;
         refreshing = false;
         moveDistance = 0;
         isConfirm = false;
