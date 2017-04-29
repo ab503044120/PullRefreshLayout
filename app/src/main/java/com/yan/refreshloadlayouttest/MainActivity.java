@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.AbsPullView;
+import com.yan.pullrefreshlayout.PullRefreshView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setHeaderView(new AbsPullView(getBaseContext()) {
+        refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
             TextView tv;
 
             @Override
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 tv.setText("刷新完成");
             }
         });
-        refreshLayout.setFooterView(new AbsPullView(getBaseContext()) {
+        refreshLayout.setFooterView(new PullRefreshView(getBaseContext()) {
             TextView tv;
 
             @Override
