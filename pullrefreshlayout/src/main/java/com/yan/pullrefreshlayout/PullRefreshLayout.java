@@ -210,11 +210,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if ((!pullRefreshEnable && !pullLoadEnable)) {
             return;
         }
-        // Prevent Layout shake
+
         if (Math.abs(dy) > 200) {
             return;
         }
-        Log.e("onNestedPreScroll: dy:", dy + "");
+
         if (!isConfirm) {
             if (dy < 0 && !canChildScrollUp()) {
                 currentAction = ACTION_PULL_REFRESH;
