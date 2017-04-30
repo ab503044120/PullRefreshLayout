@@ -181,6 +181,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        if (isRefreshing) {
+            return false;
+        }
         if (currentAnimation != null) {
             currentAnimation.cancel();
         }
@@ -285,8 +288,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (pullFlowHeight != 0 && moveDistance > pullFlowHeight) {
                 moveDistance = pullFlowHeight;
             }
-            if (moveDistance == 0 ) {
-                resetRefreshState();
+            if (moveDistance == 0 && !isRefreshing) {
+                isGettingState = false;
+                currentState = -1;
             }
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
@@ -317,8 +321,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 moveDistance = pullFlowHeight;
             }
 
-            if (moveDistance == 0 ) {
-             resetLoadMoreState();
+            if (moveDistance == 0 && !isRefreshing) {
+                isGettingState = false;
+                currentState = -1;
             }
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
@@ -458,9 +463,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
         isRefreshing = false;
         moveDistance = 0;
-        isGettingState = false;
         isResetTrigger = false;
         pullStateControl = true;
+        isGettingState = false;
         currentState = -1;
     }
 

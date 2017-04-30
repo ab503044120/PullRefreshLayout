@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         refreshLayout.refreshComplete();
                     }
-                }, 1600);
+                }, 3000);
             }
 
             @Override
