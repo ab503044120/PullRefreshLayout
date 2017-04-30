@@ -9,7 +9,6 @@ import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,9 +33,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private static final int ACTION_PULL_REFRESH = 0;
     private static final int ACTION_LOAD_MORE = 1;
 
-    private static final int PULL_VIEW_HEIGHT = 60;
-    private static final int PULL_FLOW_HEIGHT = PULL_VIEW_HEIGHT * 2;
-
     // Enable PullRefresh and LoadMore
     private boolean pullRefreshEnable = true;
     private boolean pullLoadEnable = true;
@@ -48,7 +44,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean pullStateControl = true;
 
     // RefreshView Height
-    private float pullViewHeight = 0;
+    private float pullViewHeight = 60;
 
     // RefreshView Over Flow Height
     private float pullFlowHeight = 0;
@@ -56,6 +52,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     // Drag Action
     private int currentAction = -1;
     private boolean isConfirm = false;
+
+    private float dragRatio = 0.5f;
 
     public PullRefreshLayout(Context context) {
         super(context);
@@ -78,13 +76,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
 
         parentHelper = new NestedScrollingParentHelper(this);
-
-        if (pullViewHeight == 0) {
-            pullViewHeight = dipToPx(context, PULL_VIEW_HEIGHT);
-        }
-        if (pullFlowHeight == 0) {
-            pullFlowHeight = dipToPx(context, PULL_FLOW_HEIGHT);
-        }
+        pullViewHeight = dipToPx(context, pullViewHeight);
     }
 
     @Override
@@ -156,11 +148,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-
         if ((!pullRefreshEnable && !pullLoadEnable)) {
             return;
         }
-
         // Prevent Layout shake
         if (Math.abs(dy) > 200) {
             return;
@@ -176,9 +166,23 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             }
         }
 
-        if (movePullContainerView(-dy)) {
-            consumed[1] += dy;
+        if (currentAction == ACTION_PULL_REFRESH) {
+            if (dy < 0) {
+                dy = (int) (dy * dragRatio);
+            }
+            if (moveContainer(-dy)) {
+                consumed[1] += dy;
+            }
+        } else {
+            if (dy > 0) {
+                dy = (int) (dy * dragRatio);
+            }
+            if (moveContainer(-dy)) {
+                consumed[1] += dy;
+            }
         }
+
+
     }
 
     @Override
@@ -202,11 +206,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Adjust the refresh or loading view according to the size of the gesture
+     * move container
      *
      * @param distanceY move distance of Y
      */
-    private boolean movePullContainerView(float distanceY) {
+    private boolean moveContainer(float distanceY) {
 
         if (refreshing) {
             return false;
@@ -214,15 +218,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
         if (!canChildScrollUp() && pullRefreshEnable && currentAction == ACTION_PULL_REFRESH) {
             // Pull Refresh
-                moveDistance +=distanceY;
+            moveDistance += distanceY;
 
             if (moveDistance < 0) {
                 moveDistance = 0;
             }
-            if (moveDistance > pullFlowHeight) {
+            if (pullFlowHeight != 0 && moveDistance > pullFlowHeight) {
                 moveDistance = pullFlowHeight;
             }
-
             if (moveDistance == 0) {
                 isConfirm = false;
                 currentAction = -1;
@@ -253,7 +256,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (moveDistance < 0) {
                 moveDistance = 0;
             }
-            if (moveDistance > pullFlowHeight) {
+            if (pullFlowHeight != 0 && moveDistance > pullFlowHeight) {
                 moveDistance = pullFlowHeight;
             }
 
@@ -288,14 +291,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * Move children
      */
-    private void moveView(float h) {
+    private void moveView(float distance) {
         if (headerView != null) {
-            headerView.setTranslationY(h);
+            headerView.setTranslationY(distance);
         }
         if (footerView != null) {
-            footerView.setTranslationY(h);
+            footerView.setTranslationY(distance);
         }
-        targetView.setTranslationY(h);
+        targetView.setTranslationY(distance);
     }
 
     /**
@@ -453,7 +456,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (footerView != null&&refreshing) {
+                if (footerView != null && refreshing) {
                     footerView.onPullFinish();
                 }
             }
