@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setUseAsTwinkLayout(true);
         refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
             TextView tv;
 
@@ -161,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void initData() {
         mDatas = new ArrayList<String>();
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 25; i++) {
             mDatas.add("测试数据" + i);
         }
     }
