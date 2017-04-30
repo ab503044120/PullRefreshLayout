@@ -30,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
         initData();
         initRecyclerView();
         initRefreshLayout();
+        refreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.autoRefresh();
+            }
+        },150);
     }
 
     private void initRecyclerView() {
