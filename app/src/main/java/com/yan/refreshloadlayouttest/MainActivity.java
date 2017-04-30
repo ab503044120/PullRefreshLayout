@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                refreshLayout.autoRefresh();
+                refreshLayout.autoRefresh();
             }
         },150);
     }

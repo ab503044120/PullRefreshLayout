@@ -9,7 +9,6 @@ import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -105,13 +104,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isUseForTwinkLayout = false;
 
     /**
-     * victory pixel peer millisecond
+     * animation during adjust value
      */
-    private float victoryPixelPeerMillisecond = 2;
+    private float duringInterpolatorValue = 0.4f;
 
     /**
      * refresh back time
-     * if the value equals 0, the field victoryPixelPeerMillisecond will be work
+     * if the value equals 0, the field duringInterpolatorValue will be work
      */
     private long refreshBackTime = 350;
 
@@ -134,7 +133,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (getChildCount() > 1) {
             throw new RuntimeException("PullRefreshLayout should not have more than one child");
         }
-
         parentHelper = new NestedScrollingParentHelper(this);
         pullViewHeight = dipToPx(context, pullViewHeight);
     }
@@ -142,7 +140,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        if (getChildCount() == 0) {
+            throw new RuntimeException("PullRefreshLayout should have one child");
+        }
         targetView = getChildAt(0);
+
         if (!isUseForTwinkLayout && headerView != null) {
             addView(headerView, new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.MATCH_PARENT, (int) pullViewHeight));
@@ -417,7 +419,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerViewHeight == 0) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
+            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
         }
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.start();
@@ -453,7 +455,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != 0 && !isUseForTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
+            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
         }
         animator.start();
     }
@@ -495,7 +497,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
+        animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
         animator.start();
     }
 
@@ -529,7 +531,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != 0 && !isUseForTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
+            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
         }
         animator.start();
     }
@@ -675,8 +677,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         this.dragDampingRatio = dragDampingRatio;
     }
 
-    public void setVictoryPixelPeerMillisecond(float victoryPixelPeerMillisecond) {
-        this.victoryPixelPeerMillisecond = victoryPixelPeerMillisecond;
+    public void setDuringInterpolatorValue(float duringInterpolatorValue) {
+        this.duringInterpolatorValue = duringInterpolatorValue;
     }
 
     public void setRefreshBackTime(long refreshBackTime) {
