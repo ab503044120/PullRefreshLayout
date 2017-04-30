@@ -97,6 +97,22 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private float dragRatio = 0.5f;
 
+    /**
+     * is just use for twinkLayout
+     */
+    private boolean isTwinklingLayout = false;
+
+    /**
+     * victory pixel peer millisecond
+     */
+    private float victoryPixelPeerMillisecond = 2;
+
+    /**
+     * refresh back time
+     * if the value equals 0, the field victoryPixelPeerMillisecond will be work
+     */
+    private long refreshBackTime = 300;
+
     public PullRefreshLayout(Context context) {
         super(context);
         initAttrs(context);
@@ -125,11 +141,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         targetView = getChildAt(0);
-        if (headerView != null) {
+        if (!isTwinklingLayout && headerView != null) {
             addView(headerView, new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.MATCH_PARENT, (int) pullViewHeight));
         }
-        if (footerView != null) {
+        if (!isTwinklingLayout && footerView != null) {
             addView(footerView, new FrameLayout.LayoutParams(ViewGroup
                     .LayoutParams.MATCH_PARENT, (int) pullViewHeight));
         }
@@ -138,10 +154,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (headerView != null) {
+        if (!isTwinklingLayout && headerView != null) {
             headerView.layout(left, (int) (-pullViewHeight), right, 0);
         }
-        if (footerView != null) {
+        if (!isTwinklingLayout && footerView != null) {
             footerView.layout(left, bottom - top, right, (int) (bottom - top + pullViewHeight));
         }
     }
@@ -223,8 +239,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 consumed[1] += dy;
             }
         }
-
-
     }
 
     @Override
@@ -275,19 +289,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (headerView != null) {
+                    if (!isTwinklingLayout && headerView != null) {
                         headerView.onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (headerView != null) {
+                    if (!isTwinklingLayout && headerView != null) {
                         headerView.onPullHoldUnTrigger();
                     }
                 }
             }
-            if (headerView != null) {
+            if (!isTwinklingLayout && headerView != null) {
                 headerView.onPullChange(moveDistance / pullViewHeight);
             }
             moveView(moveDistance);
@@ -309,19 +323,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (footerView != null) {
+                    if (!isTwinklingLayout && footerView != null) {
                         footerView.onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (footerView != null) {
+                    if (!isTwinklingLayout && footerView != null) {
                         footerView.onPullHoldUnTrigger();
                     }
                 }
             }
-            if (footerView != null) {
+            if (!isTwinklingLayout && footerView != null) {
                 footerView.onPullChange(moveDistance / pullViewHeight);
             }
             moveView(-moveDistance);
@@ -334,10 +348,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * move children
      */
     private void moveView(float distance) {
-        if (headerView != null) {
+        if (!isTwinklingLayout && headerView != null) {
             headerView.setTranslationY(distance);
         }
-        if (footerView != null) {
+        if (!isTwinklingLayout && footerView != null) {
             footerView.setTranslationY(distance);
         }
         targetView.setTranslationY(distance);
@@ -354,9 +368,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         isConfirm = false;
 
         if (pullRefreshEnable && currentAction == ACTION_PULL_REFRESH) {
-            if (moveDistance >= pullViewHeight) {
+            if (!isTwinklingLayout && moveDistance >= pullViewHeight) {
                 startRefresh((int) moveDistance);
-                if (headerView != null) {
+                if (!isTwinklingLayout && headerView != null) {
                     headerView.onPullHolding();
                 }
             } else if (moveDistance > 0) {
@@ -367,9 +381,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
 
         if (pullLoadEnable && currentAction == ACTION_LOAD_MORE) {
-            if (moveDistance >= pullViewHeight) {
+            if (!isTwinklingLayout && moveDistance >= pullViewHeight) {
                 startLoadMore((int) moveDistance);
-                if (footerView != null) {
+                if (!isTwinklingLayout && footerView != null) {
                     footerView.onPullHolding();
                 }
             } else if (moveDistance > 0) {
@@ -403,7 +417,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        animator.setDuration(300);
+        animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
         animator.start();
     }
 
@@ -424,7 +438,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (headerView != null && refreshing) {
+                if (!isTwinklingLayout && headerView != null && refreshing) {
                     headerView.onPullFinish();
                 }
             }
@@ -434,12 +448,16 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 resetRefreshState();
             }
         });
-        animator.setDuration(300);
+        if (refreshBackTime != 0 && !isTwinklingLayout) {
+            animator.setDuration(refreshBackTime);
+        } else {
+            animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
+        }
         animator.start();
     }
 
     private void resetRefreshState() {
-        if (headerView != null) {
+        if (!isTwinklingLayout && headerView != null) {
             headerView.onPullReset();
         }
         refreshing = false;
@@ -472,7 +490,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        animator.setDuration(300);
+        animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
         animator.start();
     }
 
@@ -498,17 +516,21 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (footerView != null && refreshing) {
+                if (!isTwinklingLayout && footerView != null && refreshing) {
                     footerView.onPullFinish();
                 }
             }
         });
-        animator.setDuration(300);
+        if (refreshBackTime != 0 && !isTwinklingLayout) {
+            animator.setDuration(refreshBackTime);
+        } else {
+            animator.setDuration((long) (moveDistance / victoryPixelPeerMillisecond));
+        }
         animator.start();
     }
 
     private void resetLoadMoreState() {
-        if (footerView != null) {
+        if (!isTwinklingLayout && footerView != null) {
             footerView.onPullReset();
         }
         refreshing = false;
@@ -597,6 +619,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
     }
 
+    public void setTwinklingLayout(boolean twinklingLayout) {
+        isTwinklingLayout = twinklingLayout;
+    }
+
     public boolean isLoadMoreEnable() {
         return pullLoadEnable;
     }
@@ -635,6 +661,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     public void setDragRatio(float dragRatio) {
         this.dragRatio = dragRatio;
+    }
+
+    public void setVictoryPixelPeerMillisecond(float victoryPixelPeerMillisecond) {
+        this.victoryPixelPeerMillisecond = victoryPixelPeerMillisecond;
+    }
+
+    public void setRefreshBackTime(long refreshBackTime) {
+        this.refreshBackTime = refreshBackTime;
     }
 
     public static interface OnPullListener {
