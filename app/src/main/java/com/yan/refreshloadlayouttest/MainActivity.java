@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
+        refreshLayout.setUseAsTwinkLayout(true);
         refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
             TextView tv;
 

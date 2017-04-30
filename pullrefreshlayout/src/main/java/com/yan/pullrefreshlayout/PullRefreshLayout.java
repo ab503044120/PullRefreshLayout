@@ -100,7 +100,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * is just use for twinkLayout
      */
-    private boolean isUseForTwinkLayout = false;
+    private boolean isUseAsTwinkLayout = false;
 
     /**
      * animation during adjust value
@@ -147,10 +147,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                 .LayoutParams.MATCH_PARENT, (int) pullViewHeight);
-        if (!isUseForTwinkLayout && headerView != null) {
+        if (!isUseAsTwinkLayout && headerView != null) {
             addView(headerView, layoutParams);
         }
-        if (!isUseForTwinkLayout && footerView != null) {
+        if (!isUseAsTwinkLayout && footerView != null) {
             addView(footerView, layoutParams);
         }
     }
@@ -158,10 +158,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!isUseForTwinkLayout && headerView != null) {
+        if (!isUseAsTwinkLayout && headerView != null) {
             headerView.layout(left, (int) (-pullViewHeight), right, 0);
         }
-        if (!isUseForTwinkLayout && footerView != null) {
+        if (!isUseAsTwinkLayout && footerView != null) {
             footerView.layout(left, bottom - top, right, (int) (bottom - top + pullViewHeight));
         }
     }
@@ -286,19 +286,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (!isUseForTwinkLayout && headerView != null) {
+                    if (!isUseAsTwinkLayout && headerView != null) {
                         headerView.onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (!isUseForTwinkLayout && headerView != null) {
+                    if (!isUseAsTwinkLayout && headerView != null) {
                         headerView.onPullHoldUnTrigger();
                     }
                 }
             }
-            if (!isUseForTwinkLayout && headerView != null) {
+            if (!isUseAsTwinkLayout && headerView != null) {
                 headerView.onPullChange(moveDistance / pullViewHeight);
             }
             moveChildren(moveDistance);
@@ -319,19 +319,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (!isUseForTwinkLayout && footerView != null) {
+                    if (!isUseAsTwinkLayout && footerView != null) {
                         footerView.onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (!isUseForTwinkLayout && footerView != null) {
+                    if (!isUseAsTwinkLayout && footerView != null) {
                         footerView.onPullHoldUnTrigger();
                     }
                 }
             }
-            if (!isUseForTwinkLayout && footerView != null) {
+            if (!isUseAsTwinkLayout && footerView != null) {
                 footerView.onPullChange(moveDistance / pullViewHeight);
             }
             moveChildren(-moveDistance);
@@ -342,10 +342,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * move children
      */
     private void moveChildren(float distance) {
-        if (!isUseForTwinkLayout && headerView != null) {
+        if (!isUseAsTwinkLayout && headerView != null) {
             headerView.setTranslationY(distance);
         }
-        if (!isUseForTwinkLayout && footerView != null) {
+        if (!isUseAsTwinkLayout && footerView != null) {
             footerView.setTranslationY(distance);
         }
         targetView.setTranslationY(distance);
@@ -355,14 +355,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * decide on the action refresh or loadMore
      */
     private void handleState() {
-
         if (isRefreshing) {
             return;
         }
         isGettingState = false;
 
         if (pullRefreshEnable && currentState == STATE_PULL_REFRESH) {
-            if (!isUseForTwinkLayout && moveDistance >= pullViewHeight) {
+            if (!isUseAsTwinkLayout && moveDistance >= pullViewHeight) {
                 startRefresh((int) moveDistance);
             } else if (moveDistance > 0) {
                 resetHeaderView((int) moveDistance);
@@ -372,7 +371,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
 
         if (pullLoadMoreEnable && currentState == STATE_LOAD_MORE) {
-            if (!isUseForTwinkLayout && moveDistance >= pullViewHeight) {
+            if (!isUseAsTwinkLayout && moveDistance >= pullViewHeight) {
                 startLoadMore((int) moveDistance);
             } else if (moveDistance > 0) {
                 resetFootView((int) moveDistance);
@@ -434,7 +433,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseForTwinkLayout && headerView != null && isRefreshing) {
+                if (!isUseAsTwinkLayout && headerView != null && isRefreshing) {
                     headerView.onPullFinish();
                 }
             }
@@ -444,7 +443,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 resetRefreshState();
             }
         });
-        if (refreshBackTime != 0 && !isUseForTwinkLayout) {
+        if (refreshBackTime != 0 && !isUseAsTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
             animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
@@ -453,7 +452,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void resetRefreshState() {
-        if (!isUseForTwinkLayout && headerView != null) {
+        if (!isUseAsTwinkLayout && headerView != null) {
             headerView.onPullReset();
         }
         isRefreshing = false;
@@ -515,12 +514,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseForTwinkLayout && footerView != null && isRefreshing) {
+                if (!isUseAsTwinkLayout && footerView != null && isRefreshing) {
                     footerView.onPullFinish();
                 }
             }
         });
-        if (refreshBackTime != 0 && !isUseForTwinkLayout) {
+        if (refreshBackTime != 0 && !isUseAsTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
             animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
@@ -529,7 +528,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void resetLoadMoreState() {
-        if (!isUseForTwinkLayout && footerView != null) {
+        if (!isUseAsTwinkLayout && footerView != null) {
             footerView.onPullReset();
         }
         isRefreshing = false;
@@ -625,8 +624,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
     }
 
-    public void setUseForTwinkLayout(boolean useForTwinkLayout) {
-        isUseForTwinkLayout = useForTwinkLayout;
+    public void setUseAsTwinkLayout(boolean useAsTwinkLayout) {
+        isUseAsTwinkLayout = useAsTwinkLayout;
     }
 
     public boolean isLoadMoreEnable() {
