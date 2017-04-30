@@ -23,7 +23,6 @@ import android.widget.FrameLayout;
 public class PullRefreshLayout extends FrameLayout implements NestedScrollingParent {
 
     private NestedScrollingParentHelper parentHelper;
-    private OnRefreshListener onRefreshListener;
 
     /**
      * refresh header
@@ -45,13 +44,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private View targetView;
 
     /**
-     * drag action refresh
+     * drag refresh
      */
-    private static final int ACTION_PULL_REFRESH = 0;
+    private static final int STATE_PULL_REFRESH = 0;
     /**
-     * drag action loadMore
+     * drag loadMore
      */
-    private static final int ACTION_LOAD_MORE = 1;
+    private static final int STATE_LOAD_MORE = 1;
 
     /**
      * switch refresh enable
@@ -61,7 +60,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * switch loadMore enable
      */
-    private boolean pullLoadEnable = true;
+    private boolean pullLoadMoreEnable = true;
 
     /**
      * state is refreshing
@@ -86,12 +85,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * drag current action
      */
-    private int currentAction = -1;
+    private int currentState = -1;
 
     /**
-     * make sure the current action
+     * make sure the current state
      */
-    private boolean isConfirm = false;
+    private boolean isGettingState = false;
 
     /**
      * the ratio for final distance for drag
@@ -114,25 +113,24 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private long refreshBackTime = 350;
 
+    private OnRefreshListener onRefreshListener;
+
     public PullRefreshLayout(Context context) {
         super(context);
-        initAttrs(context);
+        init(context);
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initAttrs(context);
+        init(context);
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initAttrs(context);
+        init(context);
     }
 
-    private void initAttrs(Context context) {
-        if (getChildCount() > 1) {
-            throw new RuntimeException("PullRefreshLayout should not have more than one child");
-        }
+    private void init(Context context) {
         parentHelper = new NestedScrollingParentHelper(this);
         pullViewHeight = dipToPx(context, pullViewHeight);
     }
@@ -140,18 +138,20 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (getChildCount() == 0) {
+        if (getChildCount() > 1) {
+            throw new RuntimeException("PullRefreshLayout should not have more than one child");
+        } else if (getChildCount() == 0) {
             throw new RuntimeException("PullRefreshLayout should have one child");
         }
         targetView = getChildAt(0);
 
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
+                .LayoutParams.MATCH_PARENT, (int) pullViewHeight);
         if (!isUseForTwinkLayout && headerView != null) {
-            addView(headerView, new FrameLayout.LayoutParams(ViewGroup
-                    .LayoutParams.MATCH_PARENT, (int) pullViewHeight));
+            addView(headerView, layoutParams);
         }
         if (!isUseForTwinkLayout && footerView != null) {
-            addView(footerView, new FrameLayout.LayoutParams(ViewGroup
-                    .LayoutParams.MATCH_PARENT, (int) pullViewHeight));
+            addView(footerView, layoutParams);
         }
     }
 
@@ -168,7 +168,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if ((!pullRefreshEnable && !pullLoadEnable)) {
+        if ((!pullRefreshEnable && !pullLoadMoreEnable)) {
             return false;
         }
         return super.onInterceptTouchEvent(ev);
@@ -188,7 +188,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * callback on TouchEvent.ACTION_CANCEL or TouchEvent.ACTION_UP
      * handler : refresh or loading
      *
      * @param child : child view of PullRefreshLayout,RecyclerView or Scroller
@@ -196,7 +195,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
-        handlerAction();
+        handleState();
     }
 
     /**
@@ -209,7 +208,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        if ((!pullRefreshEnable && !pullLoadEnable)) {
+        if ((!pullRefreshEnable && !pullLoadMoreEnable)) {
             return;
         }
 
@@ -217,24 +216,24 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             return;
         }
 
-        if (!isConfirm) {
+        if (!isGettingState) {
             if (dy < 0 && !canChildScrollUp()) {
-                currentAction = ACTION_PULL_REFRESH;
-                isConfirm = true;
+                currentState = STATE_PULL_REFRESH;
+                isGettingState = true;
             } else if (dy > 0 && !canChildScrollDown()) {
-                currentAction = ACTION_LOAD_MORE;
-                isConfirm = true;
+                currentState = STATE_LOAD_MORE;
+                isGettingState = true;
             }
         }
 
-        if (currentAction == ACTION_PULL_REFRESH) {
+        if (currentState == STATE_PULL_REFRESH) {
             if (dy > 0) {
-                moveContainer(-dy);
+                onScroll(-dy);
                 consumed[1] += dy;
             }
-        } else if (currentAction == ACTION_LOAD_MORE) {
+        } else if (currentState == STATE_LOAD_MORE) {
             if (dy < 0) {
-                moveContainer(-dy);
+                onScroll(-dy);
                 consumed[1] += dy;
             }
         }
@@ -242,10 +241,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        if (currentAction == ACTION_PULL_REFRESH
-                || currentAction == ACTION_LOAD_MORE) {
+        if (currentState == STATE_PULL_REFRESH
+                || currentState == STATE_LOAD_MORE) {
             dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
-            moveContainer(-dyUnconsumed);
+            onScroll(-dyUnconsumed);
         }
     }
 
@@ -265,16 +264,16 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * move container
+     * dell the nestedScroll
      *
      * @param distanceY move distance of Y
      */
-    private boolean moveContainer(float distanceY) {
+    private boolean onScroll(float distanceY) {
         if (refreshing) {
             return false;
         }
 
-        if (!canChildScrollUp() && pullRefreshEnable && currentAction == ACTION_PULL_REFRESH) {
+        if (!canChildScrollUp() && pullRefreshEnable && currentState == STATE_PULL_REFRESH) {
             // Pull Refresh
             moveDistance += distanceY;
 
@@ -285,8 +284,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 moveDistance = pullFlowHeight;
             }
             if (moveDistance == 0) {
-                isConfirm = false;
-                currentAction = -1;
+                isGettingState = false;
+                currentState = -1;
             }
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
@@ -306,9 +305,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (!isUseForTwinkLayout && headerView != null) {
                 headerView.onPullChange(moveDistance / pullViewHeight);
             }
-            moveView(moveDistance);
+            moveChildren(moveDistance);
             return true;
-        } else if (!canChildScrollDown() && pullLoadEnable && currentAction == ACTION_LOAD_MORE) {
+        } else if (!canChildScrollDown() && pullLoadMoreEnable && currentState == STATE_LOAD_MORE) {
             // Load more
             moveDistance -= distanceY;
             if (moveDistance < 0) {
@@ -319,8 +318,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             }
 
             if (moveDistance == 0) {
-                isConfirm = false;
-                currentAction = -1;
+                isGettingState = false;
+                currentState = -1;
             }
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
@@ -340,7 +339,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             if (!isUseForTwinkLayout && footerView != null) {
                 footerView.onPullChange(moveDistance / pullViewHeight);
             }
-            moveView(-moveDistance);
+            moveChildren(-moveDistance);
             return true;
         }
         return false;
@@ -349,7 +348,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * move children
      */
-    private void moveView(float distance) {
+    private void moveChildren(float distance) {
         if (!isUseForTwinkLayout && headerView != null) {
             headerView.setTranslationY(distance);
         }
@@ -362,14 +361,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * decide on the action refresh or loadMore
      */
-    private void handlerAction() {
+    private void handleState() {
 
         if (refreshing) {
             return;
         }
-        isConfirm = false;
+        isGettingState = false;
 
-        if (pullRefreshEnable && currentAction == ACTION_PULL_REFRESH) {
+        if (pullRefreshEnable && currentState == STATE_PULL_REFRESH) {
             if (!isUseForTwinkLayout && moveDistance >= pullViewHeight) {
                 startRefresh((int) moveDistance);
             } else if (moveDistance > 0) {
@@ -379,7 +378,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             }
         }
 
-        if (pullLoadEnable && currentAction == ACTION_LOAD_MORE) {
+        if (pullLoadMoreEnable && currentState == STATE_LOAD_MORE) {
             if (!isUseForTwinkLayout && moveDistance >= pullViewHeight) {
                 startLoadMore((int) moveDistance);
             } else if (moveDistance > 0) {
@@ -405,7 +404,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (int) ((Float) animation.getAnimatedValue()).floatValue();
-                moveView(moveDistance);
+                moveChildren(moveDistance);
             }
         });
         animator.addListener(new RefreshAnimatorListener() {
@@ -436,7 +435,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (int) ((Float) animation.getAnimatedValue()).floatValue();
-                moveView(moveDistance);
+                moveChildren(moveDistance);
             }
         });
         animator.addListener(new RefreshAnimatorListener() {
@@ -466,9 +465,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
         refreshing = false;
         moveDistance = 0;
-        isConfirm = false;
+        isGettingState = false;
         pullStateControl = true;
-        currentAction = -1;
+        currentState = -1;
     }
 
     /**
@@ -486,7 +485,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (int) ((Float) animation.getAnimatedValue()).floatValue();
-                moveView(-moveDistance);
+                moveChildren(-moveDistance);
             }
         });
         animator.addListener(new RefreshAnimatorListener() {
@@ -512,7 +511,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (int) ((Float) animation.getAnimatedValue()).floatValue();
-                moveView(-moveDistance);
+                moveChildren(-moveDistance);
             }
         });
         animator.addListener(new RefreshAnimatorListener() {
@@ -542,15 +541,15 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
         refreshing = false;
         moveDistance = 0;
-        isConfirm = false;
+        isGettingState = false;
         pullStateControl = true;
-        currentAction = -1;
+        currentState = -1;
     }
 
     public void autoRefresh() {
         if (targetView == null) return;
-        currentAction = ACTION_PULL_REFRESH;
-        isConfirm = true;
+        currentState = STATE_PULL_REFRESH;
+        isGettingState = true;
         startRefresh(0);
     }
 
@@ -619,7 +618,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * callback on refresh finish
      */
     public void refreshComplete() {
-        if (currentAction == ACTION_PULL_REFRESH) {
+        if (currentState == STATE_PULL_REFRESH) {
             resetHeaderView((int) moveDistance);
         }
     }
@@ -628,7 +627,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * Callback on loadMore finish
      */
     public void loadMoreComplete() {
-        if (currentAction == ACTION_LOAD_MORE) {
+        if (currentState == STATE_LOAD_MORE) {
             resetFootView((int) moveDistance);
         }
     }
@@ -638,11 +637,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     public boolean isLoadMoreEnable() {
-        return pullLoadEnable;
+        return pullLoadMoreEnable;
     }
 
     public void setLoadMoreEnable(boolean mPullLoadEnable) {
-        this.pullLoadEnable = mPullLoadEnable;
+        this.pullLoadMoreEnable = mPullLoadEnable;
     }
 
     public boolean isRefreshEnable() {
