@@ -63,9 +63,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean pullLoadMoreEnable = true;
 
     /**
-     * state is refreshing
+     * state is isRefreshing
      */
-    volatile private boolean refreshing = false;
+    volatile private boolean isRefreshing = false;
 
     /**
      * make sure header or footer hold trigger one time
@@ -176,7 +176,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        if (refreshing) {
+        if (isRefreshing) {
             return false;
         }
         return true;
@@ -268,11 +268,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      *
      * @param distanceY move distance of Y
      */
-    private boolean onScroll(float distanceY) {
-        if (refreshing) {
-            return false;
-        }
-
+    private void onScroll(float distanceY) {
         if (!canChildScrollUp() && pullRefreshEnable && currentState == STATE_PULL_REFRESH) {
             // Pull Refresh
             moveDistance += distanceY;
@@ -306,7 +302,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 headerView.onPullChange(moveDistance / pullViewHeight);
             }
             moveChildren(moveDistance);
-            return true;
         } else if (!canChildScrollDown() && pullLoadMoreEnable && currentState == STATE_LOAD_MORE) {
             // Load more
             moveDistance -= distanceY;
@@ -340,9 +335,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 footerView.onPullChange(moveDistance / pullViewHeight);
             }
             moveChildren(-moveDistance);
-            return true;
         }
-        return false;
     }
 
     /**
@@ -363,7 +356,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private void handleState() {
 
-        if (refreshing) {
+        if (isRefreshing) {
             return;
         }
         isGettingState = false;
@@ -395,7 +388,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * @param headerViewHeight
      */
     private void startRefresh(int headerViewHeight) {
-        refreshing = true;
+        isRefreshing = true;
         if (headerView != null) {
             headerView.onPullHolding();
         }
@@ -441,7 +434,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseForTwinkLayout && headerView != null && refreshing) {
+                if (!isUseForTwinkLayout && headerView != null && isRefreshing) {
                     headerView.onPullFinish();
                 }
             }
@@ -463,7 +456,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (!isUseForTwinkLayout && headerView != null) {
             headerView.onPullReset();
         }
-        refreshing = false;
+        isRefreshing = false;
         moveDistance = 0;
         isGettingState = false;
         pullStateControl = true;
@@ -476,7 +469,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * @param loadMoreViewHeight
      */
     private void startLoadMore(int loadMoreViewHeight) {
-        refreshing = true;
+        isRefreshing = true;
         if (footerView != null) {
             footerView.onPullHolding();
         }
@@ -522,7 +515,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseForTwinkLayout && footerView != null && refreshing) {
+                if (!isUseForTwinkLayout && footerView != null && isRefreshing) {
                     footerView.onPullFinish();
                 }
             }
@@ -539,7 +532,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (!isUseForTwinkLayout && footerView != null) {
             footerView.onPullReset();
         }
-        refreshing = false;
+        isRefreshing = false;
         moveDistance = 0;
         isGettingState = false;
         pullStateControl = true;
@@ -653,7 +646,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     public boolean isRefreshing() {
-        return refreshing;
+        return isRefreshing;
     }
 
     public void setHeaderView(PullRefreshView header) {
