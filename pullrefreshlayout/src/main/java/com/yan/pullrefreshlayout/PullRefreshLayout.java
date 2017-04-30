@@ -214,7 +214,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
         if (!canChildScrollUp() && pullRefreshEnable && currentAction == ACTION_PULL_REFRESH) {
             // Pull Refresh
-            moveDistance += distanceY;
+                moveDistance +=distanceY;
+
             if (moveDistance < 0) {
                 moveDistance = 0;
             }
@@ -378,7 +379,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (headerView != null&&refreshing) {
+                if (headerView != null && refreshing) {
                     headerView.onPullFinish();
                 }
             }
@@ -452,7 +453,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (footerView != null) {
+                if (footerView != null&&refreshing) {
                     footerView.onPullFinish();
                 }
             }
