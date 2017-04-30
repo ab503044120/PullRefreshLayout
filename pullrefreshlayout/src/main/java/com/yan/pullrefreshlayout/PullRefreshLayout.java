@@ -24,35 +24,77 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private NestedScrollingParentHelper parentHelper;
     private OnRefreshListener onRefreshListener;
 
+    /**
+     * refresh header
+     */
     private PullRefreshView headerView;
+    /**
+     * refresh footer
+     */
     private PullRefreshView footerView;
 
+    /**
+     * drag move distance
+     */
     private float moveDistance = 0;
+
+    /**
+     * refresh target view
+     */
     private View targetView;
 
+    /**
+     * drag action refresh
+     */
     private static final int ACTION_PULL_REFRESH = 0;
+    /**
+     * drag action loadMore
+     */
     private static final int ACTION_LOAD_MORE = 1;
 
-    // Enable PullRefresh and LoadMore
+    /**
+     * switch refresh enable
+     */
     private boolean pullRefreshEnable = true;
+
+    /**
+     * switch loadMore enable
+     */
     private boolean pullLoadEnable = true;
 
-    // Is Refreshing
+    /**
+     * state is refreshing
+     */
     volatile private boolean refreshing = false;
 
-    // pullStateControl
+    /**
+     * make sure header or footer hold trigger one time
+     */
     private boolean pullStateControl = true;
 
-    // RefreshView Height
+    /**
+     * header or footer height
+     */
     private float pullViewHeight = 60;
 
-    // RefreshView Over Flow Height
+    /**
+     * max height drag
+     */
     private float pullFlowHeight = 0;
 
-    // Drag Action
+    /**
+     * drag current action
+     */
     private int currentAction = -1;
+
+    /**
+     * make sure the current action
+     */
     private boolean isConfirm = false;
 
+    /**
+     * the ratio for final distance for drag
+     */
     private float dragRatio = 0.5f;
 
     public PullRefreshLayout(Context context) {
@@ -127,7 +169,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Callback on TouchEvent.ACTION_CANCEL or TouchEvent.ACTION_UP
+     * callback on TouchEvent.ACTION_CANCEL or TouchEvent.ACTION_UP
      * handler : refresh or loading
      *
      * @param child : child view of PullRefreshLayout,RecyclerView or Scroller
@@ -139,7 +181,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * With child view to processing move events
+     * with child view to processing move events
      *
      * @param target   the child view
      * @param dx       move x
@@ -289,7 +331,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Move children
+     * move children
      */
     private void moveView(float distance) {
         if (headerView != null) {
@@ -302,7 +344,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Decide on the action refresh or loadMore
+     * decide on the action refresh or loadMore
      */
     private void handlerAction() {
 
@@ -339,7 +381,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Start Refresh
+     * start Refresh
      *
      * @param headerViewHeight
      */
@@ -366,7 +408,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Reset refresh state
+     * reset refresh state
      *
      * @param headerViewHeight
      */
@@ -408,7 +450,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Start loadMore
+     * start loadMore
      *
      * @param loadMoreViewHeight
      */
@@ -435,7 +477,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Reset loadMore state
+     * reset loadMore state
      *
      * @param loadMoreViewHeight
      */
@@ -477,7 +519,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Whether child view can scroll up
+     * whether child view can scroll up
      *
      * @return
      */
@@ -500,7 +542,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Whether child view can scroll down
+     * whether child view can scroll down
      *
      * @return
      */
@@ -538,7 +580,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     /**
-     * Callback on refresh finish
+     * callback on refresh finish
      */
     public void refreshComplete() {
         if (currentAction == ACTION_PULL_REFRESH) {
@@ -591,6 +633,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         this.pullFlowHeight = pullFlowHeight;
     }
 
+    public void setDragRatio(float dragRatio) {
+        this.dragRatio = dragRatio;
+    }
+
     public static interface OnPullListener {
         void onPullChange(float percent);
 
@@ -606,7 +652,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     public static abstract class OnRefreshListener {
-        public abstract void onRefresh();
+        public void onRefresh() {
+        }
 
         public void onLoading() {
         }
@@ -630,5 +677,4 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         public void onAnimationRepeat(Animator animation) {
         }
     }
-
 }
