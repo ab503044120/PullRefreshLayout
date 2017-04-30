@@ -1,7 +1,6 @@
 package com.yan.refreshloadlayouttest;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +16,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
     private List<String> mDatas;
     private PullRefreshLayout refreshLayout;
 
@@ -36,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 refreshLayout.autoRefresh();
             }
-        },150);
+        }, 150);
     }
 
     private void initRecyclerView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         SimpleAdapter adapter = new SimpleAdapter(this, mDatas);
 
@@ -161,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void initData() {
-        mDatas = new ArrayList();
-        for (int i = 'A'; i < 'z'; i++) {
-            mDatas.add("" + (char) i);
+        mDatas = new ArrayList<String>();
+        for (int i = 0; i < 15; i++) {
+            mDatas.add("测试数据" + i);
         }
     }
 }
