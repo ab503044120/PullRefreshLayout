@@ -1,6 +1,7 @@
 package com.yan.refreshloadlayouttest;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                refreshLayout.autoRefresh();
+//                refreshLayout.autoRefresh();
             }
         },150);
     }
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
     }
 
     private void initRefreshLayout() {
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected int contentView() {
-                return R.layout.refresh_view;
+                return R.layout.load_more_view;
             }
 
             @Override

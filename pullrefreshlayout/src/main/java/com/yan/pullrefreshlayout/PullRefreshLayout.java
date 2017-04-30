@@ -9,12 +9,12 @@ import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
@@ -169,7 +169,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if ((!pullRefreshEnable && !pullLoadEnable)) {
             return false;
         }
-
         return super.onInterceptTouchEvent(ev);
     }
 
@@ -215,7 +214,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (Math.abs(dy) > 200) {
             return;
         }
-
+        Log.e("onNestedPreScroll: dy:", dy + "");
         if (!isConfirm) {
             if (dy < 0 && !canChildScrollUp()) {
                 currentAction = ACTION_PULL_REFRESH;
@@ -227,17 +226,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
 
         if (currentAction == ACTION_PULL_REFRESH) {
-            if (dy < 0) {
-                dy = (int) (dy * dragDampingRatio);
-            }
-            if (moveContainer(-dy)) {
+            if (dy > 0) {
+                moveContainer(-dy);
                 consumed[1] += dy;
             }
-        } else {
-            if (dy > 0) {
-                dy = (int) (dy * dragDampingRatio);
-            }
-            if (moveContainer(-dy)) {
+        } else if (currentAction == ACTION_LOAD_MORE) {
+            if (dy < 0) {
+                moveContainer(-dy);
                 consumed[1] += dy;
             }
         }
@@ -245,7 +240,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-
+        if (currentAction == ACTION_PULL_REFRESH
+                || currentAction == ACTION_LOAD_MORE) {
+            dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
+            moveContainer(-dyUnconsumed);
+        }
     }
 
     @Override
@@ -269,7 +268,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * @param distanceY move distance of Y
      */
     private boolean moveContainer(float distanceY) {
-
         if (refreshing) {
             return false;
         }
@@ -550,6 +548,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     public void autoRefresh() {
         if (targetView == null) return;
         currentAction = ACTION_PULL_REFRESH;
+        isConfirm = true;
         startRefresh(0);
     }
 
