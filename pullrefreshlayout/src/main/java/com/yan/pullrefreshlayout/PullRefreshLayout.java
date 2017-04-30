@@ -106,11 +106,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * animation during adjust value
      */
-    private float duringInterpolatorValue = 0.4f;
+    private float duringAdjustValue = 0.4f;
 
     /**
      * refresh back time
-     * if the value equals 0, the field duringInterpolatorValue will be work
+     * if the value equals 0, the field duringAdjustValue will be work
      */
     private long refreshBackTime = 350;
 
@@ -419,7 +419,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerViewHeight == 0) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
+            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
         }
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.start();
@@ -455,7 +455,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != 0 && !isUseForTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
+            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
         }
         animator.start();
     }
@@ -497,7 +497,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
+        animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
         animator.start();
     }
 
@@ -531,7 +531,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != 0 && !isUseForTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringInterpolatorValue));
+            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
         }
         animator.start();
     }
@@ -677,8 +677,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         this.dragDampingRatio = dragDampingRatio;
     }
 
-    public void setDuringInterpolatorValue(float duringInterpolatorValue) {
-        this.duringInterpolatorValue = duringInterpolatorValue;
+    public void setDuringAdjustValue(float duringAdjustValue) {
+        this.duringAdjustValue = duringAdjustValue;
     }
 
     public void setRefreshBackTime(long refreshBackTime) {
