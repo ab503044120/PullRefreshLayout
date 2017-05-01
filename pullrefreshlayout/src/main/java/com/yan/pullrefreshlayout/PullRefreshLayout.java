@@ -51,26 +51,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private View targetView;
 
     /**
-     * switch refresh enable
-     */
-    private boolean pullRefreshEnable = true;
-
-    /**
-     * switch loadMore enable
-     */
-    private boolean pullLoadMoreEnable = true;
-
-    /**
-     * refreshState is isRefreshing
-     */
-    private volatile boolean isRefreshing = false;
-
-    /**
-     * make sure header or footer hold trigger one time
-     */
-    private boolean pullStateControl = true;
-
-    /**
      * header or footer height
      */
     private float pullViewHeight = 60;
@@ -86,9 +66,34 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private float dragDampingRatio = 0.6f;
 
     /**
+     * switch refresh enable
+     */
+    private boolean pullRefreshEnable = true;
+
+    /**
+     * switch loadMore enable
+     */
+    private boolean pullLoadMoreEnable = true;
+
+    /**
+     * refreshState is isRefreshing
+     */
+    private boolean isRefreshing = false;
+
+    /**
+     * make sure header or footer hold trigger one time
+     */
+    private boolean pullStateControl = true;
+
+    /**
      * is just use for twinkLayout
      */
     private boolean isUseAsTwinkLayout = false;
+
+    /**
+     * has called the method refreshComplete or loadMoreComplete
+     */
+    private boolean isResetTrigger = false;
 
     /**
      * animation during adjust value
@@ -102,8 +107,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private long refreshBackTime = 350;
 
     private OnRefreshListener onRefreshListener;
-
-    private boolean isResetTrigger = false;
 
     private ValueAnimator currentAnimation;
 
@@ -268,8 +271,18 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * @param distanceY move distance of Y
      */
     private void onScroll(float distanceY) {
-        moveDistance += distanceY;
-        Log.e(TAG, "onScroll: " + moveDistance);
+        if (pullFlowHeight != 0) {
+            if (moveDistance + distanceY > pullFlowHeight) {
+                moveDistance = (int) pullFlowHeight;
+            } else if (moveDistance + distanceY < -pullFlowHeight) {
+                moveDistance = -(int) pullFlowHeight;
+            } else {
+                moveDistance += distanceY;
+            }
+        } else {
+            moveDistance += distanceY;
+        }
+
         moveChildren(moveDistance);
 
         if (moveDistance >= 0) {
