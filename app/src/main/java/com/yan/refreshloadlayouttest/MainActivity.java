@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         refreshLayout.refreshComplete();
                     }
-                }, 10000);
+                }, 2000);
             }
 
             @Override
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         refreshLayout.loadMoreComplete();
                     }
-                }, 1600);
+                }, 2000);
             }
         });
     }
