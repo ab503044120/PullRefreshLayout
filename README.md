@@ -21,4 +21,19 @@
     refreshLayout.setPullFlowHeight(400);// 拖拽最大范围
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用
     refreshLayout.setUseAsTwinkLayout(true);// 剔除刷新或加载效果，保留回弹动画
+    
+    // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
+    refreshLayout.setHeaderView(view);// 设置headerView
+    refreshLayout.setFooterView(view);// 设置footerView
+    
+    // PullRefreshLayout.OnPullListener
+        public interface OnPullListener {
+            // 刷新或加载过程中位置相刷新或加载触发位置的百分比，时刻调用
+            void onPullChange(float percent);
+            void onPullReset();// 数据重置调用
+            void onPullHoldTrigger();// 拖拽超过触发位置调用
+            void onPullHoldUnTrigger();// 拖拽回到触发位置之前调用
+            void onPullHolding(); // 正在刷新
+            void onPullFinish();// 刷新完成
+        }
 ```
