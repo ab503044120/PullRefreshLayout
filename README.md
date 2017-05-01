@@ -23,8 +23,8 @@
     refreshLayout.setUseAsTwinkLayout(true);// 剔除刷新或加载效果，保留回弹动画
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
-    refreshLayout.setHeaderView(view);// 设置headerView
-    refreshLayout.setFooterView(view);// 设置footerView
+    refreshLayout.setHeaderView(headerView);// 设置headerView
+    refreshLayout.setFooterView(footerView);// 设置footerView
     
     // PullRefreshLayout.OnPullListener
         public interface OnPullListener {
