@@ -331,7 +331,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (pullRefreshEnable) {
             if (!isResetTrigger && !isUseAsTwinkLayout && moveDistance >= pullViewHeight) {
                 startRefresh(moveDistance);
-            } else if (!isRefreshing && moveDistance > 0) {
+            } else if ((!isRefreshing && moveDistance > 0)
+                    || isResetTrigger) {
                 resetHeaderView(moveDistance);
             } else if (!isRefreshing && moveDistance == 0) {
                 resetRefreshState();
@@ -341,7 +342,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (pullLoadMoreEnable) {
             if (!isResetTrigger && !isUseAsTwinkLayout && moveDistance <= -pullViewHeight) {
                 startLoadMore(moveDistance);
-            } else if (!isRefreshing && moveDistance < 0) {
+            } else if ((!isRefreshing && moveDistance < 0)
+                    || isResetTrigger) {
                 resetFootView(moveDistance);
             } else if (!isRefreshing && moveDistance == 0) {
                 resetLoadMoreState();
