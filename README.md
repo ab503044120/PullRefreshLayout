@@ -7,7 +7,7 @@
 
 ## 2.说明  
 该控件作用于，实现了NestedScrollingChild的控件（recycleView、NestedScrollView）
-,其他控件需要实现NestedScrollingChild可参考（PullListView、PullScrollView）
+,其他控件需要实现NestedScrollingChild可参考（[PullListView.java](https://github.com/genius158/RefreshLayout/blob/master/pullrefreshlayout/src/main/java/com/yan/pullrefreshlayout/view/PullListView.java)、[PullScrollView.java](https://github.com/genius158/RefreshLayout/blob/master/pullrefreshlayout/src/main/java/com/yan/pullrefreshlayout/view/PullScrollView.java)）
 
 ```
 //-控件设置-
