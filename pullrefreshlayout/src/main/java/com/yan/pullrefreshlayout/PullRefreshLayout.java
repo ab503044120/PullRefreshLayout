@@ -7,6 +7,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,7 +73,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * switch loadMore enable
      */
-    private boolean pullLoadMoreEnable = true;
+    private boolean pullLoadMoreEnable = false;
 
     /**
      * refreshState is isRefreshing
@@ -263,8 +264,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         } else {
             moveDistance += distanceY;
         }
-
-        moveChildren(moveDistance);
+        if ((pullLoadMoreEnable && moveDistance <= 0)
+                || (pullRefreshEnable && moveDistance >= 0)) {
+            moveChildren(moveDistance);
+        } else {
+            moveDistance = 0;
+        }
 
         if (moveDistance >= 0) {
             if (!isUseAsTwinkLayout && headerView != null) {
@@ -529,7 +534,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     public void autoRefresh() {
-        if (targetView == null || isUseAsTwinkLayout) {
+        if (targetView == null || isUseAsTwinkLayout || !pullRefreshEnable) {
             return;
         }
         startRefresh(0);
