@@ -7,6 +7,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -535,7 +536,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     public void autoRefresh() {
-        if (targetView == null) return;
+        if (targetView == null || isUseAsTwinkLayout) {
+            return;
+        }
         startRefresh(0);
     }
 
