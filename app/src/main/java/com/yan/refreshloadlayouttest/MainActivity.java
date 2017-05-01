@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     private List<String> mDatas;
     private PullRefreshLayout refreshLayout;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPullChange(float percent) {
-
+                Log.e(TAG, "onPullChange: refresh " + percent);
             }
 
             @Override
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPullChange(float percent) {
-
+                Log.e(TAG, "onPullChange: loadMore " + percent);
             }
 
             @Override
