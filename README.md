@@ -11,27 +11,13 @@
 
 ```
 //-控件设置-
-bsrGiftView.setRes(context, R.drawable.gift_car_t2); // 设置view的图片资源
-bsrGiftLayout.addChild(bsrPathView); // 设置giftLayout的bsrPathView动画资源，并播放动画
-bsrGiftView.addBSRPathPoints(bsrPathPoints); // 加入一组bsr并播放动画，不可保持之前执行的动画
-bsrGiftView.addBSRPathPointAndDraw(bsrPathPoint); // 添加和播放一帧动画，用于帧动画
-bsrGiftView.addBSRPathPoint(bsrPathPoint); // 加入一个动画数据，并播放，可保持之前执行的动画
-
-//-动画数据设置-
-bsrPath.setDuring(during); // 设置动画执行时间
-bsrPath.positionInScreen(); // 设置位置为相对控件的位置（比如0.5是控件的中心点）
-bsrPath.setFirstRotation(-90); // 设置动画初始旋转角度
-bsrPath.autoRotation(); // 设置动画旋转跟随运动轨迹
-bsrPath.adjustScaleInScreen(1f);// 设置资源相对容器的大小
-bsrPath.attachPoint(bsr2);// 设置bsr的位移跟随bsr2
-bsrPath.setPositionXPercent(0.5f);// 设置bsrX轴上位移的基准点
-bsrPath.setAlphaTrigger(0.9f);// 设置动画的淡出在动画执行的到0.9的时候
-
-bsrPath.setScale(0.5f);// 恒定bsr的缩放
-bsrPath.setPositionPoint(0.5f,0.5f);// 恒定bsr的位置
-bsrPath.setRotation(100);// 恒定bsr的恒定旋转角度
-
-bsrPath.addScaleControl(0.5f);// 添加缩放的控制点用于贝塞尔效果
-bsrPath.addRotationControl(30);// 添加旋转的控制点用于贝塞尔效果
-bsrPath.addPositionControlPoint(200);// 添加位移的控制点用于贝塞尔效果，如果调用positionInScreen()，填入的参数为相对父View界面的比例值
+    refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用
+    refreshLayout.setDuringAdjustValue(0.4f);// 动画执行时间调节，越大动画执行越快
+    // 刷新或加载完成后回复动画执行时间，为0是，根据setDuringAdjustValue（0.4f）方法实现
+    refreshLayout.setRefreshBackTime(300);
+    refreshLayout.setPullViewHeight(100);// 设置头部和底部的高度
+    refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
+    refreshLayout.setPullFlowHeight(400);// 拖拽最大范围
+    refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用
+    refreshLayout.setUseAsTwinkLayout(true);// 剔除刷新或加载效果，保留回弹动画
 ```

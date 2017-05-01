@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
         refreshLayout.setLoadMoreEnable(true);
+//        refreshLayout.setDuringAdjustValue(0.4f);// 动画执行时间调节，越大动画执行越快
+        // 刷新或加载完成后回复动画执行时间，为0是，根据setDuringAdjustValue（0.4f）方法实现
+//        refreshLayout.setRefreshBackTime(300);
+//        refreshLayout.setPullViewHeight(100);// 设置头部和底部的高度
+//        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
+//        refreshLayout.setPullFlowHeight(400);// 拖拽最大范围
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setUseAsTwinkLayout(true);
         refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
