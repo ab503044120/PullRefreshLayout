@@ -224,8 +224,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         if (!isRefreshing
-                ||(dyUnconsumed < 0 && refreshState == 1)
-                ||(dyUnconsumed > 0 && refreshState == 2)) {
+                || (dyUnconsumed < 0 && refreshState == 1)
+                || (dyUnconsumed > 0 && refreshState == 2)) {
             dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
             onScroll(-dyUnconsumed);
         }
@@ -616,7 +616,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         this.refreshBackTime = refreshBackTime;
     }
 
-    public static interface OnPullListener {
+    public interface OnPullListener {
         void onPullChange(float percent);
 
         void onPullReset();
@@ -630,7 +630,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         void onPullFinish();
     }
 
-    public static abstract class OnRefreshListener {
+    public static class OnRefreshListener {
         public void onRefresh() {
         }
 
