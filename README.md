@@ -11,6 +11,7 @@
 
 ```
 //-控件设置-
+    refreshLayout.autoRefresh();// 自动刷新
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用
     refreshLayout.setDuringAdjustValue(0.4f);// 动画执行时间调节，越大动画执行越快
     // 刷新或加载完成后回复动画执行时间，为0是，根据setDuringAdjustValue（0.4f）方法实现
