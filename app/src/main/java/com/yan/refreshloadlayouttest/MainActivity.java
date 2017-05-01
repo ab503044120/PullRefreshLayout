@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         refreshLayout.refreshComplete();
                     }
-                }, 3000);
+                }, 10000);
             }
 
             @Override
