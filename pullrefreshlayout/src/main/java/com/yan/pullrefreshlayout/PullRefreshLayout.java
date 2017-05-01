@@ -18,8 +18,6 @@ import android.widget.FrameLayout;
  * Created by yan on 2017/4/11.
  */
 public class PullRefreshLayout extends FrameLayout implements NestedScrollingParent {
-    private static final String TAG = "PullRefreshLayout";
-
     private NestedScrollingParentHelper parentHelper;
 
     /**
@@ -225,13 +223,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        if (!isRefreshing) {
-            dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
-            onScroll(-dyUnconsumed);
-        } else if (dyUnconsumed < 0 && refreshState == 1) {
-            dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
-            onScroll(-dyUnconsumed);
-        } else if (dyUnconsumed > 0 && refreshState == 2) {
+        if (!isRefreshing
+                ||(dyUnconsumed < 0 && refreshState == 1)
+                ||(dyUnconsumed > 0 && refreshState == 2)) {
             dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
             onScroll(-dyUnconsumed);
         }
