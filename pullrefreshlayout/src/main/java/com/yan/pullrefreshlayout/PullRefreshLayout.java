@@ -24,8 +24,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * refresh header
      */
-
     private PullRefreshView headerView;
+
     /**
      * refresh footer
      */
@@ -98,7 +98,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     /**
      * refresh back time
-     * if the value equals 0, the field duringAdjustValue will be work
+     * if the value equals -1, the field duringAdjustValue will be work
      */
     private long refreshBackTime = 350;
 
