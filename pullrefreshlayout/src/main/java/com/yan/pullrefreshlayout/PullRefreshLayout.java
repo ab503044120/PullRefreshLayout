@@ -71,6 +71,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private float duringAdjustValue = 10f;
 
     /**
+     * direction Y fling speed
+     */
+    private float velocityY;
+
+    /**
      * switch refresh enable
      */
     private boolean pullRefreshEnable = true;
@@ -106,14 +111,20 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isAbleAutoLoading = false;
 
     /**
-     *
+     * is over scroll trigger
      */
     private boolean isOverScrollTrigger = false;
+
     /**
      * refresh back time
      * if the value equals -1, the field duringAdjustValue will be work
      */
     private long refreshBackTime = 350;
+
+    /**
+     * fling trigger time
+     */
+    private long flingTriggerTime = 0;
 
     private OnRefreshListener onRefreshListener;
 
@@ -177,11 +188,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void onScrollOverBottom() {
-        Log.e("onScrollOver", "onScrollOverBottom: ");
+        long during = System.currentTimeMillis() - flingTriggerTime;
+        Log.e("onScrollOver", "onScrollOverBottom: " + velocityY + "    " + during);
     }
 
     private void onScrollOverTop() {
-        Log.e("onScrollOver", "onScrollOverTop: ");
+        long during = System.currentTimeMillis() - flingTriggerTime;
+        Log.e("onScrollOver", "onScrollOverTop: " + velocityY + "    " + during);
     }
 
     /**
@@ -322,15 +335,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        Log.e("onNestedPreFling: ", "" + velocityY);
-
+        this.velocityY = velocityY;
+        flingTriggerTime = System.currentTimeMillis();
         return false;
     }
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        Log.e("onNestedFling: ", "" + velocityY);
-        return true;
+        return false;
     }
 
     /**
