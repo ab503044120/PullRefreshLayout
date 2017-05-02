@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void initData() {
-        mDatas = new ArrayList<String>();
+        mDatas = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
             mDatas.add("测试数据" + i);
         }

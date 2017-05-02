@@ -9,21 +9,21 @@ import android.widget.TextView;
 
 import java.util.List;
 
-class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.MyViewHolder> {
+class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleViewHolder> {
 
     /**
      * Item 点击事件监听的回调
      */
-    public interface OnItemClickLitener {
+    public interface OnItemClickListener {
         void onItemClick(View view, int position);
 
         void onItemLongClick(View view, int position);
     }
 
-    private OnItemClickLitener mOnItemClickLitener;
+    private OnItemClickListener mOnItemClickListener;
 
-    public void setOnItemClickLitener(OnItemClickLitener mOnItemClickLitener) {
-        this.mOnItemClickLitener = mOnItemClickLitener;
+    public void setOnItemClickLitener(OnItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
     }
 
     private Context context;
@@ -35,23 +35,23 @@ class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.MyViewHolder> {
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        MyViewHolder holder = new MyViewHolder(LayoutInflater.from(
+    public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        SimpleViewHolder holder = new SimpleViewHolder(LayoutInflater.from(
                 context).inflate(R.layout.simple_item, parent,
                 false));
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(final SimpleViewHolder holder, int position) {
         holder.tv.setText(datas.get(position));
 
-        if (mOnItemClickLitener != null) {
+        if (mOnItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos = holder.getLayoutPosition();
-                    mOnItemClickLitener.onItemClick(holder.itemView, pos);
+                    mOnItemClickListener.onItemClick(holder.itemView, pos);
                 }
             });
 
@@ -59,7 +59,7 @@ class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.MyViewHolder> {
                 @Override
                 public boolean onLongClick(View v) {
                     int pos = holder.getLayoutPosition();
-                    mOnItemClickLitener.onItemLongClick(holder.itemView, pos);
+                    mOnItemClickListener.onItemLongClick(holder.itemView, pos);
                     return false;
                 }
             });
@@ -71,11 +71,11 @@ class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.MyViewHolder> {
         return datas.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class SimpleViewHolder extends RecyclerView.ViewHolder {
 
         TextView tv;
 
-        public MyViewHolder(View view) {
+        public SimpleViewHolder(View view) {
             super(view);
             tv = (TextView) view.findViewById(R.id.id_num);
         }
