@@ -52,7 +52,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * max height drag
      */
-    private float pullFlowHeight = 0;
+    private float pullFlowHeight = -1;
 
     /**
      * the ratio for final distance for drag
@@ -252,7 +252,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * @param distanceY move distance of Y
      */
     private void onScroll(float distanceY) {
-        if (pullFlowHeight != 0) {
+        if (pullFlowHeight != -1) {
             if (moveDistance + distanceY > pullFlowHeight) {
                 moveDistance = (int) pullFlowHeight;
             } else if (moveDistance + distanceY < -pullFlowHeight) {
@@ -426,7 +426,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 resetRefreshState();
             }
         });
-        if (refreshBackTime != 0 && !isUseAsTwinkLayout) {
+        if (refreshBackTime != -1 && !isUseAsTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
             animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
@@ -515,7 +515,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        if (refreshBackTime != 0 && !isUseAsTwinkLayout) {
+        if (refreshBackTime != -1 && !isUseAsTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
             animator.setDuration((long) (Math.pow(Math.abs(moveDistance) * 4, 0.6) / duringAdjustValue));
