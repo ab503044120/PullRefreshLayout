@@ -23,7 +23,7 @@ import android.widget.FrameLayout;
 /**
  * Created by yan on 2017/4/11.
  */
-public class PullRefreshLayout extends FrameLayout implements NestedScrollingParent {
+public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrollingParent {
     private NestedScrollingParentHelper parentHelper;
 
     /**
@@ -92,6 +92,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isRefreshing = false;
 
     /**
+     * fling control
+     */
+    private boolean flingControl = false;
+
+    /**
      * make sure header or footer hold trigger one time
      */
     private boolean pullStateControl = true;
@@ -107,10 +112,24 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isResetTrigger = false;
 
     /**
+     * is able auto load more
+     */
+    private boolean isAbleAutoLoading = false;
+
+    /**
      * is over scroll trigger
      */
     private boolean isOverScrollTrigger = false;
 
+    /**
+     * fling scroll direction 1:up 2:down
+     */
+    private int flingScrollDirection = 0;
+
+    /**
+     * nested pre scroll y
+     */
+    private int nestedPreScrollY;
     /**
      * refresh back time
      * if the value equals -1, the field duringAdjustValue will be work
@@ -121,17 +140,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ValueAnimator currentAnimation;
 
-    public PullRefreshLayout(Context context) {
+    private ScrollerCompat scroller;
+
+    public PullRefreshLayoutTwink(Context context) {
         super(context);
         init(context);
     }
 
-    public PullRefreshLayout(Context context, AttributeSet attrs) {
+    public PullRefreshLayoutTwink(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public PullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PullRefreshLayoutTwink(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
@@ -139,6 +160,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private void init(Context context) {
         parentHelper = new NestedScrollingParentHelper(this);
         pullViewHeight = dipToPx(context, pullViewHeight);
+        scroller = ScrollerCompat.create(getContext());
     }
 
     @Override
@@ -150,14 +172,168 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             throw new RuntimeException("PullRefreshLayout should have one child");
         }
         targetView = getChildAt(0);
+        addOverScrollListener();
 
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
+        LayoutParams layoutParams = new LayoutParams(ViewGroup
                 .LayoutParams.MATCH_PARENT, (int) pullViewHeight);
         if (!isUseAsTwinkLayout && headerView != null) {
             addView(headerView, layoutParams);
         }
         if (!isUseAsTwinkLayout && footerView != null) {
             addView(footerView, layoutParams);
+        }
+    }
+
+    private ValueAnimator dellAnimation;
+
+    private void dellFlingScroll(int velocityY) {
+        velocityY = Math.abs(velocityY);
+        scroller.fling(0, 0, 0, velocityY, 0, 0, 0, Integer.MAX_VALUE);
+        dellAnimation = ValueAnimator.ofInt(0, 1);
+        dellAnimation.setRepeatMode(ValueAnimator.RESTART);
+        dellAnimation.setRepeatCount(ValueAnimator.INFINITE);
+        dellAnimation.setDuration(1000);
+        dellAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                if (!scroller.computeScrollOffset()) {
+                    dellAnimation.cancel();
+                    handleState();
+                }
+            }
+        });
+        dellAnimation.start();
+    }
+
+
+    private void addOverScrollListener() {
+        targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+
+                Log.e("onPreDraw: ", (!isOverScrollTrigger) + "\n"
+                        + !canChildScrollUp() + "\n"
+                        + canChildScrollDown() + "\n"
+                        + nestedPreScrollY);
+
+                if (!isOverScrollTrigger
+                        && !canChildScrollUp()
+                        && canChildScrollDown()
+                        && nestedPreScrollY < 0) {
+                    isOverScrollTrigger = true;
+                    onOverScrollUp();
+                    Log.e("onPreDraw: ", "onOverScrollUp");
+                } else if (!isOverScrollTrigger
+                        && !canChildScrollDown()
+                        && canChildScrollUp()
+                        && nestedPreScrollY > 0) {
+                    isOverScrollTrigger = true;
+                    flingScrollDirection = 2;
+                    onOverScrollDown();
+                    Log.e("onPreDraw: ", "onOverScrollDown");
+                }
+
+                return true;
+            }
+        });
+    }
+
+    private void onOverScrollUp() {
+        if (dellAnimation == null) {
+            return;
+        }
+        dellAnimation.cancel();
+        int distance = scroller.getFinalY() - scroller.getCurrY();
+        moveDistance = (int) Math.pow(distance, 0.5) * 2;
+        ValueAnimator animator = ValueAnimator.ofInt(0, moveDistance);
+        currentAnimation = animator;
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                moveDistance = (Integer) animation.getAnimatedValue();
+                moveChildren(moveDistance);
+            }
+        });
+        animator.addListener(new RefreshAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                handleState();
+            }
+        });
+        animator.setDuration(getAnimationTime());
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.start();
+
+    }
+
+    private void onOverScrollDown() {
+        if (dellAnimation == null) {
+            return;
+        }
+        dellAnimation.cancel();
+        int distance = scroller.getFinalY() - scroller.getCurrY();
+        moveDistance = -(int) Math.pow(distance, 0.5) * 2;
+        ValueAnimator animator = ValueAnimator.ofInt(0, moveDistance);
+        currentAnimation = animator;
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                moveDistance = (Integer) animation.getAnimatedValue();
+                Log.e( "onAnimationUpdate: ", moveDistance+"");
+                moveChildren(moveDistance);
+            }
+        });
+        animator.addListener(new RefreshAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                handleState();
+            }
+        });
+        animator.setDuration(getAnimationTime());
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.start();
+
+    }
+
+    /**
+     * @return Whether it is possible for the child view of this layout to
+     * scroll up. Override this if the child view is a custom view.
+     */
+    public boolean canChildScrollUp() {
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (targetView instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) targetView;
+                return absListView.getChildCount() > 0
+                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
+                        .getTop() < absListView.getPaddingTop());
+            } else {
+                return ViewCompat.canScrollVertically(targetView, -1) || targetView.getScrollY() > 0;
+            }
+        } else {
+            return ViewCompat.canScrollVertically(targetView, -1);
+        }
+    }
+
+    /**
+     * @return Whether it is possible for the child view of this layout to
+     * scroll down. Override this if the child view is a custom view.
+     */
+    public boolean canChildScrollDown() {
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (targetView instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) targetView;
+                if (absListView.getChildCount() > 0) {
+                    int lastChildBottom = absListView.getChildAt(absListView.getChildCount() - 1).getBottom();
+                    return absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1
+                            && lastChildBottom <= absListView.getMeasuredHeight();
+                } else {
+                    return false;
+                }
+            } else {
+                return ViewCompat.canScrollVertically(targetView, 1) || targetView.getScrollY() > 0;
+            }
+        } else {
+            return ViewCompat.canScrollVertically(targetView, 1);
         }
     }
 
@@ -185,8 +361,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (currentAnimation != null) {
             currentAnimation.cancel();
         }
+        if (dellAnimation != null) {
+            dellAnimation.cancel();
+        }
         lastFlingScrollPosition = -1;
         isOverScrollTrigger = false;
+        flingScrollDirection = 0;
+
         return true;
     }
 
@@ -217,6 +398,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        nestedPreScrollY = dy;
         if ((!pullRefreshEnable && !pullLoadMoreEnable)) {
             return;
         }
@@ -258,6 +440,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        dellFlingScroll((int) velocityY);
         return false;
     }
 
@@ -395,6 +578,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         });
         animator.addListener(new RefreshAnimatorListener() {
             @Override
+            public void onAnimationStart(Animator animation) {
+                nestedPreScrollY = 0;
+            }
+
+            @Override
             public void onAnimationEnd(Animator animation) {
                 if (onRefreshListener != null && !isRefreshing) {
                     onRefreshListener.onRefresh();
@@ -488,6 +676,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             }
         });
         animator.addListener(new RefreshAnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                nestedPreScrollY = 0;
+            }
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (onRefreshListener != null && !isRefreshing) {
