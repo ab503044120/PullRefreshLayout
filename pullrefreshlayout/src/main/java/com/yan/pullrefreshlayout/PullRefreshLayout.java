@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -62,7 +63,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * animation during adjust value
      */
-    private float duringAdjustValue = 0.4f;
+    private float duringAdjustValue = 10f;
 
     /**
      * switch refresh enable
@@ -385,7 +386,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerViewHeight == 0) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
+            animator.setDuration(getAnimationTime());
         }
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.start();
@@ -429,7 +430,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != -1 && !isUseAsTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (Math.pow(moveDistance * 4, 0.6) / duringAdjustValue));
+            animator.setDuration(getAnimationTime());
         }
         animator.start();
     }
@@ -476,7 +477,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        animator.setDuration((long) (Math.pow(Math.abs(moveDistance) * 4, 0.6) / duringAdjustValue));
+        animator.setDuration(getAnimationTime());
         animator.start();
     }
 
@@ -518,9 +519,17 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != -1 && !isUseAsTwinkLayout) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration((long) (Math.pow(Math.abs(moveDistance) * 4, 0.6) / duringAdjustValue));
+            animator.setDuration(getAnimationTime());
         }
         animator.start();
+    }
+
+    private long getAnimationTime() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        float ratio = Math.abs((float) moveDistance / (float) displayMetrics.heightPixels);
+        return (long) (Math.pow(2000 * ratio, 0.5) * duringAdjustValue);
     }
 
     private void resetLoadMoreState() {
