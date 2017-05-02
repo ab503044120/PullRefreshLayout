@@ -24,6 +24,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * refresh header
      */
+
     private PullRefreshView headerView;
     /**
      * refresh footer
