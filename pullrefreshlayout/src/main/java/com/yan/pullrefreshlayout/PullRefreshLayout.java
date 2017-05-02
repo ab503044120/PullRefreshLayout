@@ -5,14 +5,18 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
 /**
@@ -97,6 +101,15 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isResetTrigger = false;
 
     /**
+     * is able auto load more
+     */
+    private boolean isAbleAutoLoading = false;
+
+    /**
+     *
+     */
+    private boolean isOverScrollTrigger = false;
+    /**
      * refresh back time
      * if the value equals -1, the field duringAdjustValue will be work
      */
@@ -135,6 +148,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             throw new RuntimeException("PullRefreshLayout should have one child");
         }
         targetView = getChildAt(0);
+        addOverScrollListener();
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup
                 .LayoutParams.MATCH_PARENT, (int) pullViewHeight);
@@ -143,6 +157,72 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
         if (!isUseAsTwinkLayout && footerView != null) {
             addView(footerView, layoutParams);
+        }
+    }
+
+    private void addOverScrollListener() {
+        targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                if (!isOverScrollTrigger && !canChildScrollUp() && canChildScrollDown()) {
+                    isOverScrollTrigger = true;
+                    onScrollOverTop();
+                } else if (!isOverScrollTrigger && !canChildScrollDown() && canChildScrollUp()) {
+                    isOverScrollTrigger = true;
+                    onScrollOverBottom();
+                }
+                return true;
+            }
+        });
+    }
+
+    private void onScrollOverBottom() {
+        Log.e("onScrollOver", "onScrollOverBottom: ");
+    }
+
+    private void onScrollOverTop() {
+        Log.e("onScrollOver", "onScrollOverTop: ");
+    }
+
+    /**
+     * @return Whether it is possible for the child view of this layout to
+     * scroll up. Override this if the child view is a custom view.
+     */
+    public boolean canChildScrollUp() {
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (targetView instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) targetView;
+                return absListView.getChildCount() > 0
+                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
+                        .getTop() < absListView.getPaddingTop());
+            } else {
+                return ViewCompat.canScrollVertically(targetView, -1) || targetView.getScrollY() > 0;
+            }
+        } else {
+            return ViewCompat.canScrollVertically(targetView, -1);
+        }
+    }
+
+    /**
+     * @return Whether it is possible for the child view of this layout to
+     * scroll down. Override this if the child view is a custom view.
+     */
+    public boolean canChildScrollDown() {
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (targetView instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) targetView;
+                if (absListView.getChildCount() > 0) {
+                    int lastChildBottom = absListView.getChildAt(absListView.getChildCount() - 1).getBottom();
+                    return absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1
+                            && lastChildBottom <= absListView.getMeasuredHeight();
+                } else {
+                    return false;
+                }
+            } else {
+                return ViewCompat.canScrollVertically(targetView, 1) || targetView.getScrollY() > 0;
+            }
+        } else {
+            return ViewCompat.canScrollVertically(targetView, 1);
         }
     }
 
@@ -186,7 +266,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
+        isOverScrollTrigger = false;
         handleState();
+
     }
 
     /**
@@ -240,12 +322,15 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        Log.e("onNestedPreFling: ", "" + velocityY);
+
         return false;
     }
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        return false;
+        Log.e("onNestedFling: ", "" + velocityY);
+        return true;
     }
 
     /**
@@ -324,6 +409,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             footerView.setTranslationY(distance);
         }
         targetView.setTranslationY(distance);
+
     }
 
     /**
