@@ -408,12 +408,8 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        if (!isRefreshing
-                || (dyUnconsumed < 0 && refreshState == 1)
-                || (dyUnconsumed > 0 && refreshState == 2)) {
-            dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
-            onScroll(-dyUnconsumed);
-        }
+        dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
+        onScroll(-dyUnconsumed);
     }
 
     @Override
@@ -519,23 +515,31 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      */
     private void handleState() {
         if (pullRefreshEnable) {
-            if (!isResetTrigger && !isUseAsTwinkLayout && moveDistance >= pullViewHeight) {
+            if (refreshState != 2
+                    && !isResetTrigger &&
+                    !isUseAsTwinkLayout
+                    && moveDistance >= pullViewHeight) {
                 startRefresh(moveDistance);
-            } else if ((!isRefreshing && moveDistance > 0)
-                    || isResetTrigger) {
+            } else if ((!isRefreshing && moveDistance > 0 && refreshState != 2)
+                    || (isResetTrigger && refreshState == 1)
+                    || refreshState == 2) {
                 resetHeaderView(moveDistance);
-            } else if (!isRefreshing && moveDistance == 0 && refreshState == 1) {
+            } else if (moveDistance == 0 && refreshState == 1) {
                 resetRefreshState();
             }
         }
 
         if (pullLoadMoreEnable) {
-            if (!isResetTrigger && !isUseAsTwinkLayout && moveDistance <= -pullViewHeight) {
+            if (refreshState != 1
+                    && !isResetTrigger
+                    && !isUseAsTwinkLayout
+                    && moveDistance <= -pullViewHeight) {
                 startLoadMore(moveDistance);
-            } else if ((!isRefreshing && moveDistance < 0)
-                    || isResetTrigger) {
+            } else if ((!isRefreshing && moveDistance < 0 && refreshState != 1)
+                    || (isResetTrigger && refreshState == 2)
+                    || refreshState == 1) {
                 resetFootView(moveDistance);
-            } else if (!isRefreshing && moveDistance == 0 && refreshState == 2) {
+            } else if (moveDistance == 0 && refreshState == 2) {
                 resetLoadMoreState();
             }
         }
