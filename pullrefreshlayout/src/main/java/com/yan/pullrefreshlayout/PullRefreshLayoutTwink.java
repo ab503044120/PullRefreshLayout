@@ -87,11 +87,6 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     private boolean isRefreshing = false;
 
     /**
-     * refreshState is isRefreshing
-     */
-    private boolean isLoading = false;
-
-    /**
      * make sure header or footer hold trigger one time
      */
     private boolean pullStateControl = true;
@@ -105,11 +100,6 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      * has called the method refreshComplete or loadMoreComplete
      */
     private boolean isResetTrigger = false;
-
-    /**
-     * has called the method refreshComplete or loadMoreComplete
-     */
-    private boolean isResetLoadTrigger = false;
 
     /**
      * is able auto load more
