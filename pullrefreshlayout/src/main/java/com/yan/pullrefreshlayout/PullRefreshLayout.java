@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
+import android.widget.Scroller;
 
 /**
  * Created by yan on 2017/4/11.
@@ -130,6 +131,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ValueAnimator currentAnimation;
 
+    private Scroller scroller;
+
     public PullRefreshLayout(Context context) {
         super(context);
         init(context);
@@ -148,6 +151,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private void init(Context context) {
         parentHelper = new NestedScrollingParentHelper(this);
         pullViewHeight = dipToPx(context, pullViewHeight);
+        scroller = new Scroller(getContext());
     }
 
     @Override
@@ -182,6 +186,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                     isOverScrollTrigger = true;
                     onScrollOverBottom();
                 }
+                onComputeScroll();
                 return true;
             }
         });
@@ -189,12 +194,22 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private void onScrollOverBottom() {
         long during = System.currentTimeMillis() - flingTriggerTime;
+        int overScrollVelocity = (int) (Math.abs(velocityY) / during);
         Log.e("onScrollOver", "onScrollOverBottom: " + velocityY + "    " + during);
+        scroller.fling(0, 0, 0, overScrollVelocity, 0, 0, 0, Integer.MAX_VALUE);
     }
 
     private void onScrollOverTop() {
         long during = System.currentTimeMillis() - flingTriggerTime;
+        int overScrollVelocity = (int) (Math.abs(velocityY) / during);
         Log.e("onScrollOver", "onScrollOverTop: " + velocityY + "    " + during);
+        scroller.fling(0, 0, 0, overScrollVelocity, 0, 0, 0, Integer.MAX_VALUE);
+    }
+
+    private void onComputeScroll() {
+        if (scroller.computeScrollOffset()) {
+            Log.e("computeScroll: ", scroller.getCurrY() + "");
+        }
     }
 
     /**
