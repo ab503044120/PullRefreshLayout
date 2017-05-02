@@ -221,7 +221,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         }
         dellAnimation.cancel();
         int distance = scroller.getFinalY() - scroller.getCurrY();
-        moveDistance = (int) (Math.pow(distance, 0.5));
+        moveDistance = (int) (Math.pow(distance, 0.4)*2);
         ValueAnimator animator = ValueAnimator.ofInt(0, moveDistance);
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -249,7 +249,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         }
         dellAnimation.cancel();
         int distance = scroller.getFinalY() - scroller.getCurrY();
-        moveDistance = -(int) (Math.pow(distance, 0.5));
+        moveDistance = -(int) (Math.pow(distance, 0.4)*2);
         ValueAnimator animator = ValueAnimator.ofInt(0, moveDistance);
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
