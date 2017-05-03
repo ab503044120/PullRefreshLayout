@@ -391,9 +391,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        if ((!pullRefreshEnable && !pullLoadMoreEnable)) {
-            return;
-        }
         if (Math.abs(dy) > 200) {
             return;
         }
