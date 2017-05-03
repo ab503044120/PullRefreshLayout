@@ -217,6 +217,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
+
                 if (!isOverScrollTrigger
                         && isStateFling
                         && !canChildScrollUp()
