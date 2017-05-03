@@ -9,7 +9,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,6 +39,11 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      * current refreshing state 1:refresh 2:loadMore
      */
     private int refreshState = 0;
+
+    /**
+     * twink adjust value
+     */
+    private int adjustTwinkValue = 4;
 
     /**
      * drag move distance
@@ -126,6 +130,8 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
 
     private ValueAnimator currentAnimation;
 
+    private ValueAnimator dellFlingAnimation;
+
     private ScrollerCompat scroller;
 
     public PullRefreshLayoutTwink(Context context) {
@@ -170,24 +176,23 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         }
     }
 
-    private ValueAnimator dellAnimation;
 
     private void dellFlingScroll(int velocityY) {
         velocityY = Math.abs(velocityY);
         scroller.fling(0, 0, 0, velocityY, 0, 0, 0, Integer.MAX_VALUE);
-        dellAnimation = ValueAnimator.ofInt(0, 1);
-        dellAnimation.setRepeatMode(ValueAnimator.RESTART);
-        dellAnimation.setRepeatCount(ValueAnimator.INFINITE);
-        dellAnimation.setDuration(1000);
-        dellAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        dellFlingAnimation = ValueAnimator.ofInt(0, 1);
+        dellFlingAnimation.setRepeatMode(ValueAnimator.RESTART);
+        dellFlingAnimation.setRepeatCount(ValueAnimator.INFINITE);
+        dellFlingAnimation.setDuration(1000);
+        dellFlingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 if (!scroller.computeScrollOffset()) {
-                    dellAnimation.cancel();
+                    dellFlingAnimation.cancel();
                 }
             }
         });
-        dellAnimation.start();
+        dellFlingAnimation.start();
     }
 
     /**
@@ -216,12 +221,12 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     }
 
     private void onOverScrollUp() {
-        if (dellAnimation == null) {
+        if (dellFlingAnimation == null) {
             return;
         }
-        dellAnimation.cancel();
+        dellFlingAnimation.cancel();
         int distance = scroller.getFinalY() - scroller.getCurrY();
-        moveDistance = (int) (Math.pow(distance, 0.4)*2);
+        moveDistance = (int) (Math.pow(distance * adjustTwinkValue, 0.4));
         ValueAnimator animator = ValueAnimator.ofInt(0, moveDistance);
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -244,12 +249,12 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     }
 
     private void onOverScrollDown() {
-        if (dellAnimation == null) {
+        if (dellFlingAnimation == null) {
             return;
         }
-        dellAnimation.cancel();
+        dellFlingAnimation.cancel();
         int distance = scroller.getFinalY() - scroller.getCurrY();
-        moveDistance = -(int) (Math.pow(distance, 0.4)*2);
+        moveDistance = -(int) (Math.pow(distance * adjustTwinkValue, 0.4));
         ValueAnimator animator = ValueAnimator.ofInt(0, moveDistance);
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -337,8 +342,8 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         if (currentAnimation != null) {
             currentAnimation.cancel();
         }
-        if (dellAnimation != null) {
-            dellAnimation.cancel();
+        if (dellFlingAnimation != null) {
+            dellFlingAnimation.cancel();
         }
         isOverScrollTrigger = false;
         isStateFling = false;
