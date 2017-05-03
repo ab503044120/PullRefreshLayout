@@ -344,8 +344,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        int action= MotionEventCompat.getActionMasked(ev);
-        if (action==MotionEvent.ACTION_DOWN){
+        int action = MotionEventCompat.getActionMasked(ev);
+        if (action == MotionEvent.ACTION_DOWN) {
             if (currentAnimation != null) {
                 currentAnimation.cancel();
             }
@@ -501,7 +501,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         } else {
-            if (headerView != null) {
+            if (footerView != null) {
                 footerView.onPullChange(moveDistance / pullViewHeight);
             }
             if (moveDistance <= -pullViewHeight) {
@@ -589,8 +589,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             public void onAnimationEnd(Animator animation) {
                 if (onRefreshListener != null && !isRefreshing) {
                     onRefreshListener.onRefresh();
-                    footerView.setVisibility(GONE);
                     isRefreshing = true;
+
+                    if (footerView != null) {
+                        footerView.setVisibility(GONE);
+                    }
                 }
             }
         });
@@ -655,8 +658,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance != 0) {
             return;
         }
-        footerView.setVisibility(VISIBLE);
-        headerView.setVisibility(VISIBLE);
+        if (footerView!=null) {
+            footerView.setVisibility(VISIBLE);
+        }
+        if (headerView!=null) {
+            headerView.setVisibility(VISIBLE);
+        }
         isRefreshing = false;
         refreshState = 0;
         isResetTrigger = false;
@@ -679,7 +686,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
                 if (headerView != null) {
-                    footerView.onPullChange(moveDistance / pullViewHeight);
+                    headerView.onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
             }
@@ -695,7 +702,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 if (onRefreshListener != null && !isRefreshing) {
                     onRefreshListener.onLoading();
                     isRefreshing = true;
-                    headerView.setVisibility(GONE);
+
+                    if (headerView != null) {
+                        headerView.setVisibility(GONE);
+                    }
                 }
             }
         });
@@ -719,7 +729,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (headerView != null) {
+                if (footerView != null) {
                     footerView.onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
@@ -762,6 +772,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
         if (moveDistance != 0) {
             return;
+        }
+        if (footerView!=null) {
+            footerView.setVisibility(VISIBLE);
+        }
+        if (headerView!=null) {
+            headerView.setVisibility(VISIBLE);
         }
         isRefreshing = false;
         refreshState = 0;
