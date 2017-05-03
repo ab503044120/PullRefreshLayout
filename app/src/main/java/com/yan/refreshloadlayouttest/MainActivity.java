@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> mDatas;
     private PullRefreshLayout refreshLayout;
+    private SimpleAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        SimpleAdapter adapter = new SimpleAdapter(this, mDatas);
+        adapter = new SimpleAdapter(this, mDatas);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -124,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         refreshLayout.loadMoreComplete();
+                        mDatas.add("onLoading测试数据");
+                        adapter.notifyItemInserted(mDatas.size());
                     }
                 }, 3000);
             }
@@ -132,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void initData() {
         mDatas = new ArrayList<>();
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 8; i++) {
             mDatas.add("测试数据" + i);
         }
     }
