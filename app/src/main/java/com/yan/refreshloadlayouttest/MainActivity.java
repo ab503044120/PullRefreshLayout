@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         refreshLayout.refreshComplete();
                     }
-                }, 2000);
+                }, 5000);
             }
 
             @Override
@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         refreshLayout.loadMoreComplete();
                     }
-                }, 2000);
+                }, 5000);
             }
         });
     }

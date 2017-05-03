@@ -509,34 +509,23 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      * decide on the action refresh or loadMore
      */
     private void handleState() {
-        if (pullRefreshEnable) {
-            if (refreshState != 2
-                    && !isResetTrigger &&
-                    !isUseAsTwinkLayout
-                    && moveDistance >= pullViewHeight) {
-                startRefresh(moveDistance);
-            } else if ((!isRefreshing && moveDistance > 0 && refreshState != 2)
-                    || (isResetTrigger && refreshState == 1)
-                    || moveDistance > 0 && refreshState == 2) {
-                resetHeaderView(moveDistance);
-            } else if (moveDistance == 0 && refreshState == 1) {
-                resetRefreshState();
-            }
+        if (pullRefreshEnable && refreshState != 2
+                && !isResetTrigger && !isUseAsTwinkLayout
+                && moveDistance >= pullViewHeight) {
+            startRefresh(moveDistance);
+        } else if ((!isRefreshing && moveDistance > 0 && refreshState != 2)
+                || (isResetTrigger && refreshState == 1)
+                || moveDistance > 0 && refreshState == 2) {
+            resetHeaderView(moveDistance);
         }
-
-        if (pullLoadMoreEnable) {
-            if (refreshState != 1
-                    && !isResetTrigger
-                    && !isUseAsTwinkLayout
-                    && moveDistance <= -pullViewHeight) {
-                startLoadMore(moveDistance);
-            } else if ((!isRefreshing && moveDistance < 0 && refreshState != 1)
-                    || (isResetTrigger && refreshState == 2)
-                    || moveDistance < 0 && refreshState == 1) {
-                resetFootView(moveDistance);
-            } else if (moveDistance == 0 && refreshState == 2) {
-                resetLoadMoreState();
-            }
+        if (pullLoadMoreEnable && refreshState != 1
+                && !isResetTrigger && !isUseAsTwinkLayout
+                && moveDistance <= -pullViewHeight) {
+            startLoadMore(moveDistance);
+        } else if ((!isRefreshing && moveDistance < 0 && refreshState != 1)
+                || (isResetTrigger && refreshState == 2)
+                || moveDistance < 0 && refreshState == 1) {
+            resetFootView(moveDistance);
         }
     }
 
@@ -563,11 +552,15 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         });
         animator.addListener(new RefreshAnimatorListener() {
             @Override
+            public void onAnimationStart(Animator animation) {
+                refreshState = 1;
+            }
+
+            @Override
             public void onAnimationEnd(Animator animation) {
                 if (onRefreshListener != null && !isRefreshing) {
                     onRefreshListener.onRefresh();
                     isRefreshing = true;
-                    refreshState = 1;
                 }
             }
         });
@@ -605,7 +598,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseAsTwinkLayout && headerView != null && isRefreshing) {
+                if (!isUseAsTwinkLayout && headerView != null && isRefreshing && refreshState == 1) {
                     headerView.onPullFinish();
                 }
             }
@@ -661,11 +654,15 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         });
         animator.addListener(new RefreshAnimatorListener() {
             @Override
+            public void onAnimationStart(Animator animation) {
+                refreshState = 2;
+            }
+
+            @Override
             public void onAnimationEnd(Animator animation) {
                 if (onRefreshListener != null && !isRefreshing) {
                     onRefreshListener.onLoading();
                     isRefreshing = true;
-                    refreshState = 2;
                 }
             }
         });
@@ -705,7 +702,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseAsTwinkLayout && footerView != null && isRefreshing) {
+                if (!isUseAsTwinkLayout && footerView != null && isRefreshing && refreshState == 2) {
                     footerView.onPullFinish();
                 }
             }
@@ -759,7 +756,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      * callback on refresh finish
      */
     public void refreshComplete() {
-        if (moveDistance >= 0 && refreshState == 1) {
+        if (refreshState == 1) {
             isResetTrigger = true;
             resetHeaderView(moveDistance);
         }
@@ -769,7 +766,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      * Callback on loadMore finish
      */
     public void loadMoreComplete() {
-        if (moveDistance <= 0 && refreshState == 2) {
+        if (refreshState == 2) {
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
