@@ -81,6 +81,11 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     private boolean pullRefreshEnable = true;
 
     /**
+     * is Twink enable
+     */
+    private boolean pullTwinkEnable = false;
+
+    /**
      * switch loadMore enable
      */
     private boolean pullLoadMoreEnable = false;
@@ -98,7 +103,6 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     /**
      * is just use for twinkLayout
      */
-    private boolean isUseAsTwinkLayout = false;
 
     /**
      * has called the method refreshComplete or loadMoreComplete
@@ -152,7 +156,10 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     private void init(Context context) {
         parentHelper = new NestedScrollingParentHelper(this);
         pullViewHeight = dipToPx(context, pullViewHeight);
-        scroller = ScrollerCompat.create(getContext());
+
+        if (pullTwinkEnable) {
+            scroller = ScrollerCompat.create(getContext());
+        }
     }
 
     @Override
@@ -168,10 +175,10 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
 
         LayoutParams layoutParams = new LayoutParams(ViewGroup
                 .LayoutParams.MATCH_PARENT, (int) pullViewHeight);
-        if (!isUseAsTwinkLayout && headerView != null) {
+        if (headerView != null) {
             addView(headerView, layoutParams);
         }
-        if (!isUseAsTwinkLayout && footerView != null) {
+        if (footerView != null) {
             addView(footerView, layoutParams);
         }
     }
@@ -199,6 +206,9 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      * add target onDraw listener
      */
     private void addOverScrollListener() {
+        if (!pullTwinkEnable) {
+            return;
+        }
         targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -321,10 +331,10 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!isUseAsTwinkLayout && headerView != null) {
+        if (headerView != null) {
             headerView.layout(left, (int) (-pullViewHeight), right, 0);
         }
-        if (!isUseAsTwinkLayout && footerView != null) {
+        if (footerView != null) {
             footerView.layout(left, bottom - top, right, (int) (bottom - top + pullViewHeight));
         }
     }
@@ -417,7 +427,10 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         if (moveDistance == 0) {
             isStateFling = true;
         }
-        dellFlingScroll((int) velocityY);
+        if (pullTwinkEnable) {
+            dellFlingScroll((int) velocityY);
+        }
+
         return false;
     }
 
@@ -443,47 +456,55 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         } else {
             moveDistance += distanceY;
         }
+
+        if (!pullTwinkEnable && isRefreshing
+                && ((refreshState == 1 && moveDistance < 0)
+                || (refreshState == 2 && moveDistance > 0))) {
+            moveDistance = 0;
+        }
+
         if ((pullLoadMoreEnable && moveDistance <= 0)
                 || (pullRefreshEnable && moveDistance >= 0)) {
             moveChildren(moveDistance);
         } else {
             moveDistance = 0;
+            return;
         }
 
         if (moveDistance >= 0) {
-            if (!isUseAsTwinkLayout && headerView != null) {
+            if (headerView != null) {
                 headerView.onPullChange(moveDistance / pullViewHeight);
             }
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (!isUseAsTwinkLayout && headerView != null && !isRefreshing) {
+                    if (headerView != null && !isRefreshing) {
                         headerView.onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (!isUseAsTwinkLayout && headerView != null && !isRefreshing) {
+                    if (headerView != null && !isRefreshing) {
                         headerView.onPullHoldUnTrigger();
                     }
                 }
             }
         } else {
-            if (!isUseAsTwinkLayout && headerView != null) {
+            if (headerView != null) {
                 footerView.onPullChange(moveDistance / pullViewHeight);
             }
             if (moveDistance <= -pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (!isUseAsTwinkLayout && footerView != null && !isRefreshing) {
+                    if (footerView != null && !isRefreshing) {
                         footerView.onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (!isUseAsTwinkLayout && footerView != null && !isRefreshing) {
+                    if (footerView != null && !isRefreshing) {
                         footerView.onPullHoldUnTrigger();
                     }
                 }
@@ -495,10 +516,10 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      * move children
      */
     private void moveChildren(float distance) {
-        if (!isUseAsTwinkLayout && headerView != null) {
+        if (headerView != null) {
             headerView.setTranslationY(distance);
         }
-        if (!isUseAsTwinkLayout && footerView != null) {
+        if (footerView != null) {
             footerView.setTranslationY(distance);
         }
         targetView.setTranslationY(distance);
@@ -510,8 +531,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
      */
     private void handleState() {
         if (pullRefreshEnable && refreshState != 2
-                && !isResetTrigger && !isUseAsTwinkLayout
-                && moveDistance >= pullViewHeight) {
+                && !isResetTrigger && moveDistance >= pullViewHeight) {
             startRefresh(moveDistance);
         } else if ((!isRefreshing && moveDistance > 0 && refreshState != 2)
                 || (isResetTrigger && refreshState == 1)
@@ -519,8 +539,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
             resetHeaderView(moveDistance);
         }
         if (pullLoadMoreEnable && refreshState != 1
-                && !isResetTrigger && !isUseAsTwinkLayout
-                && moveDistance <= -pullViewHeight) {
+                && !isResetTrigger && moveDistance <= -pullViewHeight) {
             startLoadMore(moveDistance);
         } else if ((!isRefreshing && moveDistance < 0 && refreshState != 1)
                 || (isResetTrigger && refreshState == 2)
@@ -544,7 +563,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (!isUseAsTwinkLayout && headerView != null) {
+                if (headerView != null) {
                     headerView.onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
@@ -589,7 +608,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (!isUseAsTwinkLayout && headerView != null) {
+                if (headerView != null) {
                     headerView.onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
@@ -598,7 +617,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseAsTwinkLayout && headerView != null && isRefreshing && refreshState == 1) {
+                if (headerView != null && isRefreshing && refreshState == 1) {
                     headerView.onPullFinish();
                 }
             }
@@ -610,7 +629,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
                 }
             }
         });
-        if (refreshBackTime != -1 && !isUseAsTwinkLayout) {
+        if (refreshBackTime != -1) {
             animator.setDuration(refreshBackTime);
         } else {
             animator.setDuration(getAnimationTime());
@@ -619,7 +638,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     }
 
     private void resetRefreshState() {
-        if (!isUseAsTwinkLayout && headerView != null) {
+        if (headerView != null) {
             headerView.onPullReset();
         }
         if (moveDistance != 0) {
@@ -646,7 +665,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (!isUseAsTwinkLayout && headerView != null) {
+                if (headerView != null) {
                     footerView.onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
@@ -686,7 +705,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (!isUseAsTwinkLayout && headerView != null) {
+                if (headerView != null) {
                     footerView.onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
@@ -702,12 +721,12 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (!isUseAsTwinkLayout && footerView != null && isRefreshing && refreshState == 2) {
+                if (footerView != null && isRefreshing && refreshState == 2) {
                     footerView.onPullFinish();
                 }
             }
         });
-        if (refreshBackTime != -1 && !isUseAsTwinkLayout) {
+        if (refreshBackTime != -1) {
             animator.setDuration(refreshBackTime);
         } else {
             animator.setDuration(getAnimationTime());
@@ -724,7 +743,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     }
 
     private void resetLoadMoreState() {
-        if (!isUseAsTwinkLayout && footerView != null) {
+        if (footerView != null) {
             footerView.onPullReset();
         }
         if (moveDistance != 0) {
@@ -737,7 +756,7 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
     }
 
     public void autoRefresh() {
-        if (targetView == null || isUseAsTwinkLayout || !pullRefreshEnable) {
+        if (targetView == null || !pullRefreshEnable) {
             return;
         }
         startRefresh(0);
@@ -770,10 +789,6 @@ public class PullRefreshLayoutTwink extends FrameLayout implements NestedScrolli
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
-    }
-
-    public void setUseAsTwinkLayout(boolean useAsTwinkLayout) {
-        isUseAsTwinkLayout = useAsTwinkLayout;
     }
 
     public boolean isLoadMoreEnable() {
