@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void initData() {
         mDatas = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 15; i++) {
             mDatas.add("测试数据" + i);
         }
     }
