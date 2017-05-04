@@ -127,6 +127,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isAbleAutoLoading = false;
 
     /**
+     * is able auto load more
+     */
+    private boolean autoLoadTrigger = false;
+
+    /**
      * is over scroll trigger
      */
     private boolean isOverScrollTrigger = false;
@@ -302,9 +307,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (dellFlingAnimation == null) {
             return;
         }
-        if (isAbleAutoLoading && onRefreshListener != null) {
-            onRefreshListener.onLoading();
-        }
+
         dellFlingAnimation.cancel();
         int distance = scroller.getFinalY() - scroller.getCurrY();
         moveDistance = -(int) (Math.pow(distance * adjustTwinkValue, 0.4));
@@ -579,6 +582,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance > 0) {
             moveUpTrigger = true;
         } else if (moveDistance < 0) {
+            if (isAbleAutoLoading && onRefreshListener != null && !autoLoadTrigger) {
+                autoLoadTrigger = true;
+                onRefreshListener.onLoading();
+            }
             moveDownTrigger = true;
         } else {
             moveUpTrigger = false;
@@ -878,6 +885,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
+        autoLoadTrigger = false;
     }
 
     public boolean isLoadMoreEnable() {
