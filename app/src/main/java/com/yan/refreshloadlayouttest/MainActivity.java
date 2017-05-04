@@ -51,9 +51,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setLoadMoreEnable(false);
+//        refreshLayout.setPullTwinkEnable(false);
+        refreshLayout.setLoadMoreEnable(true);
 //        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setAbleAutoLoading(true);
+//        refreshLayout.setAbleAutoLoading(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢
         // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现
 //        refreshLayout.setRefreshBackTime(300);
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
 //        refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
-//        refreshLayout.setUseAsTwinkLayout(true);
         refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
             TextView tv;
 
@@ -73,6 +73,50 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected int contentView() {
                 return R.layout.refresh_view;
+            }
+
+            @Override
+            public void onPullChange(float percent) {
+                Log.e(TAG, "onPullChange: refresh " + percent);
+            }
+
+            @Override
+            public void onPullReset() {
+                tv.setText("下拉");
+            }
+
+            @Override
+            public void onPullHoldTrigger() {
+                tv.setText("释放刷新");
+            }
+
+            @Override
+            public void onPullHoldUnTrigger() {
+                tv.setText("下拉");
+            }
+
+            @Override
+            public void onPullHolding() {
+                tv.setText("正在刷新");
+            }
+
+            @Override
+            public void onPullFinish() {
+                tv.setText("刷新完成");
+            }
+        });
+
+        refreshLayout.setFooterView(new PullRefreshView(getBaseContext()) {
+            TextView tv;
+
+            @Override
+            protected void initView() {
+                tv = (TextView) findViewById(R.id.title);
+            }
+
+            @Override
+            protected int contentView() {
+                return R.layout.load_more_view;
             }
 
             @Override

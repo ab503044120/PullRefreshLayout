@@ -43,6 +43,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private int refreshState = 0;
 
     /**
+     * last Scroll Y
+     */
+    private int lastScrollY = -1;
+
+    /**
      * twink adjust value
      */
     private int adjustTwinkValue = 4;
@@ -76,6 +81,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * animation during adjust value
      */
     private float duringAdjustValue = 10f;
+
+    /**
+     * animation during adjust value
+     */
+    private float currentVelocityY = 0;
 
     /**
      * switch refresh enable
@@ -125,6 +135,15 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * is fling
      */
     private boolean isStateFling = false;
+
+    /**
+     * moveDown
+     */
+    private boolean moveDownTrigger = false;
+    /**
+     * moveUp
+     */
+    private boolean moveUpTrigger = false;
 
     /**
      * refresh back time
@@ -198,9 +217,39 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         dellFlingAnimation.setRepeatMode(ValueAnimator.RESTART);
         dellFlingAnimation.setRepeatCount(ValueAnimator.INFINITE);
         dellFlingAnimation.setDuration(1000);
+        lastScrollY = -1;
         dellFlingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                if (moveUpTrigger && currentVelocityY > 0 && moveDistance >= 0) {
+                    int currY = scroller.getCurrY();
+                    int tempDistance = currY - lastScrollY;
+                    if (moveDistance + tempDistance >= 0) {
+                        onScroll(-moveDistance);
+                    } else if (tempDistance < 1000) {
+                        onScroll(-tempDistance);
+                    }
+                    lastScrollY = currY;
+                    if (moveDistance == 0) {
+                        onOverScrollDown();
+                        dellFlingAnimation.cancel();
+                        return;
+                    }
+                } else if (moveDownTrigger && currentVelocityY < 0 && moveDistance <= 0) {
+                    int currY = scroller.getCurrY();
+                    int tempDistance = currY - lastScrollY;
+                    if (moveDistance + tempDistance >= 0) {
+                        onScroll(-moveDistance);
+                    } else if (tempDistance < 1000) {
+                        onScroll(-tempDistance);
+                    }
+                    lastScrollY = currY;
+                    if (moveDistance == 0) {
+                        onOverScrollUp();
+                        dellFlingAnimation.cancel();
+                        return;
+                    }
+                }
                 if (!scroller.computeScrollOffset()) {
                     dellFlingAnimation.cancel();
                 }
@@ -436,6 +485,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             isStateFling = true;
         }
         if (pullTwinkEnable) {
+            currentVelocityY = velocityY;
             dellFlingScroll((int) velocityY);
         }
 
@@ -526,6 +576,15 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * move children
      */
     private void moveChildren(float distance) {
+        if (moveDistance > 0) {
+            moveUpTrigger = true;
+        } else if (moveDistance < 0) {
+            moveDownTrigger = true;
+        } else {
+            moveUpTrigger = false;
+            moveDownTrigger = false;
+        }
+
         if (headerView != null) {
             headerView.setTranslationY(distance);
         }
@@ -658,10 +717,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance != 0) {
             return;
         }
-        if (footerView!=null) {
+        if (footerView != null) {
             footerView.setVisibility(VISIBLE);
         }
-        if (headerView!=null) {
+        if (headerView != null) {
             headerView.setVisibility(VISIBLE);
         }
         isRefreshing = false;
@@ -773,10 +832,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance != 0) {
             return;
         }
-        if (footerView!=null) {
+        if (footerView != null) {
             footerView.setVisibility(VISIBLE);
         }
-        if (headerView!=null) {
+        if (headerView != null) {
             headerView.setVisibility(VISIBLE);
         }
         isRefreshing = false;
