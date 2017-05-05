@@ -226,39 +226,39 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         dellFlingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                if (moveUpTrigger && currentVelocityY > 0 && moveDistance >= 0) {
-                    int currY = scroller.getCurrY();
-                    int tempDistance = currY - lastScrollY;
-                    if (moveDistance + tempDistance >= 0) {
-                        Log.e("onAnimationUpdate: ", (moveDistance + tempDistance) + "");
-                        onScroll(-moveDistance);
-                    } else if (tempDistance < 1000) {
-                        Log.e("onAnimationUpdate: "," onScroll "+ (moveDistance + tempDistance) + "");
-                        onScroll(-tempDistance);
-                    }
-                    lastScrollY = currY;
-                    if (moveDistance == 0) {
-                        onOverScrollDown();
-                        dellFlingAnimation.cancel();
-                        return;
-                    }
-                } else if (moveDownTrigger && currentVelocityY < 0 && moveDistance <= 0) {
-                    int currY = scroller.getCurrY();
-                    int tempDistance = currY - lastScrollY;
-                    if (moveDistance + tempDistance >= 0) {
-                        Log.e("onAnimationUpdate: ", (moveDistance + tempDistance) + "");
-                        onScroll(-moveDistance);
-                    } else if (tempDistance < 1000) {
-                        Log.e("onAnimationUpdate: "," onScroll "+ (moveDistance + tempDistance) + "");
-                        onScroll(tempDistance);
-                    }
-                    lastScrollY = currY;
-                    if (moveDistance == 0) {
-                        onOverScrollUp();
-                        dellFlingAnimation.cancel();
-                        return;
-                    }
-                }
+//                if (moveUpTrigger && currentVelocityY > 0 && moveDistance >= 0) {
+//                    int currY = scroller.getCurrY();
+//                    int tempDistance = currY - lastScrollY;
+//                    if (moveDistance + tempDistance >= 0) {
+//                        Log.e("onAnimationUpdate: ", (moveDistance + tempDistance) + "");
+//                        onScroll(-moveDistance);
+//                    } else if (tempDistance < 1000) {
+//                        Log.e("onAnimationUpdate: "," onScroll "+ (moveDistance + tempDistance) + "");
+//                        onScroll(-tempDistance);
+//                    }
+//                    lastScrollY = currY;
+//                    if (moveDistance == 0) {
+//                        onOverScrollDown();
+//                        dellFlingAnimation.cancel();
+//                        return;
+//                    }
+//                } else if (moveDownTrigger && currentVelocityY < 0 && moveDistance <= 0) {
+//                    int currY = scroller.getCurrY();
+//                    int tempDistance = currY - lastScrollY;
+//                    if (moveDistance + tempDistance >= 0) {
+//                        Log.e("onAnimationUpdate: ", (moveDistance + tempDistance) + "");
+//                        onScroll(-moveDistance);
+//                    } else if (tempDistance < 1000) {
+//                        Log.e("onAnimationUpdate: "," onScroll "+ (moveDistance + tempDistance) + "");
+//                        onScroll(tempDistance);
+//                    }
+//                    lastScrollY = currY;
+//                    if (moveDistance == 0) {
+//                        onOverScrollUp();
+//                        dellFlingAnimation.cancel();
+//                        return;
+//                    }
+//                }
                 if (!scroller.computeScrollOffset()) {
                     dellFlingAnimation.cancel();
                 }
