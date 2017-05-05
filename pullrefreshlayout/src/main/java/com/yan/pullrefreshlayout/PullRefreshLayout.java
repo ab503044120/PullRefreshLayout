@@ -42,10 +42,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private int refreshState = 0;
 
-    /**
-     * last Scroll Y
-     */
-    private int lastScrollY = -1;
+//    /**
+//     * last Scroll Y
+//     */
+//    private int lastScrollY = -1;
 
     /**
      * twink adjust value
@@ -222,7 +222,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         dellFlingAnimation.setRepeatMode(ValueAnimator.RESTART);
         dellFlingAnimation.setRepeatCount(ValueAnimator.INFINITE);
         dellFlingAnimation.setDuration(1000);
-        lastScrollY = -1;
+//        lastScrollY = -1;
         dellFlingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
