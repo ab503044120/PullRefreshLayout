@@ -14,6 +14,9 @@ public class PullRefreshView extends FrameLayout implements PullRefreshLayout.On
 
     public PullRefreshView(Context context) {
         super(context);
+        if (contentView() == -1) {
+            return;
+        }
         addView(LayoutInflater.from(getContext()).inflate(contentView(), this, false));
         initView();
     }
