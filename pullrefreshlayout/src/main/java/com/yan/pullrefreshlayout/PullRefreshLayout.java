@@ -82,10 +82,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private float duringAdjustValue = 10f;
 
-    /**
-     * animation during adjust value
-     */
-    private float currentVelocityY = 0;
+//    /**
+//     * animation during adjust value
+//     */
+//    private float currentVelocityY = 0;
 
     /**
      * switch refresh enable
@@ -499,7 +499,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             isStateFling = true;
         }
         if (pullTwinkEnable||isAbleAutoLoading) {
-            currentVelocityY = velocityY;
+//            currentVelocityY = velocityY;
             dellFlingScroll((int) velocityY);
         }
 
