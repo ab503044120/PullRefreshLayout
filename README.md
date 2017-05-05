@@ -11,16 +11,17 @@
 
 ```
 //-控件设置-
-    refreshLayout.autoRefresh();// 自动刷新
-    refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用
-    refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢
-    // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现
+    refreshLayout.autoRefresh();// 自动刷新 default false
+    refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
+    refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢 default 10f
+    // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现 default 300
     refreshLayout.setRefreshBackTime(300);
-    refreshLayout.setPullViewHeight(100);// 设置头部和底部的高度
-    refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
-    refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制
-    refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用
-    refreshLayout.setUseAsTwinkLayout(true);// 剔除刷新或加载效果，保留回弹动画
+    refreshLayout.setPullViewHeight(100);// 设置头部和底部的高度 default 60dip
+    refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
+    refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
+    refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
+    refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true
+    refreshLayout.setAbleAutoLoading(true);// 自动刷新是否可用 default true
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
     refreshLayout.setHeaderView(headerView);// 设置headerView

@@ -141,14 +141,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private boolean isStateFling = false;
 
-    /**
-     * moveDown
-     */
-    private boolean moveDownTrigger = false;
-    /**
-     * moveUp
-     */
-    private boolean moveUpTrigger = false;
+//    /**
+//     * moveDown
+//     */
+//    private boolean moveDownTrigger = false;
+//    /**
+//     * moveUp
+//     */
+//    private boolean moveUpTrigger = false;
 
     /**
      * refresh back time
@@ -271,7 +271,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * add target onDraw listener
      */
     private void addOverScrollListener() {
-        if (!pullTwinkEnable) {
+        if (!pullTwinkEnable && !isAbleAutoLoading) {
             return;
         }
         targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -299,9 +299,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             return;
         }
         dellFlingAnimation.cancel();
-        int distance = scroller.getFinalY() - scroller.getCurrY();
-        moveDistance = (int) (Math.pow(distance * adjustTwinkValue, 0.4));
-        startScrollAnimation();
+        if (pullTwinkEnable) {
+            int distance = scroller.getFinalY() - scroller.getCurrY();
+            moveDistance = (int) (Math.pow(distance * adjustTwinkValue, 0.4));
+            startScrollAnimation();
+        }
     }
 
     /**
@@ -311,11 +313,16 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (dellFlingAnimation == null) {
             return;
         }
-
+        if (isAbleAutoLoading && onRefreshListener != null && !autoLoadTrigger) {
+            autoLoadTrigger = true;
+            onRefreshListener.onLoading();
+        }
         dellFlingAnimation.cancel();
-        int distance = scroller.getFinalY() - scroller.getCurrY();
-        moveDistance = -(int) (Math.pow(distance * adjustTwinkValue, 0.4));
-        startScrollAnimation();
+        if (pullTwinkEnable) {
+            int distance = scroller.getFinalY() - scroller.getCurrY();
+            moveDistance = -(int) (Math.pow(distance * adjustTwinkValue, 0.4));
+            startScrollAnimation();
+        }
     }
 
     /**
@@ -491,7 +498,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance == 0) {
             isStateFling = true;
         }
-        if (pullTwinkEnable) {
+        if (pullTwinkEnable||isAbleAutoLoading) {
             currentVelocityY = velocityY;
             dellFlingScroll((int) velocityY);
         }
@@ -584,16 +591,16 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private void moveChildren(float distance) {
         if (moveDistance > 0) {
-            moveUpTrigger = true;
+//            moveUpTrigger = true;
         } else if (moveDistance < 0) {
             if (isAbleAutoLoading && onRefreshListener != null && !autoLoadTrigger) {
                 autoLoadTrigger = true;
                 onRefreshListener.onLoading();
             }
-            moveDownTrigger = true;
+//            moveDownTrigger = true;
         } else {
-            moveUpTrigger = false;
-            moveDownTrigger = false;
+//            moveUpTrigger = false;
+//            moveDownTrigger = false;
         }
 
         if (headerView != null) {
