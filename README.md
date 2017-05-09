@@ -3,7 +3,7 @@
 ![演示gif](demo_gif.gif)
 
 ## 1.概述
-纯嵌套滑动实现无痕过度上拉加载、下拉刷新(支持自定义头部和尾部)
+纯嵌套滑动实现无痕过度上拉加载、下拉刷新(支持自定义头部和尾部),支持边界回弹效果
 
 ## 2.说明  
 该控件作用于，实现了NestedScrollingChild的控件（例如: recycleView、NestedScrollView）
