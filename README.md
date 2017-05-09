@@ -25,7 +25,7 @@ compile 'com.yan:pullrefreshlayout:1.0.2'
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
     refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true
     refreshLayout.setAdjustTwinkValue(4);// 值越大回弹效果越明显 default 4
-    refreshLayout.setAbleAutoLoading(true);// 自动刷新是否可用 default false
+    refreshLayout.setAbleAutoLoading(true);// 自动加载是否可用 default false
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
     refreshLayout.setHeaderView(headerView);// 设置headerView
