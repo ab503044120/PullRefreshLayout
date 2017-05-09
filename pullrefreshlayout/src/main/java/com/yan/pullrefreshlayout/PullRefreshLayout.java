@@ -123,7 +123,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * is able auto load more
      */
-    private boolean isAbleAutoLoading = true;
+    private boolean isAbleAutoLoading = false;
 
     /**
      * is able auto load more
