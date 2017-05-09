@@ -42,10 +42,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private int refreshState = 0;
 
-//    /**
-//     * last Scroll Y
-//     */
-//    private int lastScrollY = -1;
+    /**
+     * last Scroll Y
+     */
+    private int lastScrollY = -1;
 
     /**
      * twink adjust value
@@ -82,10 +82,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private float duringAdjustValue = 10f;
 
-//    /**
-//     * animation during adjust value
-//     */
-//    private float currentVelocityY = 0;
+    /**
+     * animation during adjust value
+     */
+    private float currentVelocityY = 0;
 
     /**
      * switch refresh enable
@@ -141,14 +141,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private boolean isStateFling = false;
 
-//    /**
-//     * moveDown
-//     */
-//    private boolean moveDownTrigger = false;
-//    /**
-//     * moveUp
-//     */
-//    private boolean moveUpTrigger = false;
+    /**
+     * moveDown
+     */
+    private boolean moveDownTrigger = false;
+    /**
+     * moveUp
+     */
+    private boolean moveUpTrigger = false;
 
     /**
      * refresh back time
@@ -163,6 +163,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private ValueAnimator dellFlingAnimation;
 
     private ScrollerCompat scroller;
+
+    private ViewTreeObserver.OnPreDrawListener onPreDrawListener;
 
     public PullRefreshLayout(Context context) {
         super(context);
@@ -209,6 +211,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        targetView.getViewTreeObserver().removeOnPreDrawListener(onPreDrawListener);
+    }
+
     /**
      * dellFlingAnimation is used for update scroller
      * update scroller state
@@ -222,43 +230,27 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         dellFlingAnimation.setRepeatMode(ValueAnimator.RESTART);
         dellFlingAnimation.setRepeatCount(ValueAnimator.INFINITE);
         dellFlingAnimation.setDuration(1000);
-//        lastScrollY = -1;
+        lastScrollY = -1;
         dellFlingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-//                if (moveUpTrigger && currentVelocityY > 0 && moveDistance >= 0) {
-//                    int currY = scroller.getCurrY();
-//                    int tempDistance = currY - lastScrollY;
-//                    if (moveDistance + tempDistance >= 0) {
-//                        Log.e("onAnimationUpdate: ", (moveDistance + tempDistance) + "");
-//                        onScroll(-moveDistance);
-//                    } else if (tempDistance < 1000) {
-//                        Log.e("onAnimationUpdate: "," onScroll "+ (moveDistance + tempDistance) + "");
-//                        onScroll(-tempDistance);
-//                    }
-//                    lastScrollY = currY;
-//                    if (moveDistance == 0) {
-//                        onOverScrollDown();
-//                        dellFlingAnimation.cancel();
-//                        return;
-//                    }
-//                } else if (moveDownTrigger && currentVelocityY < 0 && moveDistance <= 0) {
-//                    int currY = scroller.getCurrY();
-//                    int tempDistance = currY - lastScrollY;
-//                    if (moveDistance + tempDistance >= 0) {
-//                        Log.e("onAnimationUpdate: ", (moveDistance + tempDistance) + "");
-//                        onScroll(-moveDistance);
-//                    } else if (tempDistance < 1000) {
-//                        Log.e("onAnimationUpdate: "," onScroll "+ (moveDistance + tempDistance) + "");
-//                        onScroll(tempDistance);
-//                    }
-//                    lastScrollY = currY;
-//                    if (moveDistance == 0) {
-//                        onOverScrollUp();
-//                        dellFlingAnimation.cancel();
-//                        return;
-//                    }
-//                }
+                int currY = scroller.getCurrY();
+                int tempDistance = currY - lastScrollY;
+                if (moveUpTrigger && currentVelocityY > 0 && moveDistance >= 0) {
+                    if (moveDistance - tempDistance <= 0) {
+                        onScroll(-moveDistance);
+                    } else if (tempDistance < 1000) {
+                        onScroll(-tempDistance);
+                    }
+                } else if (moveDownTrigger && currentVelocityY < 0 && moveDistance <= 0) {
+                    if (moveDistance + tempDistance >= 0) {
+                        onScroll(-moveDistance);
+                    } else if (tempDistance < 1000) {
+                        onScroll(tempDistance);
+                    }
+                }
+                lastScrollY = currY;
+
                 if (!scroller.computeScrollOffset()) {
                     dellFlingAnimation.cancel();
                 }
@@ -267,6 +259,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         dellFlingAnimation.start();
     }
 
+
     /**
      * add target onDraw listener
      */
@@ -274,21 +267,24 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (!pullTwinkEnable && !isAbleAutoLoading) {
             return;
         }
-        targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                if (!isOverScrollTrigger && isStateFling
-                        && !canChildScrollUp() && canChildScrollDown()) {
-                    isOverScrollTrigger = true;
-                    onOverScrollUp();
-                } else if (!isOverScrollTrigger && isStateFling
-                        && !canChildScrollDown() && canChildScrollUp()) {
-                    isOverScrollTrigger = true;
-                    onOverScrollDown();
+        if (onPreDrawListener == null) {
+            onPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    if (!isOverScrollTrigger && isStateFling
+                            && !canChildScrollUp() && canChildScrollDown()) {
+                        isOverScrollTrigger = true;
+                        onOverScrollUp();
+                    } else if (!isOverScrollTrigger && isStateFling
+                            && !canChildScrollDown() && canChildScrollUp()) {
+                        isOverScrollTrigger = true;
+                        onOverScrollDown();
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
+            };
+        }
+        targetView.getViewTreeObserver().addOnPreDrawListener(onPreDrawListener);
     }
 
     /**
@@ -406,20 +402,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        int action = MotionEventCompat.getActionMasked(ev);
-        if (action == MotionEvent.ACTION_DOWN) {
-            if (currentAnimation != null) {
-                currentAnimation.cancel();
-            }
-            if (dellFlingAnimation != null) {
-                dellFlingAnimation.cancel();
-            }
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if ((!pullRefreshEnable && !pullLoadMoreEnable)) {
             return false;
@@ -431,6 +413,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         isOverScrollTrigger = false;
         isStateFling = false;
+        if (currentAnimation != null) {
+            currentAnimation.cancel();
+        }
+        if (dellFlingAnimation != null) {
+            dellFlingAnimation.cancel();
+        }
         return true;
     }
 
@@ -498,8 +486,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance == 0) {
             isStateFling = true;
         }
-        if (pullTwinkEnable||isAbleAutoLoading) {
-//            currentVelocityY = velocityY;
+        if (pullTwinkEnable || isAbleAutoLoading) {
+            currentVelocityY = velocityY;
             dellFlingScroll((int) velocityY);
         }
 
@@ -591,16 +579,16 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private void moveChildren(float distance) {
         if (moveDistance > 0) {
-//            moveUpTrigger = true;
+            moveUpTrigger = true;
         } else if (moveDistance < 0) {
             if (isAbleAutoLoading && onRefreshListener != null && !autoLoadTrigger) {
                 autoLoadTrigger = true;
                 onRefreshListener.onLoading();
             }
-//            moveDownTrigger = true;
+            moveDownTrigger = true;
         } else {
-//            moveUpTrigger = false;
-//            moveDownTrigger = false;
+            moveUpTrigger = false;
+            moveDownTrigger = false;
         }
 
         if (headerView != null) {
