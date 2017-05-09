@@ -21,6 +21,7 @@
     refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
     refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true
+    refreshLayout.setAdjustTwinkValue(4);// 值越大回弹效果越明显 default 4
     refreshLayout.setAbleAutoLoading(true);// 自动刷新是否可用 default true
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态

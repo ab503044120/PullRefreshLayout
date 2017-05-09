@@ -3,7 +3,6 @@ package com.yan.pullrefreshlayout;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
@@ -273,6 +272,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             onPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
+                    Log.e(  "onPreDraw: ", "onOverScrollDown"+"   "+isOverScrollTrigger+"   "+isStateFling+"    "+canChildScrollUp()+"   "+canChildScrollDown());
+
                     if (!isOverScrollTrigger && isStateFling
                             && !canChildScrollUp() && canChildScrollDown()) {
                         isOverScrollTrigger = true;
@@ -342,7 +343,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                handleState();
+                handleAction();
             }
         });
         animator.setDuration(getAnimationTime());
@@ -437,7 +438,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
-        handleState();
+        handleAction();
 
     }
 
@@ -485,7 +486,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        if (moveDistance == 0) {
+        if (moveDistance == 0 && (pullTwinkEnable||isAbleAutoLoading)) {
             isStateFling = true;
         }
         if (pullTwinkEnable || isAbleAutoLoading) {
@@ -606,7 +607,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * decide on the action refresh or loadMore
      */
-    private void handleState() {
+    private void handleAction() {
         if (pullRefreshEnable && refreshState != 2
                 && !isResetTrigger && moveDistance >= pullViewHeight) {
             startRefresh(moveDistance);
