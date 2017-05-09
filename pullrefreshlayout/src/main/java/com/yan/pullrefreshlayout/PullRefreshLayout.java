@@ -240,12 +240,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                     if (moveDistance - tempDistance <= 0) {
                         onScroll(-moveDistance);
                     } else if (tempDistance < 1000) {
+                        isStateFling = true;
                         onScroll(-tempDistance);
                     }
                 } else if (moveDownTrigger && currentVelocityY < 0 && moveDistance <= 0) {
                     if (moveDistance + tempDistance >= 0) {
                         onScroll(-moveDistance);
                     } else if (tempDistance < 1000) {
+                        isStateFling = true;
                         onScroll(tempDistance);
                     }
                 }
