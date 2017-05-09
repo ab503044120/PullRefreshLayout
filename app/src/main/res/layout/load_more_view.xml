@@ -9,7 +9,7 @@
         android:layout_gravity="top"
         android:ellipsize="end"
         android:gravity="center"
-        android:text="refresh"
+        android:text="上拉"
         android:textColor="@color/colorPrimary" />
 </FrameLayout>
 

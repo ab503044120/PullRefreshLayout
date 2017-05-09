@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 //        refreshLayout.setPullTwinkEnable(false);
 //        refreshLayout.setAdjustTwinkValue(4);// 值越大回弹效果越明显
 //        refreshLayout.setLoadMoreEnable(true);
-        refreshLayout.setRefreshEnable(false);
+//        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAbleAutoLoading(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢
         // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现
@@ -127,27 +127,27 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPullReset() {
-                tv.setText("下拉");
+                tv.setText("上拉");
             }
 
             @Override
             public void onPullHoldTrigger() {
-                tv.setText("释放刷新");
+                tv.setText("释放加载");
             }
 
             @Override
             public void onPullHoldUnTrigger() {
-                tv.setText("下拉");
+                tv.setText("上拉");
             }
 
             @Override
             public void onPullHolding() {
-                tv.setText("正在刷新");
+                tv.setText("正在加载");
             }
 
             @Override
             public void onPullFinish() {
-                tv.setText("刷新完成");
+                tv.setText("加载完成");
             }
         });
 
