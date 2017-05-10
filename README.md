@@ -6,7 +6,7 @@
 纯嵌套滑动实现无痕过度上拉加载、下拉刷新(支持自定义头部和尾部),支持边界回弹效果
 
 ### gradle
-compile 'com.yan:pullrefreshlayout:1.0.3'
+compile 'com.yan:pullrefreshlayout:1.0.4'
 
 ## 2.说明  
 该控件作用于，实现了NestedScrollingChild的控件（例如: recycleView、NestedScrollView）
@@ -25,7 +25,7 @@ compile 'com.yan:pullrefreshlayout:1.0.3'
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
     refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true
     refreshLayout.setAdjustTwinkValue(4);// 值越大回弹效果越明显 default 4
-    refreshLayout.setAbleAutoLoading(true);// 自动加载是否可用 default false
+    refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
     refreshLayout.setHeaderView(headerView);// 设置headerView

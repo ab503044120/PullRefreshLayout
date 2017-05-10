@@ -122,7 +122,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * is able auto load more
      */
-    private boolean isAbleAutoLoading = false;
+    private boolean autoLoadingEnable = false;
 
     /**
      * is able auto load more
@@ -264,7 +264,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * add target onDraw listener
      */
     private void addOverScrollListener() {
-        if (!pullTwinkEnable && !isAbleAutoLoading) {
+        if (!pullTwinkEnable && !autoLoadingEnable) {
             return;
         }
         if (onPreDrawListener == null) {
@@ -309,7 +309,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (dellFlingAnimation == null) {
             return;
         }
-        if (isAbleAutoLoading && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
+        if (autoLoadingEnable && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
             autoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
@@ -483,10 +483,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        if (moveDistance == 0 && (pullTwinkEnable || isAbleAutoLoading)) {
+        if (moveDistance == 0 && (pullTwinkEnable || autoLoadingEnable)) {
             isStateFling = true;
         }
-        if (pullTwinkEnable || isAbleAutoLoading) {
+        if (pullTwinkEnable || autoLoadingEnable) {
             currentVelocityY = velocityY;
             dellFlingScroll((int) velocityY);
         }
@@ -581,7 +581,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance > 0) {
             moveUpTrigger = true;
         } else if (moveDistance < 0) {
-            if (isAbleAutoLoading && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
+            if (autoLoadingEnable && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
                 autoLoadTrigger = true;
                 onRefreshListener.onLoading();
             }
@@ -943,8 +943,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         this.pullTwinkEnable = pullTwinkEnable;
     }
 
-    public void setAbleAutoLoading(boolean ableAutoLoading) {
-        isAbleAutoLoading = ableAutoLoading;
+    public void setAutoLoadingEnable(boolean ableAutoLoading) {
+        autoLoadingEnable = ableAutoLoading;
     }
 
     public interface OnPullListener {
