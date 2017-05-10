@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
@@ -344,7 +345,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             }
         });
         animator.setDuration(getAnimationTime());
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setInterpolator(new DecelerateInterpolator());
         animator.start();
     }
 
