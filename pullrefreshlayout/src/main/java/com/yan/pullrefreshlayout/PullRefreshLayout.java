@@ -9,7 +9,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -310,7 +309,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (dellFlingAnimation == null) {
             return;
         }
-        if (isAbleAutoLoading && onRefreshListener != null && !autoLoadTrigger) {
+        if (isAbleAutoLoading && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
             autoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
@@ -484,7 +483,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        if (moveDistance == 0 && (pullTwinkEnable||isAbleAutoLoading)) {
+        if (moveDistance == 0 && (pullTwinkEnable || isAbleAutoLoading)) {
             isStateFling = true;
         }
         if (pullTwinkEnable || isAbleAutoLoading) {
@@ -582,7 +581,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance > 0) {
             moveUpTrigger = true;
         } else if (moveDistance < 0) {
-            if (isAbleAutoLoading && onRefreshListener != null && !autoLoadTrigger) {
+            if (isAbleAutoLoading && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
                 autoLoadTrigger = true;
                 onRefreshListener.onLoading();
             }
