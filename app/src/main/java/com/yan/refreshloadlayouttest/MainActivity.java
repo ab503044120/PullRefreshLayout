@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
 //        refreshLayout.setPullTwinkEnable(false);
 //        refreshLayout.setAdjustTwinkValue(4);// 值越大回弹效果越明显
-//        refreshLayout.setLoadMoreEnable(true);
+//        refreshLayout.setLoadMoreEnable(false);
 //        refreshLayout.setRefreshEnable(false);
         refreshLayout.setAutoLoadingEnable(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢

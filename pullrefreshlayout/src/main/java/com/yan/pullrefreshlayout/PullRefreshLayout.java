@@ -29,12 +29,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * refresh header
      */
-    private PullRefreshView headerView;
+    private View headerView;
 
     /**
      * refresh footer
      */
-    private PullRefreshView footerView;
+    private View footerView;
 
     /**
      * current refreshing state 1:refresh 2:loadMore
@@ -535,40 +535,40 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
 
         if (moveDistance >= 0) {
-            if (headerView != null) {
-                headerView.onPullChange(moveDistance / pullViewHeight);
+            if (headerView != null && headerView instanceof OnPullListener) {
+                ((OnPullListener) headerView).onPullChange(moveDistance / pullViewHeight);
             }
             if (moveDistance >= pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (headerView != null && !isRefreshing) {
-                        headerView.onPullHoldTrigger();
+                    if (headerView != null && !isRefreshing && headerView instanceof OnPullListener) {
+                        ((OnPullListener) headerView).onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (headerView != null && !isRefreshing) {
-                        headerView.onPullHoldUnTrigger();
+                    if (headerView != null && !isRefreshing && headerView instanceof OnPullListener) {
+                        ((OnPullListener) headerView).onPullHoldUnTrigger();
                     }
                 }
             }
         } else {
-            if (footerView != null) {
-                footerView.onPullChange(moveDistance / pullViewHeight);
+            if (footerView != null && footerView instanceof OnPullListener) {
+                ((OnPullListener) footerView).onPullChange(moveDistance / pullViewHeight);
             }
             if (moveDistance <= -pullViewHeight) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (footerView != null && !isRefreshing) {
-                        footerView.onPullHoldTrigger();
+                    if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
+                        ((OnPullListener) footerView).onPullHoldTrigger();
                     }
                 }
             } else {
                 if (!pullStateControl) {
                     pullStateControl = true;
-                    if (footerView != null && !isRefreshing) {
-                        footerView.onPullHoldUnTrigger();
+                    if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
+                        ((OnPullListener) footerView).onPullHoldUnTrigger();
                     }
                 }
             }
@@ -630,8 +630,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * @param headerViewHeight
      */
     private void startRefresh(int headerViewHeight) {
-        if (headerView != null) {
-            headerView.onPullHolding();
+        if (headerView != null && headerView instanceof OnPullListener) {
+            ((OnPullListener) headerView).onPullHolding();
         }
         ValueAnimator animator = ValueAnimator.ofInt(headerViewHeight, (int) pullViewHeight);
         currentAnimation = animator;
@@ -639,8 +639,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (headerView != null) {
-                    headerView.onPullChange(moveDistance / pullViewHeight);
+                if (headerView != null && headerView instanceof OnPullListener) {
+                    ((OnPullListener) headerView).onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
             }
@@ -688,8 +688,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (headerView != null) {
-                    headerView.onPullChange(moveDistance / pullViewHeight);
+                if (headerView != null && headerView instanceof OnPullListener) {
+                    ((OnPullListener) headerView).onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
             }
@@ -697,8 +697,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         animator.addListener(new RefreshAnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (headerView != null && isRefreshing && refreshState == 1) {
-                    headerView.onPullFinish();
+                if (headerView != null && isRefreshing && refreshState == 1 && headerView instanceof OnPullListener) {
+                    ((OnPullListener) headerView).onPullFinish();
                 }
             }
 
@@ -718,8 +718,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void resetRefreshState() {
-        if (headerView != null) {
-            headerView.onPullReset();
+        if (headerView != null && headerView instanceof OnPullListener) {
+            ((OnPullListener) headerView).onPullReset();
         }
         if (moveDistance != 0) {
             return;
@@ -742,8 +742,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * @param loadMoreViewHeight
      */
     private void startLoadMore(int loadMoreViewHeight) {
-        if (footerView != null) {
-            footerView.onPullHolding();
+        if (footerView != null && footerView instanceof OnPullListener) {
+            ((OnPullListener) footerView).onPullHolding();
         }
         ValueAnimator animator = ValueAnimator.ofInt(loadMoreViewHeight, -(int) pullViewHeight);
         currentAnimation = animator;
@@ -751,8 +751,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (headerView != null) {
-                    headerView.onPullChange(moveDistance / pullViewHeight);
+                if (headerView != null && headerView instanceof OnPullListener) {
+                    ((OnPullListener) headerView).onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
             }
@@ -795,8 +795,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 moveDistance = (Integer) animation.getAnimatedValue();
-                if (footerView != null) {
-                    footerView.onPullChange(moveDistance / pullViewHeight);
+                if (footerView != null && footerView instanceof OnPullListener) {
+                    ((OnPullListener) footerView).onPullChange(moveDistance / pullViewHeight);
                 }
                 moveChildren(moveDistance);
             }
@@ -811,8 +811,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             @Override
             public void onAnimationStart(Animator animation) {
-                if (footerView != null && isRefreshing && refreshState == 2) {
-                    footerView.onPullFinish();
+                if (footerView != null && isRefreshing && refreshState == 2 && footerView instanceof OnPullListener) {
+                    ((OnPullListener) footerView).onPullFinish();
                 }
             }
         });
@@ -833,8 +833,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void resetLoadMoreState() {
-        if (footerView != null) {
-            footerView.onPullReset();
+        if (footerView != null && footerView instanceof OnPullListener) {
+            ((OnPullListener) footerView).onPullReset();
         }
         if (moveDistance != 0) {
             return;
@@ -908,11 +908,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         return isRefreshing;
     }
 
-    public void setHeaderView(PullRefreshView header) {
+    public void setHeaderView(View header) {
         headerView = header;
     }
 
-    public void setFooterView(PullRefreshView footer) {
+    public void setFooterView(View footer) {
         footerView = footer;
     }
 
