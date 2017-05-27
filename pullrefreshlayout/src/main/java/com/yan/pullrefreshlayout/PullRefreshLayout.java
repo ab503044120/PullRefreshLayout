@@ -359,6 +359,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             });
 //            scrollAnimation.setInterpolator(new DecelerateInterpolator(0.4f));
             scrollAnimation.setInterpolator(new OvershootInterpolator(0.1f));
+//            scrollAnimation.setInterpolator(new AccelerateInterpolator(0.4f));
         } else {
             scrollAnimation.setIntValues(0, moveDistance);
         }
