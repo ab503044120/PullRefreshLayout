@@ -167,20 +167,20 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     public PullRefreshLayout(Context context) {
         super(context);
-        init(context);
+        pullInit(context);
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        pullInit(context);
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        pullInit(context);
     }
 
-    private void init(Context context) {
+    private void pullInit(Context context) {
         parentHelper = new NestedScrollingParentHelper(this);
         pullViewHeight = dipToPx(context, pullViewHeight);
 
@@ -345,7 +345,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             }
         });
         animator.setDuration(getAnimationTime());
-        animator.setInterpolator(new DecelerateInterpolator());
+        animator.setInterpolator(new DecelerateInterpolator(1.5f));
         animator.start();
     }
 
