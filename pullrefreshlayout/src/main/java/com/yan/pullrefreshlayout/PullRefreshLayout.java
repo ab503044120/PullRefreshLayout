@@ -9,6 +9,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,7 +17,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
@@ -160,6 +163,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private ValueAnimator currentAnimation;
 
     private ValueAnimator dellFlingAnimation;
+
+    private ValueAnimator scrollAnimation;
 
     private ScrollerCompat scroller;
 
@@ -322,31 +327,43 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
     }
 
+
     /**
      * dell over scroll to move children
      */
     private void startScrollAnimation() {
-        ValueAnimator animator = ValueAnimator.ofInt(0, moveDistance);
-        if (currentAnimation != null) {
+        Log.e("startScrollAnimation: ", moveDistance + "");
+        if (scrollAnimation != null && scrollAnimation.isRunning()) {
+            scrollAnimation.cancel();
+        }
+        if (currentAnimation != null && currentAnimation != scrollAnimation
+                &&currentAnimation.isRunning()) {
             currentAnimation.cancel();
         }
-        currentAnimation = animator;
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                moveDistance = (Integer) animation.getAnimatedValue();
-                moveChildren(moveDistance);
-            }
-        });
-        animator.addListener(new RefreshAnimatorListener() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                handleAction();
-            }
-        });
-        animator.setDuration(getAnimationTime());
-        animator.setInterpolator(new DecelerateInterpolator(1.3f));
-        animator.start();
+
+        if (scrollAnimation == null) {
+            scrollAnimation = ValueAnimator.ofInt(0, moveDistance);
+            scrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    Log.e("onAnimationUpdate: ", moveDistance + "");
+                    moveDistance = (Integer) animation.getAnimatedValue();
+                    moveChildren(moveDistance);
+                }
+            });
+            scrollAnimation.addListener(new RefreshAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    handleAction();
+                }
+            });
+//            scrollAnimation.setInterpolator(new DecelerateInterpolator(0.4f));
+            scrollAnimation.setInterpolator(new OvershootInterpolator(0.1f));
+        } else {
+            scrollAnimation.setIntValues(0, moveDistance);
+        }
+        scrollAnimation.setDuration(getAnimationTime());
+        scrollAnimation.start();
     }
 
     /**
