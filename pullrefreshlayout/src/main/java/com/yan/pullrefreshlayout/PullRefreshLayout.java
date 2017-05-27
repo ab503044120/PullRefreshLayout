@@ -17,8 +17,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
@@ -357,9 +355,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                     handleAction();
                 }
             });
-//            scrollAnimation.setInterpolator(new DecelerateInterpolator(0.4f));
             scrollAnimation.setInterpolator(new OvershootInterpolator(0.1f));
-//            scrollAnimation.setInterpolator(new AccelerateInterpolator(0.4f));
         } else {
             scrollAnimation.setIntValues(0, moveDistance);
         }
@@ -454,10 +450,17 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
-        handleAction();
-
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if ((ev.getAction()==MotionEvent.ACTION_CANCEL
+                ||ev.getAction()==MotionEvent.ACTION_UP)
+                &&moveDistance!=0){
+            handleAction();
+        }
+        return super.dispatchTouchEvent(ev);
+    }
     /**
      * with child view to processing move events
      *
@@ -550,7 +553,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             moveDistance = 0;
             return;
         }
-
 
         if (moveDistance >= 0) {
             if (headerView != null && headerView instanceof OnPullListener) {
