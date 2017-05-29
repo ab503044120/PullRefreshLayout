@@ -50,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
 //        refreshLayout.setPullTwinkEnable(false);
-//        refreshLayout.setAdjustTwinkValue(40);// 值越大回弹效果越明显
+        refreshLayout.setAdjustTwinkValue(40);// 值越大回弹效果越明显
 //        refreshLayout.setLoadMoreEnable(false);
 //        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setAutoLoadingEnable(true);
+//        refreshLayout.setAutoLoadingEnable(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢
         // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现
 //        refreshLayout.setRefreshBackTime(300);
