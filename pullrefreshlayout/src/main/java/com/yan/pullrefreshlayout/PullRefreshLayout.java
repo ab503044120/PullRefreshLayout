@@ -206,7 +206,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerView != null) {
             addView(headerView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }
-        if (headerView != null) {
+        if (footerView != null) {
             addView(footerView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }
     }
@@ -416,7 +416,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerView!=null) {
             headerHeight = headerView.getMeasuredHeight();
         }
-        if (headerView!=null) {
+        if (footerView!=null) {
             footerHeight = footerView.getMeasuredHeight();
         }
     }
