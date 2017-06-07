@@ -1,12 +1,14 @@
 package com.yan.refreshloadlayouttest;
 
 import android.os.Bundle;
+import android.support.v4.view.ScrollingView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
     }
 
     private void initRefreshLayout() {

@@ -1,6 +1,7 @@
 package com.yan.pullrefreshlayout;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
@@ -227,6 +228,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private void dellFlingScroll(int velocityY) {
         velocityY = Math.abs(velocityY);
+        if (!scroller.isFinished()) {
+            scroller.abortAnimation();
+        }
         scroller.fling(0, 0, 0, velocityY, 0, 0, 0, Integer.MAX_VALUE);
         dellFlingAnimation = ValueAnimator.ofInt(0, 1);
         dellFlingAnimation.setRepeatMode(ValueAnimator.RESTART);
@@ -262,7 +266,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         });
         dellFlingAnimation.start();
     }
-
 
     /**
      * add target onDraw listener
@@ -335,7 +338,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             scrollAnimation.cancel();
         }
         if (currentAnimation != null && currentAnimation != scrollAnimation
-                &&currentAnimation.isRunning()) {
+                && currentAnimation.isRunning()) {
             currentAnimation.cancel();
         }
 
@@ -353,6 +356,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     handleAction();
+                }
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    if (!scroller.isFinished()){
+                        scroller.abortAnimation();
+                    }
                 }
             });
 //            scrollAnimation.setInterpolator(new OvershootInterpolator(0.25f));
@@ -456,13 +466,14 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if ((ev.getAction()==MotionEvent.ACTION_CANCEL
-                ||ev.getAction()==MotionEvent.ACTION_UP)
-                &&moveDistance!=0){
+        if ((ev.getAction() == MotionEvent.ACTION_CANCEL
+                || ev.getAction() == MotionEvent.ACTION_UP)
+                && moveDistance != 0) {
             handleAction();
         }
         return super.dispatchTouchEvent(ev);
     }
+
     /**
      * with child view to processing move events
      *
