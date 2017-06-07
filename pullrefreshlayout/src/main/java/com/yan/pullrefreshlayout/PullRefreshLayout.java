@@ -360,14 +360,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    if (!scroller.isFinished()){
+                    if (!scroller.isFinished()) {
                         scroller.abortAnimation();
                     }
                 }
             });
-//            scrollAnimation.setInterpolator(new OvershootInterpolator(0.25f));
-//            scrollAnimation.setInterpolator(new DecelerateInterpolator(0.5f));
-            scrollAnimation.setInterpolator(new DecelerateInterpolator(0.85f));
+            scrollAnimation.setInterpolator(new DecelerateInterpolator(1f));
         } else {
             scrollAnimation.setIntValues(0, moveDistance);
         }
