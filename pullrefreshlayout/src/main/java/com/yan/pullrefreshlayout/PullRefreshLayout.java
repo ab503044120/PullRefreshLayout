@@ -298,11 +298,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             return;
         }
         dellFlingAnimation.cancel();
+
         if (pullTwinkEnable) {
             int distance = scroller.getFinalY() - scroller.getCurrY();
-            moveDistance = (int) (Math.pow(distance * adjustTwinkValue, 0.4));
-            startScrollAnimation();
+            startScrollAnimation((int) (Math.pow(distance * adjustTwinkValue, 0.4)));
         }
+
     }
 
     /**
@@ -312,33 +313,28 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (dellFlingAnimation == null) {
             return;
         }
+        dellFlingAnimation.cancel();
+
         if (autoLoadingEnable && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
             autoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
-        dellFlingAnimation.cancel();
         if (pullTwinkEnable) {
             int distance = scroller.getFinalY() - scroller.getCurrY();
-            moveDistance = -(int) (Math.pow(distance * adjustTwinkValue, 0.4));
-            startScrollAnimation();
+            startScrollAnimation(-(int) (Math.pow(distance * adjustTwinkValue, 0.4)));
         }
     }
-
 
     /**
      * dell over scroll to move children
      */
-    private void startScrollAnimation() {
+    private void startScrollAnimation(final int distanceMove) {
         if (scrollAnimation != null && scrollAnimation.isRunning()) {
             scrollAnimation.cancel();
         }
-        if (currentAnimation != null && currentAnimation != scrollAnimation
-                && currentAnimation.isRunning()) {
-            currentAnimation.cancel();
-        }
-
+        cancelCurrentAnimation();
         if (scrollAnimation == null) {
-            scrollAnimation = ValueAnimator.ofInt(0, moveDistance);
+            scrollAnimation = ValueAnimator.ofInt(0, distanceMove);
             scrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -361,9 +357,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             });
             scrollAnimation.setInterpolator(new DecelerateInterpolator(1f));
         } else {
-            scrollAnimation.setIntValues(0, moveDistance);
+            scrollAnimation.setIntValues(0, distanceMove);
         }
-        scrollAnimation.setDuration(getAnimationTime());
+        scrollAnimation.setDuration(getAnimationTime(distanceMove));
         scrollAnimation.start();
     }
 
@@ -412,10 +408,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (headerView!=null) {
+        if (headerView != null) {
             headerHeight = headerView.getMeasuredHeight();
         }
-        if (footerView!=null) {
+        if (footerView != null) {
             footerHeight = footerView.getMeasuredHeight();
         }
     }
@@ -443,9 +439,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         isOverScrollTrigger = false;
         isStateFling = false;
-        if (currentAnimation != null) {
-            currentAnimation.cancel();
-        }
+        cancelCurrentAnimation();
+
         if (dellFlingAnimation != null) {
             dellFlingAnimation.cancel();
         }
@@ -670,6 +665,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             ((OnPullListener) headerView).onPullHolding();
         }
         ValueAnimator animator = ValueAnimator.ofInt(headerViewHeight, (int) headerHeight);
+        cancelCurrentAnimation();
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -702,7 +698,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerViewHeight == 0) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration(getAnimationTime());
+            animator.setDuration(getAnimationTime(moveDistance));
         }
         animator.setInterpolator(new DecelerateInterpolator(2f));
         animator.start();
@@ -719,6 +715,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             return;
         }
         ValueAnimator animator = ValueAnimator.ofInt(headerViewHeight, 0);
+        cancelCurrentAnimation();
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -748,7 +745,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != -1) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration(getAnimationTime());
+            animator.setDuration(getAnimationTime(moveDistance));
         }
         animator.start();
     }
@@ -782,6 +779,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             ((OnPullListener) footerView).onPullHolding();
         }
         ValueAnimator animator = ValueAnimator.ofInt(loadMoreViewHeight, -(int) footerHeight);
+        cancelCurrentAnimation();
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -811,9 +809,15 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        animator.setDuration(getAnimationTime());
+        animator.setDuration(getAnimationTime(moveDistance));
         animator.setInterpolator(new DecelerateInterpolator(2f));
         animator.start();
+    }
+
+    private void cancelCurrentAnimation() {
+        if (currentAnimation != null && currentAnimation.isRunning()) {
+            currentAnimation.cancel();
+        }
     }
 
     /**
@@ -827,6 +831,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             return;
         }
         ValueAnimator animator = ValueAnimator.ofInt(loadMoreViewHeight, 0);
+        cancelCurrentAnimation();
         currentAnimation = animator;
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -856,12 +861,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (refreshBackTime != -1) {
             animator.setDuration(refreshBackTime);
         } else {
-            animator.setDuration(getAnimationTime());
+            animator.setDuration(getAnimationTime(moveDistance));
         }
         animator.start();
     }
 
-    private long getAnimationTime() {
+    private long getAnimationTime(int moveDistance) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getMetrics(displayMetrics);
