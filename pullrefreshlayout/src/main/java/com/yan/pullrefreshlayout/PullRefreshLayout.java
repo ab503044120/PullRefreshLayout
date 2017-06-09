@@ -52,6 +52,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private int adjustTwinkValue = 4;
 
+    /**
+     * over scroll state
+     */
     private int overScrollState = 0;
 
     /**
