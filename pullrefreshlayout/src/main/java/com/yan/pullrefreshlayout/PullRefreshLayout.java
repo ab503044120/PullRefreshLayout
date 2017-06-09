@@ -1,12 +1,14 @@
 package com.yan.pullrefreshlayout;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -15,6 +17,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
@@ -164,6 +168,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ScrollerCompat scroller;
 
+    private Interpolator scrollInterpolator;
+
     private ViewTreeObserver.OnPreDrawListener onPreDrawListener;
 
     public PullRefreshLayout(Context context) {
@@ -185,10 +191,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         parentHelper = new NestedScrollingParentHelper(this);
         headerHeight = dipToPx(context, headerHeight);
         footerHeight = dipToPx(context, footerHeight);
-
-        if (pullTwinkEnable) {
-            scroller = ScrollerCompat.create(getContext());
-        }
     }
 
     @Override
@@ -200,6 +202,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             throw new RuntimeException("PullRefreshLayout should have one child");
         }
         targetView = getChildAt(0);
+        initScroller();
         addOverScrollListener();
 
         if (headerView != null) {
@@ -209,6 +212,36 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             addView(footerView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }
     }
+
+    private void initScroller() {
+        if (pullTwinkEnable) {
+            if (scrollInterpolator != null) {
+                scroller = ScrollerCompat.create(getContext(), scrollInterpolator);
+                return;
+            }
+            if (targetView instanceof RecyclerView) {
+                scroller = ScrollerCompat.create(getContext(), getRecyclerDefaultInterpolator());
+            } else {
+                scroller = ScrollerCompat.create(getContext());
+            }
+        }
+    }
+
+
+    private void setScrollInterpolator(Interpolator interpolator) {
+        scrollInterpolator = interpolator;
+    }
+
+    private Interpolator getRecyclerDefaultInterpolator() {
+        return new Interpolator() {
+            @Override
+            public float getInterpolation(float t) {
+                t -= 1.0f;
+                return t * t * t * t * t + 1.0f;
+            }
+        };
+    }
+
 
     @Override
     protected void onDetachedFromWindow() {
@@ -224,15 +257,20 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private void dellFlingScroll(int velocityY) {
         velocityY = Math.abs(velocityY);
-        if (!scroller.isFinished()) {
-            scroller.abortAnimation();
-        }
         scroller.fling(0, 0, 0, velocityY, 0, 0, 0, Integer.MAX_VALUE);
         dellFlingAnimation = ValueAnimator.ofInt(0, 1);
         dellFlingAnimation.setRepeatMode(ValueAnimator.RESTART);
         dellFlingAnimation.setRepeatCount(ValueAnimator.INFINITE);
         dellFlingAnimation.setDuration(1000);
         lastScrollY = -1;
+        dellFlingAnimation.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                if (scroller != null && !scroller.isFinished()) {
+                    scroller.abortAnimation();
+                }
+            }
+        });
         dellFlingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -294,27 +332,16 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * onOverScrollUp
      */
     private void onOverScrollUp() {
-        if (dellFlingAnimation == null) {
-            return;
-        }
-        dellFlingAnimation.cancel();
-
         if (pullTwinkEnable) {
             int distance = scroller.getFinalY() - scroller.getCurrY();
             startScrollAnimation((int) (Math.pow(distance * adjustTwinkValue, 0.4)));
         }
-
     }
 
     /**
      * onOverScrollDown
      */
     private void onOverScrollDown() {
-        if (dellFlingAnimation == null) {
-            return;
-        }
-        dellFlingAnimation.cancel();
-
         if (autoLoadingEnable && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
             autoLoadTrigger = true;
             onRefreshListener.onLoading();
@@ -329,6 +356,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * dell over scroll to move children
      */
     private void startScrollAnimation(final int distanceMove) {
+        if (dellFlingAnimation != null && dellFlingAnimation.isRunning()) {
+            dellFlingAnimation.cancel();
+        }
         if (scrollAnimation != null && scrollAnimation.isRunning()) {
             scrollAnimation.cancel();
         }
@@ -347,15 +377,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 public void onAnimationEnd(Animator animation) {
                     handleAction();
                 }
-
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    if (!scroller.isFinished()) {
-                        scroller.abortAnimation();
-                    }
-                }
             });
-            scrollAnimation.setInterpolator(new DecelerateInterpolator(1f));
+            scrollAnimation.setInterpolator(new DecelerateInterpolator(1.1f));
+//            scrollAnimation.setInterpolator(new OvershootInterpolator(1.5f));
         } else {
             scrollAnimation.setIntValues(0, distanceMove);
         }
