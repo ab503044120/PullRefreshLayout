@@ -168,8 +168,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ScrollerCompat scroller;
 
-    private Interpolator scrollInterpolator;
-
     private ViewTreeObserver.OnPreDrawListener onPreDrawListener;
 
     public PullRefreshLayout(Context context) {
@@ -214,11 +212,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void initScroller() {
-        if (pullTwinkEnable) {
-            if (scrollInterpolator != null) {
-                scroller = ScrollerCompat.create(getContext(), scrollInterpolator);
-                return;
-            }
+        if (pullTwinkEnable && scroller == null) {
             if (targetView instanceof RecyclerView) {
                 scroller = ScrollerCompat.create(getContext(), getRecyclerDefaultInterpolator());
             } else {
@@ -227,9 +221,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
     }
 
-
     private void setScrollInterpolator(Interpolator interpolator) {
-        scrollInterpolator = interpolator;
+        scroller = ScrollerCompat.create(getContext(), interpolator);
     }
 
     private Interpolator getRecyclerDefaultInterpolator() {
