@@ -14,6 +14,7 @@
 ```
 //-控件设置-
     refreshLayout.autoRefresh();// 自动刷新
+    refreshLayout.setScrollInterpolator(interpolator);// 设置scroller的插值器
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢 default 10f
     // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现 default 300
