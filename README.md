@@ -14,8 +14,8 @@
 ```
 //-控件设置-
     refreshLayout.autoRefresh();// 自动刷新
-    refreshLayout.setOverScrollDampingRatio(0.5f);//  值越大overscroll越短
-    refreshLayout.setAdjustTwinkDuring(4);// 值越大overscroll越慢 default 4
+    refreshLayout.setOverScrollDampingRatio(0.4f);//  值越大overscroll越短
+    refreshLayout.setAdjustTwinkDuring(2);// 值越大overscroll越慢 default 2
     refreshLayout.setScrollInterpolator(interpolator);// 设置scroller的插值器
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢 default 10f
