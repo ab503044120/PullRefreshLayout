@@ -14,6 +14,8 @@
 ```
 //-控件设置-
     refreshLayout.autoRefresh();// 自动刷新
+    refreshLayout.setOverScrollDampingRatio(0.5f);//  值越大overscroll越短
+    refreshLayout.setAdjustTwinkDuring(4);// 值越大overscroll越慢 default 4
     refreshLayout.setScrollInterpolator(interpolator);// 设置scroller的插值器
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢 default 10f
@@ -23,8 +25,7 @@
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
     refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
-    refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true
-    refreshLayout.setAdjustTwinkValue(4);// 值越大回弹效果越明显 default 4
+    refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true 
     refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态

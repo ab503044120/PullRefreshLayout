@@ -1,14 +1,11 @@
 package com.yan.refreshloadlayouttest;
 
 import android.os.Bundle;
-import android.support.v4.view.ScrollingView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -50,8 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
+//        refreshLayout.setOverScrollDampingRatio(0.6f);
+//        refreshLayout.setAdjustTwinkDuring(4);
 //        refreshLayout.setPullTwinkEnable(false);
-        refreshLayout.setAdjustTwinkValue(40);// 值越大回弹效果越明显
 //        refreshLayout.setLoadMoreEnable(true);
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAutoLoadingEnable(true);
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void initData() {
         mDatas = new ArrayList<>();
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 20; i++) {
             mDatas.add("测试数据" + i);
         }
     }
