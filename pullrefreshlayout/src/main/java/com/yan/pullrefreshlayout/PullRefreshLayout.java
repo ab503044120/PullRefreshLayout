@@ -295,9 +295,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * dell over scroll to move children
      */
     private void startScrollAnimation(final int distanceMove) {
-        if (scrollAnimation != null && scrollAnimation.isRunning()) {
-            scrollAnimation.cancel();
-        }
         cancelCurrentAnimation();
         if (scrollAnimation == null) {
             scrollAnimation = ValueAnimator.ofInt(distanceMove, 0);
