@@ -48,7 +48,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * twink during adjust value
      */
-    private int adjustTwinkDuring = 4;
+    private int adjustTwinkDuring = 2;
 
     /**
      * over scroll state
@@ -88,7 +88,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * move distance ratio for over scroll
      */
-    private float overScrollDampingRatio = 0.5f;
+    private float overScrollDampingRatio = 0.4f;
 
     /**
      * animation during adjust value

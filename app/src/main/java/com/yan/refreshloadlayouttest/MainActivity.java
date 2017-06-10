@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-//        refreshLayout.setOverScrollDampingRatio(0.6f);
-//        refreshLayout.setAdjustTwinkDuring(4);
+//        refreshLayout.setOverScrollDampingRatio(0.4f);
+//        refreshLayout.setAdjustTwinkDuring(2);
 //        refreshLayout.setPullTwinkEnable(false);
 //        refreshLayout.setLoadMoreEnable(true);
 //        refreshLayout.setRefreshEnable(false);
