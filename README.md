@@ -21,7 +21,6 @@
     refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢 default 10f
     // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现 default 300
     refreshLayout.setRefreshBackTime(300);
-    refreshLayout.setPullViewHeight(100);// 设置头部和底部的高度 default 60dip
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
     refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
