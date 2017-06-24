@@ -7,12 +7,10 @@ import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -201,10 +199,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (onAttachedToWindow) return;
         onAttachedToWindow = true;
         if (headerView != null) {
-            addView(headerView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            addView(headerView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
         if (footerView != null) {
-            addView(footerView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            addView(footerView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
     }
 
@@ -397,7 +395,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerView != null) {
             headerView.layout(left, (int) (-headerHeight), right, 0);
         }
-        Log.e("onLayout: ", "" + headerHeight);
         if (footerView != null) {
             footerView.layout(left, bottom - top, right, (int) (bottom - top + footerHeight));
         }
