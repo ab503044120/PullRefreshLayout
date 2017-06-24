@@ -11,6 +11,7 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -175,15 +176,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         pullInit(context);
     }
 
-    private void pullInit(Context context) {
-        parentHelper = new NestedScrollingParentHelper(this);
-        headerHeight = dipToPx(context, headerHeight);
-        footerHeight = dipToPx(context, footerHeight);
-    }
-
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
+        Log.e("onAttachedToWindow", "onAttachedToWindow: "+getChildCount());
         if (getChildCount() > 1) {
             throw new RuntimeException("PullRefreshLayout should not have more than one child");
         } else if (getChildCount() == 0) {
@@ -198,6 +195,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (footerView != null) {
             addView(footerView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    private void pullInit(Context context) {
+        parentHelper = new NestedScrollingParentHelper(this);
+        headerHeight = dipToPx(context, headerHeight);
+        footerHeight = dipToPx(context, footerHeight);
     }
 
     private void initScroller() {
