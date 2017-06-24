@@ -7,6 +7,7 @@ import android.content.Context;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -148,6 +149,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isOverScrollTrigger = false;
 
     /**
+     * on attached to window
+     */
+    private boolean onAttachedToWindow = false;
+
+    /**
      * refresh back time
      * if the value equals -1, the field duringAdjustValue will be work
      */
@@ -179,8 +185,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
-        Log.e("onAttachedToWindow", "onAttachedToWindow: "+getChildCount());
         if (getChildCount() > 1) {
             throw new RuntimeException("PullRefreshLayout should not have more than one child");
         } else if (getChildCount() == 0) {
@@ -189,11 +193,18 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         targetView = getChildAt(0);
         initScroller();
 
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (onAttachedToWindow) return;
+        onAttachedToWindow = true;
         if (headerView != null) {
-            addView(headerView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            addView(headerView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
         if (footerView != null) {
-            addView(footerView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            addView(footerView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
     }
 
@@ -276,6 +287,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     /**
      * get Final Over Scroll Distance
+     *
      * @return
      */
     private int getFinalOverScrollDistance() {
@@ -385,6 +397,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerView != null) {
             headerView.layout(left, (int) (-headerHeight), right, 0);
         }
+        Log.e("onLayout: ", "" + headerHeight);
         if (footerView != null) {
             footerView.layout(left, bottom - top, right, (int) (bottom - top + footerHeight));
         }
