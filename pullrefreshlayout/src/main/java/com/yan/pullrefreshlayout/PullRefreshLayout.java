@@ -27,6 +27,16 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private NestedScrollingParentHelper parentHelper;
 
     /**
+     * refresh header layout
+     */
+    private FrameLayout headerViewLayout;
+
+    /**
+     * refresh footer layout
+     */
+    private FrameLayout footerViewLayout;
+
+    /**
      * refresh header
      */
     private View headerView;
@@ -147,11 +157,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private boolean isOverScrollTrigger = false;
 
     /**
-     * on attached to window
-     */
-    private boolean onAttachedToWindow = false;
-
-    /**
      * refresh back time
      * if the value equals -1, the field duringAdjustValue will be work
      */
@@ -183,33 +188,35 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        if (getChildCount() > 1) {
-            throw new RuntimeException("PullRefreshLayout should not have more than one child");
-        } else if (getChildCount() == 0) {
+        if (getChildCount() <= 2) {
             throw new RuntimeException("PullRefreshLayout should have one child");
         }
-        targetView = getChildAt(0);
+        targetView = getChildAt(2);
         initScroller();
-
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (onAttachedToWindow) return;
-        onAttachedToWindow = true;
-        if (headerView != null) {
-            addView(headerView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if (footerView != null) {
-            addView(footerView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
     }
 
     private void pullInit(Context context) {
         parentHelper = new NestedScrollingParentHelper(this);
         headerHeight = dipToPx(context, headerHeight);
         footerHeight = dipToPx(context, footerHeight);
+
+        headerViewLayout = new FrameLayout(getContext());
+        footerViewLayout = new FrameLayout(getContext());
+        LayoutParams layoutParams =
+                new LayoutParams(LayoutParams.MATCH_PARENT
+                        , LayoutParams.WRAP_CONTENT);
+        addView(headerViewLayout, layoutParams);
+        addView(footerViewLayout, layoutParams);
+        addHeaderAndFooter();
+    }
+
+    private void addHeaderAndFooter() {
+        if (headerView != null) {
+            headerViewLayout.addView(headerView);
+        }
+        if (footerView != null) {
+            footerViewLayout.addView(footerView);
+        }
     }
 
     private void initScroller() {
@@ -384,6 +391,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerView != null) {
             headerHeight = headerView.getMeasuredHeight();
         }
+
         if (footerView != null) {
             footerHeight = footerView.getMeasuredHeight();
         }
@@ -392,12 +400,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (headerView != null) {
-            headerView.layout(left, (int) (-headerHeight), right, 0);
-        }
-        if (footerView != null) {
-            footerView.layout(left, bottom - top, right, (int) (bottom - top + footerHeight));
-        }
+        headerViewLayout.layout(0, (int) (-headerHeight), getMeasuredWidth(), 0);
+        footerViewLayout.layout(0, bottom - top, getMeasuredWidth(), (int) (bottom - top + footerHeight));
     }
 
     @Override
@@ -580,13 +584,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 onRefreshListener.onLoading();
             }
         }
-
-        if (headerView != null) {
-            headerView.setTranslationY(distance);
-        }
-        if (footerView != null) {
-            footerView.setTranslationY(distance);
-        }
+        headerViewLayout.setTranslationY(distance);
+        footerViewLayout.setTranslationY(distance);
         targetView.setTranslationY(distance);
     }
 
@@ -884,11 +883,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     public void setHeaderView(View header) {
-        headerView = header;
+        if (header != null) {
+            headerView = header;
+            headerViewLayout.removeAllViewsInLayout();
+            headerViewLayout.addView(headerView);
+        }
     }
 
     public void setFooterView(View footer) {
-        footerView = footer;
+        if (footer != null) {
+            headerView = footer;
+            footerViewLayout.removeAllViewsInLayout();
+            footerViewLayout.addView(headerView);
+        }
     }
 
     public void setLoadMoreEnable(boolean mPullLoadEnable) {
