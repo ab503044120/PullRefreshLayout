@@ -4,12 +4,11 @@
 
     <TextView
         android:id="@id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:layout_gravity="top|center_horizontal"
         android:ellipsize="end"
-        android:paddingBottom="16dp"
-        android:paddingTop="8dp"
+        android:gravity="center"
         android:text="上拉"
         android:textColor="@color/colorPrimary" />
 </FrameLayout>

@@ -5,12 +5,10 @@
     <TextView
         android:id="@id/title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:ellipsize="end"
         android:gravity="center"
-        android:paddingBottom="30dp"
-        android:paddingTop="30dp"
         android:text="下拉"
         android:textColor="@color/colorPrimary" />
 </FrameLayout>
