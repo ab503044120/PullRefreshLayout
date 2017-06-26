@@ -450,17 +450,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (dy > 0 && moveDistance > 0) {
             if (moveDistance - dy < 0) {
                 onScroll(-moveDistance);
-            } else {
-                onScroll(-dy);
+                consumed[1] += dy;
+                return;
             }
+            onScroll(-dy);
             consumed[1] += dy;
         }
         if (dy < 0 && moveDistance < 0) {
             if (moveDistance - dy > 0) {
                 onScroll(-moveDistance);
-            } else {
-                onScroll(-dy);
+                consumed[1] += dy;
+                return;
             }
+            onScroll(-dy);
             consumed[1] += dy;
         }
     }
@@ -536,32 +538,32 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                         ((OnPullListener) headerView).onPullHoldTrigger();
                     }
                 }
-            } else {
-                if (!pullStateControl) {
-                    pullStateControl = true;
-                    if (headerView != null && !isRefreshing && headerView instanceof OnPullListener) {
-                        ((OnPullListener) headerView).onPullHoldUnTrigger();
-                    }
+                return;
+            }
+            if (!pullStateControl) {
+                pullStateControl = true;
+                if (headerView != null && !isRefreshing && headerView instanceof OnPullListener) {
+                    ((OnPullListener) headerView).onPullHoldUnTrigger();
                 }
             }
-        } else {
-            if (footerView != null && footerView instanceof OnPullListener) {
-                ((OnPullListener) footerView).onPullChange(moveDistance / footerHeight);
+            return;
+        }
+        if (footerView != null && footerView instanceof OnPullListener) {
+            ((OnPullListener) footerView).onPullChange(moveDistance / footerHeight);
+        }
+        if (moveDistance <= -footerHeight) {
+            if (pullStateControl) {
+                pullStateControl = false;
+                if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
+                    ((OnPullListener) footerView).onPullHoldTrigger();
+                }
             }
-            if (moveDistance <= -footerHeight) {
-                if (pullStateControl) {
-                    pullStateControl = false;
-                    if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
-                        ((OnPullListener) footerView).onPullHoldTrigger();
-                    }
-                }
-            } else {
-                if (!pullStateControl) {
-                    pullStateControl = true;
-                    if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
-                        ((OnPullListener) footerView).onPullHoldUnTrigger();
-                    }
-                }
+            return;
+        }
+        if (!pullStateControl) {
+            pullStateControl = true;
+            if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
+                ((OnPullListener) footerView).onPullHoldUnTrigger();
             }
         }
     }
@@ -708,9 +710,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (footerView != null) {
             footerView.setVisibility(VISIBLE);
         }
-        if (headerView != null) {
-            headerView.setVisibility(VISIBLE);
-        }
         isRefreshing = false;
         refreshState = 0;
         isResetTrigger = false;
@@ -829,12 +828,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (moveDistance != 0) {
             return;
         }
-        if (footerView != null) {
-            footerView.setVisibility(VISIBLE);
-        }
         if (headerView != null) {
             headerView.setVisibility(VISIBLE);
         }
+
         isRefreshing = false;
         refreshState = 0;
         isResetTrigger = false;
