@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPullChange(float percent) {
-//                Log.e(TAG, "onPullChange: refresh " + percent);
+                Log.e(TAG, "onPullChange: refresh " + percent);
             }
 
             @Override

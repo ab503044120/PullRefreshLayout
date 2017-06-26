@@ -884,9 +884,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     public void setFooterView(View footer) {
         if (footer != null) {
-            headerView = footer;
+            footerView = footer;
             footerViewLayout.removeAllViewsInLayout();
-            footerViewLayout.addView(headerView);
+            footerViewLayout.addView(footerView);
         }
     }
 
