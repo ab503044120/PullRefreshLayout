@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 //        refreshLayout.setOverScrollDampingRatio(0.4f);
 //        refreshLayout.setAdjustTwinkDuring(2);
 //        refreshLayout.setPullTwinkEnable(false);
-//        refreshLayout.setLoadMoreEnable(true);
+        refreshLayout.setLoadMoreEnable(true);
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAutoLoadingEnable(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢

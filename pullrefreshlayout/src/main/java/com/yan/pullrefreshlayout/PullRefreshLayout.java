@@ -704,9 +704,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (headerView != null && headerView instanceof OnPullListener) {
             ((OnPullListener) headerView).onPullReset();
         }
-        if (moveDistance != 0) {
-            return;
-        }
         if (footerView != null) {
             footerView.setVisibility(VISIBLE);
         }
@@ -825,13 +822,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (footerView != null && footerView instanceof OnPullListener) {
             ((OnPullListener) footerView).onPullReset();
         }
-        if (moveDistance != 0) {
-            return;
-        }
         if (headerView != null) {
             headerView.setVisibility(VISIBLE);
         }
-
         isRefreshing = false;
         refreshState = 0;
         isResetTrigger = false;
