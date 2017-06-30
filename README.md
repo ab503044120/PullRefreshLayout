@@ -4,13 +4,15 @@
 
 ## 1.概述
 旧:纯嵌套滑动实现无痕过度上拉加载、下拉刷新(支持自定义头部和尾部),支持边界回弹效果
+<br/>
 新:新版以增加对普通的控件下拉刷新的支持
 
 ### gradle 
 
 ## 2.说明  
 旧:该控件作用于，实现了NestedScrollingChild的控件（例如: recycleView、NestedScrollView）
-,其他控件需要实现NestedScrollingChild可参考（[PullListView.java](https://github.com/genius158/RefreshLayout/blob/master/pullrefreshlayout/src/main/java/com/yan/pullrefreshlayout/view/PullListView.java)、[PullScrollView.java](https://github.com/genius158/RefreshLayout/blob/master/pullrefreshlayout/src/main/java/com/yan/pullrefreshlayout/view/PullScrollView.java)）
+,其他控件需要实现NestedScrollingChild可参考（[PullListView.java](https://github.com/genius158/PullRefreshLayout/tree/master/app/src/main/java/com/yan/refreshloadlayouttest/widget/PullListView.java)、[PullScrollView.java](https://github.com/genius158/PullRefreshLayout/tree/master/app/src/main/java/com/yan/refreshloadlayouttest/widget/PullScrollView.java)）
+<br/>
 新:支持所有控件
 ```
 //-控件设置-
