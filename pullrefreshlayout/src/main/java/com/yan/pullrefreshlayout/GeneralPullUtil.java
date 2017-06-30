@@ -85,7 +85,9 @@ class GeneralPullUtil {
     }
 
     boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (pullRefreshLayout.moveDistance != 0) return true;
+        if (pullRefreshLayout.moveDistance != 0) {
+            return true;
+        }
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 actionDownPointX = ev.getX();
