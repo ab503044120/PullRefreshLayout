@@ -56,7 +56,8 @@ class GeneralPullUtil {
                 if (interceptTouchLastCount != interceptTouchCount) {
                     interceptTouchLastCount = interceptTouchCount;
                 } else {
-                    if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)) {
+                    if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
+                            || (pullRefreshLayout.moveDistance != 0)) {
                         if (!isLastMotionPointYSet) {
                             isLastMotionPointYSet = true;
                             lastMotionPointY = ev.getY();
@@ -84,6 +85,7 @@ class GeneralPullUtil {
     }
 
     boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (pullRefreshLayout.moveDistance != 0) return true;
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 actionDownPointX = ev.getX();
