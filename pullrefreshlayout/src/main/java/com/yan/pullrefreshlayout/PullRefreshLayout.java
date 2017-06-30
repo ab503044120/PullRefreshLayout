@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
@@ -69,7 +70,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * drag move distance
      */
-    private volatile int moveDistance = 0;
+    volatile int moveDistance = 0;
 
     /**
      * refresh target view
@@ -170,6 +171,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ScrollerCompat scroller;
 
+    GeneralPullUtil generalPullUtil;
+
     public PullRefreshLayout(Context context) {
         super(context);
         pullInit(context);
@@ -196,6 +199,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void pullInit(Context context) {
+        generalPullUtil = new GeneralPullUtil(this);
+
         parentHelper = new NestedScrollingParentHelper(this);
         headerHeight = dipToPx(context, headerHeight);
         footerHeight = dipToPx(context, footerHeight);
@@ -252,10 +257,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void computeScroll() {
         if (scroller != null && scroller.computeScrollOffset()) {
-            if (!isOverScrollTrigger && !canChildScrollUp() && canChildScrollDown()) {
+            if (!isOverScrollTrigger && !canChildScrollUp() && canChildScrollDown()&&currentVelocityY<0) {
                 isOverScrollTrigger = true;
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && canChildScrollUp()) {
+            } else if (!isOverScrollTrigger && !canChildScrollDown() && canChildScrollUp()&&currentVelocityY>0) {
                 isOverScrollTrigger = true;
                 onOverScrollDown();
             }
@@ -397,11 +402,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return !(!pullRefreshEnable && !pullLoadMoreEnable) && super.onInterceptTouchEvent(ev);
-    }
-
-    @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         isOverScrollTrigger = false;
         cancelCurrentAnimation();
@@ -422,16 +422,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if ((ev.getAction() == MotionEvent.ACTION_CANCEL
-                || ev.getAction() == MotionEvent.ACTION_UP)
-                && moveDistance != 0) {
-            handleAction();
-        }
-        return super.dispatchTouchEvent(ev);
     }
 
     /**
@@ -492,6 +482,37 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         return false;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (targetView instanceof NestedScrollingChild) {
+            return !(!pullRefreshEnable && !pullLoadMoreEnable) && super.onInterceptTouchEvent(ev);
+        }
+        return !generalPullUtil.onInterceptTouchEvent(ev) && super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return generalPullUtil.onTouchEvent(event);
+    }
+
+    private void actionEndHandleAction(MotionEvent ev) {
+        if ((ev.getAction() == MotionEvent.ACTION_CANCEL
+                || ev.getAction() == MotionEvent.ACTION_UP)
+                && moveDistance != 0) {
+            handleAction();
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (!(targetView instanceof NestedScrollingChild)) {
+            actionEndHandleAction(ev);
+            return !generalPullUtil.dispatchTouchEvent(ev) && super.dispatchTouchEvent(ev);
+        }
+        actionEndHandleAction(ev);
+        return super.dispatchTouchEvent(ev);
     }
 
     /**

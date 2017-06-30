@@ -2,31 +2,25 @@ package com.yan.refreshloadlayouttest;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.PullRefreshView;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CommonActivity1 extends AppCompatActivity {
+    private static final String TAG = "CommonActivity1";
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
-
-    private List<String> mDatas;
     private PullRefreshLayout refreshLayout;
-    private SimpleAdapter adapter;
+
+    protected int getViewId() {
+        return R.layout.common_activity1;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initData();
-        initRecyclerView();
+        setContentView(getViewId());
         initRefreshLayout();
         refreshLayout.postDelayed(new Runnable() {
             @Override
@@ -34,15 +28,6 @@ public class MainActivity extends AppCompatActivity {
                 refreshLayout.autoRefresh();
             }
         }, 150);
-    }
-
-    private void initRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SimpleAdapter(this, mDatas);
-
-        recyclerView.setAdapter(adapter);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void initRefreshLayout() {
@@ -167,18 +152,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         refreshLayout.loadMoreComplete();
-                        mDatas.add("onLoading测试数据");
-                        adapter.notifyItemInserted(mDatas.size());
                     }
                 }, 3000);
             }
         });
-    }
-
-    protected void initData() {
-        mDatas = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            mDatas.add("测试数据" + i);
-        }
     }
 }
