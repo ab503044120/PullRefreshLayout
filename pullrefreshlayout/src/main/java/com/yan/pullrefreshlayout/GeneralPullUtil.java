@@ -12,22 +12,67 @@ import android.view.VelocityTracker;
 class GeneralPullUtil {
     private static final String TAG = "CommonViewSupport";
     private PullRefreshLayout pullRefreshLayout;
+
+    /**
+     * last motion point y
+     */
     private float lastMotionPointY;
+
+    /**
+     * is last motion point y set
+     */
     private boolean isLastMotionPointYSet;
+
+    /**
+     * first touch point x
+     */
     private float actionDownPointX;
+
+    /**
+     * first touch point y
+     */
     private float actionDownPointY;
+
+    /**
+     * first touch moving point x
+     */
     private float movingPointX;
+
+    /**
+     * first touch moving point y
+     */
     private float movingPointY;
+
+    /**
+     * is touch direct down
+     */
     private boolean isDragDown;
 
+    /**
+     * motionEvent consumed
+     */
     private int[] consumed = new int[2];
 
+    /**
+     * dell the interceptTouchEvent
+     */
     private int interceptTouchCount = 0;
     private int interceptTouchLastCount = -1;
 
+    /**
+     * touchEvent velocityTracker
+     */
     private VelocityTracker velocityTracker;
 
+    /**
+     * velocity y
+     */
     private float velocityY;
+
+    /**
+     * first touch event id , to dell the different finger touch event
+     */
+    private int firstTouchEventId;
 
     GeneralPullUtil(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
@@ -55,15 +100,13 @@ class GeneralPullUtil {
                 }
                 if (interceptTouchLastCount != interceptTouchCount) {
                     interceptTouchLastCount = interceptTouchCount;
-                } else {
-                    if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
-                            || (pullRefreshLayout.moveDistance != 0)) {
-                        if (!isLastMotionPointYSet) {
-                            isLastMotionPointYSet = true;
-                            lastMotionPointY = ev.getY();
-                        }
-                        onTouchEvent(ev);
+                } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
+                        || (pullRefreshLayout.moveDistance != 0)) {
+                    if (!isLastMotionPointYSet) {
+                        isLastMotionPointYSet = true;
+                        lastMotionPointY = ev.getY();
                     }
+                    onTouchEvent(ev);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -76,6 +119,7 @@ class GeneralPullUtil {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                velocityY = 0;
                 interceptTouchLastCount = -1;
                 interceptTouchCount = 0;
                 isLastMotionPointYSet = false;
@@ -109,10 +153,15 @@ class GeneralPullUtil {
     boolean onTouchEvent(MotionEvent event) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                firstTouchEventId = event.getPointerId(0);
                 pullRefreshLayout.onStartNestedScroll(null, null, 0);
                 lastMotionPointY = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (firstTouchEventId != event.getPointerId(0)) {
+                    lastMotionPointY = event.getY();
+                    firstTouchEventId = event.getPointerId(0);
+                }
                 float tempPointX = event.getX();
                 float tempPointY = event.getY();
                 float tempOffsetY = tempPointY - lastMotionPointY;
@@ -141,7 +190,6 @@ class GeneralPullUtil {
                     pullRefreshLayout.onNestedPreFling(null, 0, -velocityY);
                 }
                 pullRefreshLayout.onStopNestedScroll(null);
-                velocityY = 0;
                 break;
         }
         return true;
