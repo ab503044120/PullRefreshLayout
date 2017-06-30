@@ -11,7 +11,7 @@ import com.yan.pullrefreshlayout.PullRefreshView;
 public class CommonActivity1 extends AppCompatActivity {
     private static final String TAG = "CommonActivity1";
 
-    private PullRefreshLayout refreshLayout;
+    protected PullRefreshLayout refreshLayout;
 
     protected int getViewId() {
         return R.layout.common_activity1;
