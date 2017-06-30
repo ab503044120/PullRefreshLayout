@@ -12,6 +12,7 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -75,7 +76,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * refresh target view
      */
-    private View targetView;
+    View targetView;
 
     /**
      * header or footer height
@@ -257,10 +258,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void computeScroll() {
         if (scroller != null && scroller.computeScrollOffset()) {
-            if (!isOverScrollTrigger && !canChildScrollUp() && canChildScrollDown()&&currentVelocityY<0) {
+            if (!isOverScrollTrigger && !canChildScrollUp() && canChildScrollDown() && currentVelocityY < 0) {
                 isOverScrollTrigger = true;
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && canChildScrollUp()&&currentVelocityY>0) {
+            } else if (!isOverScrollTrigger && !canChildScrollDown() && canChildScrollUp() && currentVelocityY > 0) {
                 isOverScrollTrigger = true;
                 onOverScrollDown();
             }
@@ -268,6 +269,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             int currY = scroller.getCurrY();
             int tempDistance = currY - lastScrollY;
             if (currentVelocityY > 0 && moveDistance >= 0) {
+                Log.e("computeScroll", "computeScroll: " + (moveDistance - tempDistance));
                 if (moveDistance - tempDistance <= 0) {
                     onScroll(-moveDistance);
                 } else if (tempDistance < 1000) {

@@ -1,8 +1,8 @@
 package com.yan.pullrefreshlayout;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+
 
 /**
  * support general view to pull refresh
@@ -102,6 +102,7 @@ class GeneralPullUtil {
             case MotionEvent.ACTION_CANCEL:
                 break;
         }
+
         return false;
     }
 
@@ -123,7 +124,6 @@ class GeneralPullUtil {
                 if ((isDragDown && !pullRefreshLayout.canChildScrollUp())
                         || (!isDragDown && !pullRefreshLayout.canChildScrollDown())) {
                     pullRefreshLayout.onNestedScroll(null, 0, 0, 0, -(int) tempOffsetY);
-
                 } else if (pullRefreshLayout.moveDistance > 0 && !isDragDown) {
                     pullRefreshLayout.onNestedPreScroll(null, 0, -(int) tempOffsetY, consumed);
                 } else if (pullRefreshLayout.moveDistance < 0 && isDragDown) {
