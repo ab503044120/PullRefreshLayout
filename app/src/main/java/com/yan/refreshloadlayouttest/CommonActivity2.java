@@ -11,6 +11,6 @@ public class CommonActivity2 extends CommonActivity1 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        refreshLayout.setPullTwinkEnable(false);
+//        refreshLayout.setPullTwinkEnable(false);
     }
 }
