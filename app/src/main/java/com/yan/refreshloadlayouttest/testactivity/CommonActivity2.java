@@ -1,7 +1,9 @@
-package com.yan.refreshloadlayouttest;
+package com.yan.refreshloadlayouttest.testactivity;
 
 
 import android.os.Bundle;
+
+import com.yan.refreshloadlayouttest.R;
 
 public class CommonActivity2 extends CommonActivity1 {
     protected int getViewId() {

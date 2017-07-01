@@ -1,4 +1,4 @@
-package com.yan.refreshloadlayouttest;
+package com.yan.refreshloadlayouttest.testactivity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.PullRefreshView;
+import com.yan.refreshloadlayouttest.R;
 
 public class CommonActivity1 extends AppCompatActivity {
     private static final String TAG = "CommonActivity1";

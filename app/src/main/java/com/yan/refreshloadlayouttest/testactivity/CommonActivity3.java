@@ -1,32 +1,28 @@
-package com.yan.refreshloadlayouttest;
+package com.yan.refreshloadlayouttest.testactivity;
 
+
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.PullRefreshView;
+import com.yan.refreshloadlayouttest.R;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CommonActivity3 extends Activity {
+    private static final String TAG = "CommonActivity1";
 
-public class NestedActivity extends AppCompatActivity {
-    private static final String TAG = "NestedActivity";
+    protected PullRefreshLayout refreshLayout;
 
-    private List<String> mDatas;
-    private PullRefreshLayout refreshLayout;
-    private SimpleAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initData();
-        initRecyclerView();
+        setContentView(R.layout.common_activity3);
+        initListView();
         initRefreshLayout();
         refreshLayout.postDelayed(new Runnable() {
             @Override
@@ -36,13 +32,39 @@ public class NestedActivity extends AppCompatActivity {
         }, 150);
     }
 
-    private void initRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SimpleAdapter(this, mDatas);
-
-        recyclerView.setAdapter(adapter);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+    private void initListView() {
+        ListView listView = (ListView) findViewById(R.id.lv_data);
+        listView.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{
+                "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+                , "test"
+        }));
     }
 
     private void initRefreshLayout() {
@@ -167,18 +189,9 @@ public class NestedActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         refreshLayout.loadMoreComplete();
-                        mDatas.add("onLoading测试数据");
-                        adapter.notifyItemInserted(mDatas.size());
                     }
                 }, 3000);
             }
         });
-    }
-
-    protected void initData() {
-        mDatas = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            mDatas.add("测试数据" + i);
-        }
     }
 }

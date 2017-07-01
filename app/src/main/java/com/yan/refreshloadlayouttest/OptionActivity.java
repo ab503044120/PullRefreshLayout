@@ -6,6 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yan.refreshloadlayouttest.testactivity.CommonActivity1;
+import com.yan.refreshloadlayouttest.testactivity.CommonActivity2;
+import com.yan.refreshloadlayouttest.testactivity.CommonActivity3;
+import com.yan.refreshloadlayouttest.testactivity.NestedActivity;
+
 public class OptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

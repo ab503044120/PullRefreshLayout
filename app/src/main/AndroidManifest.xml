@@ -17,15 +17,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NestedActivity"
+            android:name=".testactivity.NestedActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".CommonActivity1"
+            android:name=".testactivity.CommonActivity1"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".CommonActivity2"
+            android:name=".testactivity.CommonActivity2"
             android:theme="@style/AppTheme.NoActionBar"/> <activity
-            android:name=".CommonActivity3"
+            android:name=".testactivity.CommonActivity3"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
