@@ -268,14 +268,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             int currY = scroller.getCurrY();
             int tempDistance = currY - lastScrollY;
-            if (currentVelocityY > 0 && moveDistance >= 0) {
-                Log.e("computeScroll", "computeScroll: " + (moveDistance - tempDistance));
+            if (currentVelocityY > 0 && moveDistance >= 0 && targetView instanceof NestedScrollingChild) {
                 if (moveDistance - tempDistance <= 0) {
                     onScroll(-moveDistance);
                 } else if (tempDistance < 1000) {
                     onScroll(-tempDistance);
                 }
-            } else if (currentVelocityY < 0 && moveDistance <= 0) {
+            } else if (currentVelocityY < 0 && moveDistance <= 0 && targetView instanceof NestedScrollingChild) {
                 if (moveDistance + tempDistance >= 0) {
                     onScroll(-moveDistance);
                 } else if (tempDistance < 1000) {
