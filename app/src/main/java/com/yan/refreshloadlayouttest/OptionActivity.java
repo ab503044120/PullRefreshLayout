@@ -26,6 +26,9 @@ public class OptionActivity extends AppCompatActivity {
                         case 2:
                             startActivity(new Intent(getBaseContext(), CommonActivity2.class));
                             break;
+                      case 3:
+                            startActivity(new Intent(getBaseContext(), CommonActivity3.class));
+                            break;
                     }
                 }
             });

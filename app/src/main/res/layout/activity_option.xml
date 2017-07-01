@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="100dp"
-    android:id="@+id/ll_container"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -11,13 +11,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="支持嵌套刷新" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="支持普通的view刷新" />
+        android:text="支持普通的view刷新(TextView、ViewGroup)" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="支持横向滑动冲突刷新" />
+        android:text="支持ScrollView冲突刷新(例子带横向滑动)" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="支持ListView刷新" />
 
 </LinearLayout>
