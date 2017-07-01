@@ -2,6 +2,7 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ public class CommonActivity1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getViewId());
         initRefreshLayout();
+//        ((TextView)findViewById(R.id.tv_data)) .setMovementMethod(ScrollingMovementMethod.getInstance());
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
