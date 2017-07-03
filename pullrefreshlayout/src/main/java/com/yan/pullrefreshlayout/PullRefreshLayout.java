@@ -221,9 +221,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (pullTwinkEnable && scroller == null) {
             if (targetView instanceof RecyclerView) {
                 scroller = ScrollerCompat.create(getContext(), getRecyclerDefaultInterpolator());
-            } else {
-                scroller = ScrollerCompat.create(getContext());
+                return;
             }
+            scroller = ScrollerCompat.create(getContext());
         }
     }
 
