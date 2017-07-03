@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommonActivity4 extends Activity {
-    private NestedActivity.SimpleAdapter adapter;
     private List<String> datas;
 
     @Override
@@ -45,7 +44,7 @@ public class CommonActivity4 extends Activity {
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_data);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new NestedActivity.SimpleAdapter(this, datas);
+        NestedActivity.SimpleAdapter adapter = new NestedActivity.SimpleAdapter(this, datas);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
