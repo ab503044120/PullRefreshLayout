@@ -65,6 +65,8 @@ public class CommonActivity4 extends Activity {
     private void initRefreshLayout() {
         ((PullRefreshLayout) findViewById(R.id.refreshLayout1)).setRefreshEnable(false);
         ((PullRefreshLayout) findViewById(R.id.refreshLayout2)).setRefreshEnable(false);
+        ((PullRefreshLayout) findViewById(R.id.refreshLayout1)).setOverScrollDampingRatio(0.08f);
+        ((PullRefreshLayout) findViewById(R.id.refreshLayout2)).setOverScrollDampingRatio(0.1f);
     }
 
     private void initRecyclerView() {
