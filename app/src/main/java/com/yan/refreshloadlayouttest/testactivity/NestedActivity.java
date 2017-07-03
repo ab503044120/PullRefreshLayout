@@ -22,7 +22,7 @@ import java.util.List;
 public class NestedActivity extends AppCompatActivity {
     private static final String TAG = "NestedActivity";
 
-    private List<String> mDatas;
+    private List<String> datas;
     private PullRefreshLayout refreshLayout;
     private SimpleAdapter adapter;
 
@@ -44,7 +44,7 @@ public class NestedActivity extends AppCompatActivity {
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SimpleAdapter(this, mDatas);
+        adapter = new SimpleAdapter(this, datas);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -172,8 +172,8 @@ public class NestedActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         refreshLayout.loadMoreComplete();
-                        mDatas.add("onLoading测试数据");
-                        adapter.notifyItemInserted(mDatas.size());
+                        datas.add("onLoading测试数据");
+                        adapter.notifyItemInserted(datas.size());
                     }
                 }, 3000);
             }
@@ -181,9 +181,9 @@ public class NestedActivity extends AppCompatActivity {
     }
 
     protected void initData() {
-        mDatas = new ArrayList<>();
+        datas = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            mDatas.add("test" + i);
+            datas.add("test" + i);
         }
     }
 

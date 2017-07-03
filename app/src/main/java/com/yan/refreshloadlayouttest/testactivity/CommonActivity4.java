@@ -6,13 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.PullRefreshView;
 import com.yan.refreshloadlayouttest.R;
 
 import java.util.ArrayList;
@@ -20,7 +17,7 @@ import java.util.List;
 
 public class CommonActivity4 extends Activity {
     private NestedActivity.SimpleAdapter adapter;
-    private List<String> mDatas;
+    private List<String> datas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,32 +31,8 @@ public class CommonActivity4 extends Activity {
 
     private void initListView() {
         ListView listView = (ListView) findViewById(R.id.lv_data);
-        listView.setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{
-                "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-        }));
+        listView.setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, android.R.id.text1
+                , datas.toArray(new String[datas.size()])));
     }
 
     private void initRefreshLayout() {
@@ -72,16 +45,16 @@ public class CommonActivity4 extends Activity {
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_data);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new NestedActivity.SimpleAdapter(this, mDatas);
+        adapter = new NestedActivity.SimpleAdapter(this, datas);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     protected void initData() {
-        mDatas = new ArrayList<>();
+        datas = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            mDatas.add("test" + i);
+            datas.add("test" + i);
         }
     }
 }
