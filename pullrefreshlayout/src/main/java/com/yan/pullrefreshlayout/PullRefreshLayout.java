@@ -600,9 +600,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 onRefreshListener.onLoading();
             }
         }
-        ViewCompat.setTranslationY(headerViewLayout,distance);
-        ViewCompat.setTranslationY(footerViewLayout,distance);
-        ViewCompat.setTranslationY(targetView,distance);
+        ViewCompat.setTranslationY(headerViewLayout, distance);
+        ViewCompat.setTranslationY(footerViewLayout, distance);
+        ViewCompat.setTranslationY(targetView, distance);
     }
 
     /**
@@ -714,11 +714,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        if (refreshBackTime != -1) {
-            animator.setDuration(refreshBackTime);
-        } else {
-            animator.setDuration(getAnimationTime(moveDistance));
-        }
+        animator.setDuration(refreshBackTime != -1 ? refreshBackTime : getAnimationTime(moveDistance));
         animator.start();
     }
 
@@ -824,11 +820,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
                 }
             }
         });
-        if (refreshBackTime != -1) {
-            animator.setDuration(refreshBackTime);
-        } else {
-            animator.setDuration(getAnimationTime(moveDistance));
-        }
+        animator.setDuration(refreshBackTime != -1 ? refreshBackTime : getAnimationTime(moveDistance));
         animator.start();
     }
 
