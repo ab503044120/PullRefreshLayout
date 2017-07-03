@@ -25,5 +25,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="支持ListView刷新" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="单纯的回弹" />
 
 </LinearLayout>

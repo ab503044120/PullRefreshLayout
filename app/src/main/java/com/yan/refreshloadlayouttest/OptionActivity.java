@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.yan.refreshloadlayouttest.testactivity.CommonActivity1;
 import com.yan.refreshloadlayouttest.testactivity.CommonActivity2;
 import com.yan.refreshloadlayouttest.testactivity.CommonActivity3;
+import com.yan.refreshloadlayouttest.testactivity.CommonActivity4;
 import com.yan.refreshloadlayouttest.testactivity.NestedActivity;
 
 public class OptionActivity extends AppCompatActivity {
@@ -31,8 +32,11 @@ public class OptionActivity extends AppCompatActivity {
                         case 2:
                             startActivity(new Intent(getBaseContext(), CommonActivity2.class));
                             break;
-                      case 3:
+                        case 3:
                             startActivity(new Intent(getBaseContext(), CommonActivity3.class));
+                            break;
+                        case 4:
+                            startActivity(new Intent(getBaseContext(), CommonActivity4.class));
                             break;
                     }
                 }

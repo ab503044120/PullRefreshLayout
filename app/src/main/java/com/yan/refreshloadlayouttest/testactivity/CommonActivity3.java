@@ -13,7 +13,7 @@ import com.yan.pullrefreshlayout.PullRefreshView;
 import com.yan.refreshloadlayouttest.R;
 
 public class CommonActivity3 extends Activity {
-    private static final String TAG = "CommonActivity1";
+    private static final String TAG = "CommonActivity3";
 
     protected PullRefreshLayout refreshLayout;
 
