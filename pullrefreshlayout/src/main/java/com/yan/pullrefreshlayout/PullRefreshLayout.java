@@ -208,9 +208,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
         headerViewLayout = new FrameLayout(getContext());
         footerViewLayout = new FrameLayout(getContext());
-        LayoutParams layoutParams =
-                new LayoutParams(LayoutParams.MATCH_PARENT
-                        , LayoutParams.WRAP_CONTENT);
+        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT
+                , LayoutParams.WRAP_CONTENT);
         addView(headerViewLayout, layoutParams);
         addView(footerViewLayout, layoutParams);
         setHeaderView(headerView);
@@ -314,7 +313,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * dell over scroll to move children
      */
     private void startScrollAnimation(final int distanceMove) {
+        overScrollState = 0;
+        int finalDistance = getFinalOverScrollDistance();
         cancelCurrentAnimation();
+
         if (scrollAnimation == null) {
             scrollAnimation = ValueAnimator.ofInt(distanceMove, 0);
             scrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -333,9 +335,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         } else {
             scrollAnimation.setIntValues(distanceMove, 0);
         }
-        scrollAnimation.setDuration(getAnimationTime(getFinalOverScrollDistance()));
-        scroller.abortAnimation();
-        overScrollState = 0;
+        scrollAnimation.setDuration(getAnimationTime(finalDistance));
 
         currentAnimation = scrollAnimation;
         scrollAnimation.start();
@@ -779,6 +779,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     private void cancelCurrentAnimation() {
         if (currentAnimation != null && currentAnimation.isRunning()) {
             currentAnimation.cancel();
+        }
+        if (scroller != null && scroller.computeScrollOffset()) {
+            scroller.abortAnimation();
         }
     }
 
