@@ -12,7 +12,6 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -172,7 +171,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ScrollerCompat scroller;
 
-    GeneralPullUtil generalPullUtil;
+    GeneralPullHelper generalPullHelper;
 
     public PullRefreshLayout(Context context) {
         super(context);
@@ -200,7 +199,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private void pullInit(Context context) {
-        generalPullUtil = new GeneralPullUtil(this);
+        generalPullHelper = new GeneralPullHelper(this);
 
         parentHelper = new NestedScrollingParentHelper(this);
         headerHeight = dipToPx(context, headerHeight);
@@ -490,12 +489,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (targetView instanceof NestedScrollingChild) {
             return !(!pullRefreshEnable && !pullLoadMoreEnable) && super.onInterceptTouchEvent(ev);
         }
-        return !generalPullUtil.onInterceptTouchEvent(ev) && super.onInterceptTouchEvent(ev);
+        return !generalPullHelper.onInterceptTouchEvent(ev) && super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return generalPullUtil.onTouchEvent(event);
+        return generalPullHelper.onTouchEvent(event);
     }
 
     private void actionEndHandleAction(MotionEvent ev) {
@@ -510,7 +509,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (!(targetView instanceof NestedScrollingChild)) {
             actionEndHandleAction(ev);
-            return !generalPullUtil.dispatchTouchEvent(ev) && super.dispatchTouchEvent(ev);
+            return !generalPullHelper.dispatchTouchEvent(ev) && super.dispatchTouchEvent(ev);
         }
         actionEndHandleAction(ev);
         return super.dispatchTouchEvent(ev);
@@ -939,6 +938,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     public void setAdjustTwinkDuring(int adjustTwinkDuring) {
         this.adjustTwinkDuring = adjustTwinkDuring;
+        scroller = null;
     }
 
     public void setAutoLoadingEnable(boolean ableAutoLoading) {

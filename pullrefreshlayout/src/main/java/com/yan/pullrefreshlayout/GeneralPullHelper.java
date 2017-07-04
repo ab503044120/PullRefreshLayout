@@ -9,8 +9,8 @@ import android.view.VelocityTracker;
  * Created by yan on 2017/6/29.
  */
 
-class GeneralPullUtil {
-    private static final String TAG = "CommonViewSupport";
+class GeneralPullHelper {
+    private static final String TAG = "GeneralPullHelper";
     private PullRefreshLayout pullRefreshLayout;
 
     /**
@@ -74,7 +74,7 @@ class GeneralPullUtil {
      */
     private int firstTouchEventId;
 
-    GeneralPullUtil(PullRefreshLayout pullRefreshLayout) {
+    GeneralPullHelper(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
     }
 
