@@ -45,3 +45,7 @@
             void onPullFinish();// 刷新完成
         }
 ```
+## 3.demo用到的库
+ loading 动画
+ <br/>
+ AVLoadingIndicatorView(https://github.com/81813780/AVLoadingIndicatorView)
