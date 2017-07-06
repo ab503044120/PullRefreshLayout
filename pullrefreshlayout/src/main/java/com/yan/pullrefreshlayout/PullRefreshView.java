@@ -21,11 +21,11 @@ public class PullRefreshView extends FrameLayout implements PullRefreshLayout.On
         initView();
     }
 
-    protected void initView() {
-    }
-
     protected int contentView() {
         return -1;
+    }
+
+    protected void initView() {
     }
 
     public PullRefreshView(Context context, AttributeSet attrs) {
