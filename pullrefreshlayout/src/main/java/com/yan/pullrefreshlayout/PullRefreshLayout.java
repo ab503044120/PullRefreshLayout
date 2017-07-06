@@ -728,6 +728,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         refreshState = 0;
         isResetTrigger = false;
         pullStateControl = true;
+
+        generalPullHelper.resetAutoFlag();
     }
 
     /**
@@ -845,6 +847,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         refreshState = 0;
         isResetTrigger = false;
         pullStateControl = true;
+
+        generalPullHelper.resetAutoFlag();
     }
 
     public void autoRefresh() {

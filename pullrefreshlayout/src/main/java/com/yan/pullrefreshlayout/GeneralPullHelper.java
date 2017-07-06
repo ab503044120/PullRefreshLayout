@@ -115,7 +115,6 @@ class GeneralPullHelper {
                 interceptTouchLastCount = -1;
                 interceptTouchCount = 0;
                 isLastMotionPointYSet = false;
-                isAutoRefresh = false;
                 break;
         }
         return false;
@@ -223,5 +222,9 @@ class GeneralPullHelper {
 
     void autoRefreshDell() {
         isAutoRefresh = true;
+    }
+
+      void resetAutoFlag() {
+        isAutoRefresh = false;
     }
 }
