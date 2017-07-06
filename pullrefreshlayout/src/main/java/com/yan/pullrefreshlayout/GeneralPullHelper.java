@@ -1,5 +1,6 @@
 package com.yan.pullrefreshlayout;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
@@ -49,6 +50,11 @@ class GeneralPullHelper {
     private boolean isDragDown;
 
     /**
+     * is trigger auto refresh
+     */
+    private boolean isAutoRefresh;
+
+    /**
      * motionEvent consumed
      */
     private int[] consumed = new int[2];
@@ -92,7 +98,8 @@ class GeneralPullHelper {
                 if (interceptTouchLastCount != interceptTouchCount) {
                     interceptTouchLastCount = interceptTouchCount;
                 } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
-                        || (pullRefreshLayout.moveDistance != 0)) {
+                        || (pullRefreshLayout.moveDistance != 0)
+                        || isAutoRefresh) {
                     if (!isLastMotionPointYSet) {
                         isLastMotionPointYSet = true;
                         lastMotionPointY = ev.getY();
@@ -108,6 +115,7 @@ class GeneralPullHelper {
                 interceptTouchLastCount = -1;
                 interceptTouchCount = 0;
                 isLastMotionPointYSet = false;
+                isAutoRefresh = false;
                 break;
         }
         return false;
@@ -115,6 +123,7 @@ class GeneralPullHelper {
 
     /**
      * velocityTracker dell
+     *
      * @param ev MotionEvent
      */
     private void initVelocityTracker(MotionEvent ev) {
@@ -209,5 +218,10 @@ class GeneralPullHelper {
                 break;
         }
         return true;
+    }
+
+
+    void autoRefreshDell() {
+        isAutoRefresh = true;
     }
 }

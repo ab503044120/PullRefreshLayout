@@ -851,6 +851,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (targetView == null || !pullRefreshEnable) {
             return;
         }
+        if (!(targetView instanceof NestedScrollingChild)) {
+            generalPullHelper.autoRefreshDell();
+        }
         startRefresh(0);
     }
 
