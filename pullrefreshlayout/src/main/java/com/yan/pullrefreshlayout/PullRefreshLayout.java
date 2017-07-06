@@ -656,8 +656,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (onRefreshListener != null && !isRefreshing && withAction) {
-                    onRefreshListener.onRefresh();
+                if (!isRefreshing) {
+                    if (onRefreshListener != null && withAction) {
+                        onRefreshListener.onRefresh();
+                    }
                     isRefreshing = true;
 
                     if (footerView != null) {
