@@ -42,11 +42,6 @@ public class PullRefreshView extends FrameLayout implements PullRefreshLayout.On
     }
 
     @Override
-    public void onPullReset() {
-        Log.e(TAG, "onPullReset: ");
-    }
-
-    @Override
     public void onPullHoldTrigger() {
         Log.e(TAG, "onPullHoldTrigger: ");
     }
@@ -64,6 +59,11 @@ public class PullRefreshView extends FrameLayout implements PullRefreshLayout.On
     @Override
     public void onPullFinish() {
         Log.e(TAG, "onPullFinish: ");
+    }
+
+    @Override
+    public void onPullReset() {
+        Log.e(TAG, "onPullReset: ");
     }
 
 }

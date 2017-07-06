@@ -85,19 +85,10 @@ class GeneralPullHelper {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 onTouchEvent(ev);
-                if (velocityTracker == null) {
-                    velocityTracker = VelocityTracker.obtain();
-                }
-                velocityTracker.addMovement(ev);
+                initVelocityTracker(ev);
                 break;
             case MotionEvent.ACTION_MOVE:
-                try {
-                    velocityTracker.addMovement(ev);
-                    velocityTracker.computeCurrentVelocity(1000);
-                    velocityY = velocityTracker.getYVelocity();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                velocityTrackerCompute(ev);
                 if (interceptTouchLastCount != interceptTouchCount) {
                     interceptTouchLastCount = interceptTouchCount;
                 } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
@@ -112,13 +103,7 @@ class GeneralPullHelper {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 onTouchEvent(ev);
-                try {
-                    velocityTracker.clear();
-                    velocityTracker.recycle();
-                    velocityTracker = null;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                cancelVelocityTracker();
                 velocityY = 0;
                 interceptTouchLastCount = -1;
                 interceptTouchCount = 0;
@@ -126,6 +111,37 @@ class GeneralPullHelper {
                 break;
         }
         return false;
+    }
+
+    /**
+     * velocityTracker dell
+     * @param ev MotionEvent
+     */
+    private void initVelocityTracker(MotionEvent ev) {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
+        }
+        velocityTracker.addMovement(ev);
+    }
+
+    private void velocityTrackerCompute(MotionEvent ev) {
+        try {
+            velocityTracker.addMovement(ev);
+            velocityTracker.computeCurrentVelocity(1000);
+            velocityY = velocityTracker.getYVelocity();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cancelVelocityTracker() {
+        try {
+            velocityTracker.clear();
+            velocityTracker.recycle();
+            velocityTracker = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     boolean onInterceptTouchEvent(MotionEvent ev) {

@@ -964,8 +964,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     public interface OnPullListener {
         void onPullChange(float percent);
 
-        void onPullReset();
-
         void onPullHoldTrigger();
 
         void onPullHoldUnTrigger();
@@ -973,6 +971,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         void onPullHolding();
 
         void onPullFinish();
+
+        void onPullReset();
+
     }
 
     public static class OnRefreshListener {
