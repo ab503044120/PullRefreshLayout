@@ -39,34 +39,39 @@ public class HeaderOrFooter extends PullRefreshView {
 
     @Override
     public void onPullChange(float percent) {
-//                Log.e(TAG, "onPullChange: refresh " + percent);
-    }
-
-    @Override
-    public void onPullReset() {
-        tv.setText("drag");
-        loadingView.hide();
+        super.onPullChange(percent);
     }
 
     @Override
     public void onPullHoldTrigger() {
+        super.onPullHoldTrigger();
         tv.setText("release loading");
     }
 
     @Override
     public void onPullHoldUnTrigger() {
+        super.onPullHoldUnTrigger();
         tv.setText("drag");
     }
 
     @Override
     public void onPullHolding() {
+        super.onPullHolding();
         tv.setText("loading...");
         loadingView.smoothToShow();
     }
 
     @Override
     public void onPullFinish() {
+        super.onPullFinish();
         tv.setText("loading finish");
         loadingView.smoothToHide();
+    }
+
+    @Override
+    public void onPullReset() {
+        super.onPullReset();
+        tv.setText("drag");
+        loadingView.hide();
     }
 }
