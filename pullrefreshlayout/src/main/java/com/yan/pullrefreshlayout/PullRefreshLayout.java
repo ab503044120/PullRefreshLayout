@@ -171,7 +171,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ScrollerCompat scroller;
 
-    GeneralPullHelper generalPullHelper;
+    private GeneralPullHelper generalPullHelper;
 
     public PullRefreshLayout(Context context) {
         super(context);
