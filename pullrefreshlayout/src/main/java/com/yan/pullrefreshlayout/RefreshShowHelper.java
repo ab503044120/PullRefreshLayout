@@ -135,16 +135,16 @@ public class RefreshShowHelper {
         dellRefreshFooterShow();
     }
 
-     void setCustomShowHeader(IShowRefresh customShowHeader) {
+    void setCustomShowHeader(IShowRefresh customShowHeader) {
         this.customShowHeader = customShowHeader;
     }
 
-     void setCustomShowFooter(IShowRefresh customShowFooter) {
+    void setCustomShowFooter(IShowRefresh customShowFooter) {
         this.customShowFooter = customShowFooter;
     }
 
     public interface IShowRefresh {
-        void offsetRatio(FrameLayout parent, View refresh, float ratio);
+        void offsetRatio(FrameLayout refreshParent, View refreshView, float ratio);
     }
 
 }

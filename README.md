@@ -45,7 +45,7 @@
     refreshLayout.setCustomShowRefresh(
         new RefreshShowHelper.IShowRefresh() {
                 @Override
-                public void offsetRatio(FrameLayout parent, View refresh, float ratio) {
+                public void offsetRatio(FrameLayout refreshParent, View refreshView, float ratio) {
                     refresh.setY(parent.getHeight()/2);
                 }
             }，null);
