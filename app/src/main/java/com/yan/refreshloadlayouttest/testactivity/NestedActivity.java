@@ -2,6 +2,7 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
+import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
 
@@ -21,7 +24,6 @@ import java.util.List;
 
 public class NestedActivity extends AppCompatActivity {
     private static final String TAG = "NestedActivity";
-
     private List<String> datas;
     private PullRefreshLayout refreshLayout;
     private SimpleAdapter adapter;
@@ -65,7 +67,7 @@ public class NestedActivity extends AppCompatActivity {
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
 //        refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator"));
+//        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator"));
 
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator"));
 
@@ -92,6 +94,13 @@ public class NestedActivity extends AppCompatActivity {
                         adapter.notifyItemInserted(datas.size());
                     }
                 }, 3000);
+            }
+        });
+
+        refreshLayout.setCustomShowRefresh(null, new RefreshShowHelper.IShowRefresh() {
+            @Override
+            public void offsetRatio(FrameLayout parent, View refresh, float ratio) {
+                refresh.setAlpha(-ratio);
             }
         });
     }

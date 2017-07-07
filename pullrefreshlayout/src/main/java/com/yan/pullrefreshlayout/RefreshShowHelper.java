@@ -18,7 +18,10 @@ public class RefreshShowHelper {
     /**
      * @ShowState
      */
-    @IntDef({STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW, STATE_PLACEHOLDER_CENTER, STATE_CENTER})
+    @IntDef({STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW
+            , STATE_PLACEHOLDER_CENTER, STATE_CENTER
+            , STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
+    })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShowState {
     }
@@ -26,6 +29,8 @@ public class RefreshShowHelper {
     public static final int STATE_FOLLOW = 0;
     public static final int STATE_PLACEHOLDER_FOLLOW = 1;
     public static final int STATE_PLACEHOLDER_CENTER = 2;
+    public static final int STATE_CENTER_FOLLOW = 3;
+    public static final int STATE_FOLLOW_CENTER = 4;
     public static final int STATE_CENTER = Gravity.CENTER_VERTICAL;
 
     private PullRefreshLayout pullRefreshLayout;
@@ -33,26 +38,34 @@ public class RefreshShowHelper {
     private int headerShowState = STATE_FOLLOW;
     private int footerShowState = STATE_FOLLOW;
 
+    private IShowRefresh customShowHeader;
+    private IShowRefresh customShowFooter;
+
     RefreshShowHelper(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
     }
 
-    void setRefreshShowGravity(int headerShowGravity, int footerShowGravity) {
-        this.headerShowState = headerShowGravity;
-        this.footerShowState = footerShowGravity;
-        dellRefreshHeaderShow();
-        dellRefreshFooterShow();
-    }
-
     void dellRefreshHeaderShow() {
-        if (pullRefreshLayout.headerView != null) {
-            pullRefreshLayout.headerView.setLayoutParams(getLayoutParams(headerShowState == STATE_FOLLOW ? Gravity.BOTTOM : headerShowState));
+        if (pullRefreshLayout.headerView == null) {
+            return;
+        }
+        if (headerShowState == STATE_FOLLOW) {
+            pullRefreshLayout.headerView.setLayoutParams(getLayoutParams(Gravity.BOTTOM));
+        }
+        if (headerShowState == STATE_CENTER) {
+            pullRefreshLayout.headerView.setLayoutParams(getLayoutParams(headerShowState));
         }
     }
 
     void dellRefreshFooterShow() {
-        if (pullRefreshLayout.footerView != null) {
-            pullRefreshLayout.footerView.setLayoutParams(getLayoutParams(footerShowState == STATE_FOLLOW ? Gravity.TOP : footerShowState));
+        if (pullRefreshLayout.footerView == null) {
+            return;
+        }
+        if (footerShowState == STATE_FOLLOW) {
+            pullRefreshLayout.footerView.setLayoutParams(getLayoutParams(Gravity.TOP));
+        }
+        if (footerShowState == STATE_CENTER) {
+            pullRefreshLayout.footerView.setLayoutParams(getLayoutParams(footerShowState));
         }
     }
 
@@ -72,6 +85,10 @@ public class RefreshShowHelper {
     }
 
     float headerOffsetRatio(float ratio) {
+        if (customShowHeader != null) {
+            customShowHeader.offsetRatio(pullRefreshLayout.headerViewLayout, pullRefreshLayout.headerView, ratio);
+            return ratio;
+        }
         switch (headerShowState) {
             case STATE_PLACEHOLDER_FOLLOW:
                 resetLayoutParamsGravity(pullRefreshLayout.headerView, ratio <= 1 ? Gravity.TOP : Gravity.BOTTOM);
@@ -79,11 +96,21 @@ public class RefreshShowHelper {
             case STATE_PLACEHOLDER_CENTER:
                 resetLayoutParamsGravity(pullRefreshLayout.headerView, ratio <= 1 ? Gravity.TOP : Gravity.CENTER_VERTICAL);
                 break;
+            case STATE_CENTER_FOLLOW:
+                resetLayoutParamsGravity(pullRefreshLayout.headerView, ratio <= 1 ? Gravity.CENTER_VERTICAL : Gravity.BOTTOM);
+                break;
+            case STATE_FOLLOW_CENTER:
+                resetLayoutParamsGravity(pullRefreshLayout.headerView, ratio <= 1 ? Gravity.BOTTOM : Gravity.CENTER_VERTICAL);
+                break;
         }
         return ratio;
     }
 
     float footerOffsetRatio(float ratio) {
+        if (customShowFooter != null) {
+            customShowFooter.offsetRatio(pullRefreshLayout.footerViewLayout, pullRefreshLayout.footerView, ratio);
+            return ratio;
+        }
         switch (footerShowState) {
             case STATE_PLACEHOLDER_FOLLOW:
                 resetLayoutParamsGravity(pullRefreshLayout.footerView, ratio > -1 ? Gravity.BOTTOM : Gravity.TOP);
@@ -91,8 +118,33 @@ public class RefreshShowHelper {
             case STATE_PLACEHOLDER_CENTER:
                 resetLayoutParamsGravity(pullRefreshLayout.footerView, ratio > -1 ? Gravity.BOTTOM : Gravity.CENTER_VERTICAL);
                 break;
+            case STATE_CENTER_FOLLOW:
+                resetLayoutParamsGravity(pullRefreshLayout.footerView, ratio > -1 ? Gravity.CENTER_VERTICAL : Gravity.TOP);
+                break;
+            case STATE_FOLLOW_CENTER:
+                resetLayoutParamsGravity(pullRefreshLayout.footerView, ratio > -1 ? Gravity.TOP : Gravity.CENTER_VERTICAL);
+                break;
         }
         return ratio;
+    }
+
+    void setRefreshShowGravity(int headerShowGravity, int footerShowGravity) {
+        this.headerShowState = headerShowGravity;
+        this.footerShowState = footerShowGravity;
+        dellRefreshHeaderShow();
+        dellRefreshFooterShow();
+    }
+
+     void setCustomShowHeader(IShowRefresh customShowHeader) {
+        this.customShowHeader = customShowHeader;
+    }
+
+     void setCustomShowFooter(IShowRefresh customShowFooter) {
+        this.customShowFooter = customShowFooter;
+    }
+
+    public interface IShowRefresh {
+        void offsetRatio(FrameLayout parent, View refresh, float ratio);
     }
 
 }

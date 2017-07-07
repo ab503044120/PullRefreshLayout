@@ -3,21 +3,18 @@
 ![演示gif](gif/demo_gif.gif)
 
 ## 1.概述
-旧:纯嵌套滑动实现无痕过度上拉加载、下拉刷新(支持自定义头部和尾部),支持边界回弹效果
-<br/>
-新:新版以增加对普通的控件下拉刷新的支持,处理了横向滑动冲突（例如:顶部banner的情况）
+对所有基础控件(包括，嵌套滑动例如RecyclerView、NestedScrollView，普通的TextView、ListView、ScrollerView、LinearLayout等)提供下拉刷新、上拉加载的支持,处理了横向滑动冲突（例如:顶部banner的情况）
+，且实现无痕过度。
 
 ### gradle 
 
 ## 2.说明  
-旧:该控件作用于，实现了NestedScrollingChild的控件（例如: recycleView、NestedScrollView）
-,其他控件需要实现NestedScrollingChild可参考（[PullListView.java](https://github.com/genius158/PullRefreshLayout/tree/master/app/src/main/java/com/yan/refreshloadlayouttest/widget/PullListView.java)、[PullScrollView.java](https://github.com/genius158/PullRefreshLayout/tree/master/app/src/main/java/com/yan/refreshloadlayouttest/widget/PullScrollView.java)）
-<br/>
-新:支持所有控件
+支持所有基础控件
 <br/>
 <br/>
-#### loading 出现效果(STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER)
+#### loading 出现效果默认6种，demo给出4中效果(STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER)
 ![STATE_FOLLOW](gif/show_demo_1.gif)![STATE_PLACEHOLDER_FOLLOW](gif/show_demo_2.gif)![STATE_PLACEHOLDER_CENTER](gif/show_demo_3.gif)![STATE_CENTER](gif/show_demo_4.gif)
+
 ```
 //-控件设置-
     refreshLayout.autoRefresh();// 自动刷新
@@ -38,8 +35,20 @@
     refreshLayout.setHeaderView(headerView);// 设置headerView
     refreshLayout.setFooterView(footerView);// 设置footerView
     
-    //设置loading view 的出现方式
+    /**
+    * 设置header或者footer的的出现方式,默认6种方式
+    * STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW, STATE_PLACEHOLDER_CENTER
+    * , STATE_CENTER, STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
+    */
     refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER,RefreshShowHelper.STATE_CENTER);
+    // 自定义header或者footer的出现效果
+    refreshLayout.setCustomShowRefresh(
+        new RefreshShowHelper.IShowRefresh() {
+                @Override
+                public void offsetRatio(FrameLayout parent, View refresh, float ratio) {
+                    refresh.setY(parent.getHeight()/2);
+                }
+            }，null);
     
     // PullRefreshLayout.OnPullListener
         public interface OnPullListener {

@@ -996,13 +996,18 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         scroller = null;
     }
 
+    public void setAutoLoadingEnable(boolean ableAutoLoading) {
+        autoLoadingEnable = ableAutoLoading;
+    }
+
     public void setRefreshShowGravity(@RefreshShowHelper.ShowState int headerShowGravity
             , @RefreshShowHelper.ShowState int footerShowGravity) {
         refreshShowHelper.setRefreshShowGravity(headerShowGravity, footerShowGravity);
     }
 
-    public void setAutoLoadingEnable(boolean ableAutoLoading) {
-        autoLoadingEnable = ableAutoLoading;
+    public void setCustomShowRefresh(RefreshShowHelper.IShowRefresh headerRefresh, RefreshShowHelper.IShowRefresh footerRefresh) {
+        refreshShowHelper.setCustomShowHeader(headerRefresh);
+        refreshShowHelper.setCustomShowFooter(footerRefresh);
     }
 
     public int getRefreshState() {
