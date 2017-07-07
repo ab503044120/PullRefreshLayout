@@ -15,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -398,8 +399,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        headerViewLayout.layout(0, (int) (-headerHeight), getMeasuredWidth(), 0);
-        footerViewLayout.layout(0, bottom - top, getMeasuredWidth(), (int) (bottom - top + footerHeight));
+        headerViewLayout.layout(0, -headerViewLayout.getMeasuredHeight(), getMeasuredWidth(), 0);
+        footerViewLayout.layout(0, bottom - top, getMeasuredWidth(), bottom - top + footerViewLayout.getMeasuredHeight());
     }
 
     @Override
@@ -597,15 +598,19 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      * move children
      */
     private void moveChildren(float distance) {
+        dellAutoLoading();
+        ViewCompat.setTranslationY(targetView, distance);
+        ViewCompat.setTranslationY(headerViewLayout, distance);
+        ViewCompat.setTranslationY(footerViewLayout, distance);
+    }
+
+    private void dellAutoLoading() {
         if (moveDistance < 0) {
             if (autoLoadingEnable && !isRefreshing && onRefreshListener != null && !autoLoadTrigger) {
                 autoLoadTrigger = true;
                 onRefreshListener.onLoading();
             }
         }
-        ViewCompat.setTranslationY(headerViewLayout, distance);
-        ViewCompat.setTranslationY(footerViewLayout, distance);
-        ViewCompat.setTranslationY(targetView, distance);
     }
 
     /**
