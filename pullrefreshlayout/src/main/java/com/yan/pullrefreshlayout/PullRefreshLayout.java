@@ -195,12 +195,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             throw new RuntimeException("PullRefreshLayout should have one child");
         }
         targetView = getChildAt(2);
+        if (!(targetView instanceof NestedScrollingChild)) {
+            generalPullHelper = new GeneralPullHelper(this);
+        }
         initScroller();
     }
 
     private void pullInit(Context context) {
-        generalPullHelper = new GeneralPullHelper(this);
-
         parentHelper = new NestedScrollingParentHelper(this);
         headerHeight = dipToPx(context, headerHeight);
         footerHeight = dipToPx(context, footerHeight);
@@ -494,6 +495,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (targetView instanceof NestedScrollingChild) {
+            return super.onTouchEvent(event);
+        }
         return generalPullHelper.onTouchEvent(event);
     }
 
@@ -731,7 +735,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         isResetTrigger = false;
         pullStateControl = true;
 
-        generalPullHelper.resetAutoFlag();
     }
 
     /**
@@ -850,7 +853,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         isResetTrigger = false;
         pullStateControl = true;
 
-        generalPullHelper.resetAutoFlag();
     }
 
     public void autoRefresh() {

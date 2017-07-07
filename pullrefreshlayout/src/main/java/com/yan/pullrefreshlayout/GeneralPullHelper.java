@@ -50,11 +50,6 @@ class GeneralPullHelper {
     private boolean isDragDown;
 
     /**
-     * is trigger auto refresh
-     */
-    private boolean isAutoRefresh;
-
-    /**
      * motionEvent consumed
      */
     private int[] consumed = new int[2];
@@ -98,8 +93,7 @@ class GeneralPullHelper {
                 if (interceptTouchLastCount != interceptTouchCount) {
                     interceptTouchLastCount = interceptTouchCount;
                 } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
-                        || (pullRefreshLayout.moveDistance != 0)
-                        || isAutoRefresh) {
+                        || (pullRefreshLayout.moveDistance != 0)) {
                     if (!isLastMotionPointYSet) {
                         isLastMotionPointYSet = true;
                         lastMotionPointY = ev.getY();
@@ -221,10 +215,11 @@ class GeneralPullHelper {
 
 
     void autoRefreshDell() {
-        isAutoRefresh = true;
+        movingPointY = 100;
+        actionDownPointY = 0;
+        movingPointX = 0;
+        actionDownPointX = 0;
+
     }
 
-      void resetAutoFlag() {
-        isAutoRefresh = false;
-    }
 }
