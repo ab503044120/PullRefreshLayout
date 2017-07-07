@@ -1005,11 +1005,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         refreshShowHelper.setRefreshShowGravity(headerShowGravity, footerShowGravity);
     }
 
-    public void setCustomShowRefresh(RefreshShowHelper.IShowRefresh headerRefresh, RefreshShowHelper.IShowRefresh footerRefresh) {
-        refreshShowHelper.setCustomShowHeader(headerRefresh);
-        refreshShowHelper.setCustomShowFooter(footerRefresh);
-    }
-
     public int getRefreshState() {
         return refreshState;
     }

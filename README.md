@@ -41,15 +41,7 @@
     * , STATE_CENTER, STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
     */
     refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER,RefreshShowHelper.STATE_CENTER);
-    // 自定义header或者footer的出现效果
-    refreshLayout.setCustomShowRefresh(
-        new RefreshShowHelper.IShowRefresh() {
-                @Override
-                public void offsetRatio(FrameLayout refreshParent, View refreshView, float ratio) {
-                    refresh.setY(parent.getHeight()/2);
-                }
-            }，null);
-    
+
     // PullRefreshLayout.OnPullListener
         public interface OnPullListener {
             // 刷新或加载过程中位置相刷新或加载触发位置的百分比，时刻调用

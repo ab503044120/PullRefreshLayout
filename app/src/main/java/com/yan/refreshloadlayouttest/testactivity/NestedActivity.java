@@ -67,8 +67,7 @@ public class NestedActivity extends AppCompatActivity {
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
 //        refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
-//        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator"));
-
+        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator"));
 
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
@@ -97,12 +96,6 @@ public class NestedActivity extends AppCompatActivity {
             }
         });
 
-        refreshLayout.setCustomShowRefresh(null, new RefreshShowHelper.IShowRefresh() {
-            @Override
-            public void offsetRatio(FrameLayout parent, View refresh, float ratio) {
-                refresh.setAlpha(-ratio);
-            }
-        });
     }
 
     protected void initData() {

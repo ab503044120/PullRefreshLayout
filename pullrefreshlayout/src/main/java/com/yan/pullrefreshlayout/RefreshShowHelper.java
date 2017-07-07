@@ -38,9 +38,6 @@ public class RefreshShowHelper {
     private int headerShowState = STATE_FOLLOW;
     private int footerShowState = STATE_FOLLOW;
 
-    private IShowRefresh customShowHeader;
-    private IShowRefresh customShowFooter;
-
     RefreshShowHelper(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
     }
@@ -85,10 +82,6 @@ public class RefreshShowHelper {
     }
 
     float headerOffsetRatio(float ratio) {
-        if (customShowHeader != null) {
-            customShowHeader.offsetRatio(pullRefreshLayout.headerViewLayout, pullRefreshLayout.headerView, ratio);
-            return ratio;
-        }
         switch (headerShowState) {
             case STATE_PLACEHOLDER_FOLLOW:
                 resetLayoutParamsGravity(pullRefreshLayout.headerView, ratio <= 1 ? Gravity.TOP : Gravity.BOTTOM);
@@ -107,10 +100,6 @@ public class RefreshShowHelper {
     }
 
     float footerOffsetRatio(float ratio) {
-        if (customShowFooter != null) {
-            customShowFooter.offsetRatio(pullRefreshLayout.footerViewLayout, pullRefreshLayout.footerView, ratio);
-            return ratio;
-        }
         switch (footerShowState) {
             case STATE_PLACEHOLDER_FOLLOW:
                 resetLayoutParamsGravity(pullRefreshLayout.footerView, ratio > -1 ? Gravity.BOTTOM : Gravity.TOP);
@@ -133,18 +122,6 @@ public class RefreshShowHelper {
         this.footerShowState = footerShowGravity;
         dellRefreshHeaderShow();
         dellRefreshFooterShow();
-    }
-
-    void setCustomShowHeader(IShowRefresh customShowHeader) {
-        this.customShowHeader = customShowHeader;
-    }
-
-    void setCustomShowFooter(IShowRefresh customShowFooter) {
-        this.customShowFooter = customShowFooter;
-    }
-
-    public interface IShowRefresh {
-        void offsetRatio(FrameLayout refreshParent, View refreshView, float ratio);
     }
 
 }
