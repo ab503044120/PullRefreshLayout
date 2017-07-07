@@ -16,6 +16,8 @@ public class HeaderOrFooter extends PullRefreshView {
     private AVLoadingIndicatorView loadingView;
     private String animationName;
 
+    private boolean isStateFinish;
+
     public HeaderOrFooter(Context context, String animationName) {
         super(context);
         this.animationName = animationName;
@@ -40,6 +42,21 @@ public class HeaderOrFooter extends PullRefreshView {
     @Override
     public void onPullChange(float percent) {
         super.onPullChange(percent);
+        if (isStateFinish) return;
+        percent = Math.abs(percent);
+        if (percent > 0.2 && percent < 1) {
+            if (loadingView.getVisibility() != VISIBLE) {
+                loadingView.smoothToShow();
+            }
+            loadingView.setScaleX(percent);
+            loadingView.setScaleY(percent);
+        } else if (percent <= 0.2 && loadingView.getVisibility() == VISIBLE) {
+            loadingView.smoothToHide();
+        } else if (loadingView.getScaleX() != 1) {
+            loadingView.setScaleX(1f);
+            loadingView.setScaleY(1f);
+        }
+
     }
 
     @Override
@@ -58,13 +75,13 @@ public class HeaderOrFooter extends PullRefreshView {
     public void onPullHolding() {
         super.onPullHolding();
         tv.setText("loading...");
-        loadingView.smoothToShow();
     }
 
     @Override
     public void onPullFinish() {
         super.onPullFinish();
         tv.setText("loading finish");
+        isStateFinish = true;
         loadingView.smoothToHide();
     }
 
@@ -72,6 +89,6 @@ public class HeaderOrFooter extends PullRefreshView {
     public void onPullReset() {
         super.onPullReset();
         tv.setText("drag");
-        loadingView.hide();
+        isStateFinish = false;
     }
 }
