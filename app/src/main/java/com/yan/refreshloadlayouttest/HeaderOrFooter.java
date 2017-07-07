@@ -26,7 +26,7 @@ public class HeaderOrFooter extends PullRefreshView {
 
     @Override
     protected int contentView() {
-        return R.layout.load_more_view;
+        return R.layout.refresh_view;
     }
 
     @Override

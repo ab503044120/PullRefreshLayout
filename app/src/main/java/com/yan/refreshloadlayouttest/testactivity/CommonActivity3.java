@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
+import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
 
@@ -81,10 +82,9 @@ public class CommonActivity3 extends Activity {
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
 //        refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(),"LineSpinFadeLoaderIndicator"));
-
-        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(),"LineSpinFadeLoaderIndicator"));
-
+        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));
+        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));
+        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_PLACEHOLDER_CENTER, RefreshShowHelper.STATE_PLACEHOLDER_CENTER);
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

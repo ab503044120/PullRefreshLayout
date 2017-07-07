@@ -1,6 +1,6 @@
 # PullRefreshLayout
 #
-![演示gif](demo_gif.gif)
+![演示gif](gif/demo_gif.gif)
 
 ## 1.概述
 旧:纯嵌套滑动实现无痕过度上拉加载、下拉刷新(支持自定义头部和尾部),支持边界回弹效果
@@ -33,6 +33,9 @@
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
     refreshLayout.setHeaderView(headerView);// 设置headerView
     refreshLayout.setFooterView(footerView);// 设置footerView
+    
+    //设置loading view 的出现方式
+    refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER,RefreshShowHelper.STATE_CENTER);
     
     // PullRefreshLayout.OnPullListener
         public interface OnPullListener {
