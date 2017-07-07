@@ -17,7 +17,7 @@
 <br/>
 <br/>
 #### loading 出现效果
-![STATE_FOLLOW](gif/show_demo_1.gif)![STATE_PLACEHOLDER_FOLLOW](gif/demoshow_demo_2.gif)![STATE_PLACEHOLDER_CENTER](gif/demoshow_demo_3.gif)![STATE_CENTER](gif/demoshow_demo_4.gif)
+![STATE_FOLLOW](gif/show_demo_1.gif)![STATE_PLACEHOLDER_FOLLOW](gif/show_demo_2.gif)![STATE_PLACEHOLDER_CENTER](gif/show_demo_3.gif)![STATE_CENTER](gif/show_demo_4.gif)
 ```
 //-控件设置-
     refreshLayout.autoRefresh();// 自动刷新
