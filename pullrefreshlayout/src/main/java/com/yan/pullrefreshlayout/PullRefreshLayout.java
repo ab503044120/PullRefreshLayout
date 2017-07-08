@@ -1053,17 +1053,13 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     private class PullFrameLayout extends FrameLayout {
-
         public PullFrameLayout(@NonNull Context context) {
             super(context);
         }
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                return true;
-            }
-            return super.onTouchEvent(event);
+            return event.getActionMasked() == MotionEvent.ACTION_DOWN || super.onTouchEvent(event);
         }
     }
 }
