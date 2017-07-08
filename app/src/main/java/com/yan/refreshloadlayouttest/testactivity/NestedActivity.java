@@ -69,7 +69,7 @@ public class NestedActivity extends AppCompatActivity {
 //        refreshLayout.setRefreshEnable(false);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator"));
-
+        refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_CENTER_FOLLOW);
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

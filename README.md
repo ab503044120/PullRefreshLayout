@@ -12,8 +12,10 @@
 支持所有基础控件
 <br/>
 <br/>
-#### loading 出现效果默认6种，demo给出4中效果(STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER)
-![STATE_FOLLOW](gif/show_demo_1.gif)![STATE_PLACEHOLDER_FOLLOW](gif/show_demo_2.gif)![STATE_PLACEHOLDER_CENTER](gif/show_demo_3.gif)![STATE_CENTER](gif/show_demo_4.gif)
+#### loading 出现效果默认6种，demo给出4中效果(STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER、STATE_FOLLOW_CENTER、STATE_CENTER_FOLLOW)
+![STATE_FOLLOW](gif/show_demo_1.gif)![STATE_PLACEHOLDER_FOLLOW](gif/show_demo_2.gif)
+![STATE_PLACEHOLDER_CENTER](gif/show_demo_3.gif)![STATE_CENTER](gif/show_demo_4.gif)
+![STATE_FOLLOW_CENTER](gif/show_demo_5.gif)![STATE_CENTER_FOLLOW](gif/show_demo_6.gif)
 
 ```
 //-控件设置-
@@ -41,7 +43,8 @@
     * , STATE_CENTER, STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
     */
     refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER,RefreshShowHelper.STATE_CENTER);
-
+    refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_CENTER)// header出现动画
+    refreshLayout.setFooterShowGravity(RefreshShowHelper.STATE_CENTER)// footer出现动画
     // PullRefreshLayout.OnPullListener
         public interface OnPullListener {
             // 刷新或加载过程中位置相刷新或加载触发位置的百分比，时刻调用
