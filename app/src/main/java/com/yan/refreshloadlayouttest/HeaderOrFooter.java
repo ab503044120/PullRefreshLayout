@@ -38,7 +38,6 @@ public class HeaderOrFooter extends PullRefreshView {
         }
     }
 
-
     @Override
     public void onPullChange(float percent) {
         super.onPullChange(percent);
@@ -58,7 +57,6 @@ public class HeaderOrFooter extends PullRefreshView {
             loadingView.setScaleX(1f);
             loadingView.setScaleY(1f);
         }
-
     }
 
     @Override
