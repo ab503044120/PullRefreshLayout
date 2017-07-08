@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
@@ -32,12 +33,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     /**
      * refresh header layout
      */
-    FrameLayout headerViewLayout;
+    PullFrameLayout headerViewLayout;
 
     /**
      * refresh footer layout
      */
-    FrameLayout footerViewLayout;
+    PullFrameLayout footerViewLayout;
 
     /**
      * refresh header
@@ -212,8 +213,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         headerHeight = dipToPx(context, headerHeight);
         footerHeight = dipToPx(context, footerHeight);
 
-        headerViewLayout = new FrameLayout(getContext());
-        footerViewLayout = new FrameLayout(getContext());
+        headerViewLayout = new PullFrameLayout(getContext());
+        footerViewLayout = new PullFrameLayout(getContext());
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT
                 , LayoutParams.WRAP_CONTENT);
         addView(headerViewLayout, layoutParams);
@@ -1050,6 +1051,21 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
 
         public void onLoading() {
+        }
+    }
+
+    private class PullFrameLayout extends FrameLayout {
+
+        public PullFrameLayout(@NonNull Context context) {
+            super(context);
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                return true;
+            }
+            return super.onTouchEvent(event);
         }
     }
 }
