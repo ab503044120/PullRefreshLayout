@@ -44,12 +44,14 @@ public class HeaderOrFooter extends PullRefreshView {
         super.onPullChange(percent);
         if (isStateFinish) return;
         percent = Math.abs(percent);
-        if (percent > 0.2 && percent < 1) {
+        if (percent > 0.2) {
             if (loadingView.getVisibility() != VISIBLE) {
                 loadingView.smoothToShow();
             }
-            loadingView.setScaleX(percent);
-            loadingView.setScaleY(percent);
+            if (percent < 1) {
+                loadingView.setScaleX(percent);
+                loadingView.setScaleY(percent);
+            }
         } else if (percent <= 0.2 && loadingView.getVisibility() == VISIBLE) {
             loadingView.smoothToHide();
         } else if (loadingView.getScaleX() != 1) {

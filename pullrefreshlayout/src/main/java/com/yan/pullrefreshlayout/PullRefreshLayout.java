@@ -1059,7 +1059,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            return event.getActionMasked() == MotionEvent.ACTION_DOWN || super.onTouchEvent(event);
+            return event.getActionMasked() == MotionEvent.ACTION_DOWN && !(targetView instanceof NestedScrollingChild)
+                    || super.onTouchEvent(event);
         }
     }
 }
