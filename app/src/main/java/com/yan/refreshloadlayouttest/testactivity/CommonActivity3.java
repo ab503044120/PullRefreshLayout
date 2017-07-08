@@ -80,7 +80,7 @@ public class CommonActivity3 extends Activity {
 //        refreshLayout.setRefreshBackTime(300);
 //        refreshLayout.setPullViewHeight(400);// 设置头部和底部的高度
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
-//        refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制
+//        refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));

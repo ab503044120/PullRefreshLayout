@@ -2,7 +2,6 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -65,9 +63,27 @@ public class NestedActivity extends AppCompatActivity {
 //        refreshLayout.setRefreshBackTime(300);
 //        refreshLayout.setPullViewHeight(400);// 设置头部和底部的高度
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
-//        refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制
+        refreshLayout.setRefreshTriggerDistance(200);
+        refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator"));
+        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator") {
+            @Override
+            protected int contentView() {
+                return R.layout.refresh_view_big;
+            }
+
+            @Override
+            public void onPullChange(float percent) {
+                super.onPullChange(percent);
+                if (percent > 1.2) {
+                    findViewById(R.id.loading_view).setScaleY(1 + (percent - 1.2f) * 1.25f);
+                    findViewById(R.id.title).setScaleY(1 + (percent - 1.2f) * 1.25f);
+                } else {
+                    findViewById(R.id.loading_view).setScaleY(1f);
+                    findViewById(R.id.title).setScaleY(1f);
+                }
+            }
+        });
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator"));
         refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_PLACEHOLDER);
 //        refreshLayout.setFooterShowGravity(RefreshShowHelper.STATE_PLACEHOLDER);

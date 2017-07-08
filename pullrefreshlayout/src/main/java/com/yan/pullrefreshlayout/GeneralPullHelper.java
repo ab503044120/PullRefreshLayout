@@ -80,9 +80,6 @@ class GeneralPullHelper {
     }
 
     boolean dispatchTouchEvent(MotionEvent ev) {
-        if (!pullRefreshLayout.canChildScrollDown() && !pullRefreshLayout.canChildScrollUp()) {
-            return false;
-        }
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 onTouchEvent(ev);

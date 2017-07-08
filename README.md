@@ -31,7 +31,6 @@ compile 'com.yan:pullrefreshlayout:~latest-version~'
     // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现 default 300
     refreshLayout.setRefreshBackTime(300);
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
-    refreshLayout.setPullFlowHeight(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
     refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true 
     refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
@@ -40,6 +39,10 @@ compile 'com.yan:pullrefreshlayout:~latest-version~'
     refreshLayout.setHeaderView(headerView);// 设置headerView
     refreshLayout.setFooterView(footerView);// 设置footerView
     
+    refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度
+    refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度
+    refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
+
     /**
     * 设置header或者footer的的出现方式,默认7种方式
     * STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW, STATE_PLACEHOLDER_CENTER
