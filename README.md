@@ -1,4 +1,4 @@
-# PullRefreshLayout
+# PullRefreshLayout[ ![Download](https://api.bintray.com/packages/genius158/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/genius158/maven/pullrefreshlayout/_latestVersion)
 #
 ![演示gif](gif/demo_gif.gif)
 
