@@ -7,6 +7,7 @@
 ，且实现无痕过度。
 
 ### gradle 
+compile 'com.yan:pullrefreshlayout:1.1.2'
 
 ## 2.说明  
 支持所有基础控件
