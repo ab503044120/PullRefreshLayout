@@ -1,4 +1,13 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'yan157'
+    groupId = 'com.yan'
+    artifactId = 'pullrefreshlayout'
+    publishVersion = '1.1.2'
+    website = 'https://github.com/genius158/RefreshLayout/'
+}
 
 android {
     compileSdkVersion 25
@@ -7,11 +16,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0.6"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        versionCode 8
+        versionName "1.1.2"
     }
     buildTypes {
         release {
@@ -22,12 +28,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:25.3.1'
 }
-//apply from: "https://raw.githubusercontent.com/xiaopansky/android-library-publish-to-jcenter/master/bintrayUpload.gradle"
