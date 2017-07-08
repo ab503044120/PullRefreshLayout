@@ -5,9 +5,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
-import java.util.Arrays;
-
-
 /**
  * support general view to pull refresh
  * Created by yan on 2017/6/29.
