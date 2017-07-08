@@ -117,10 +117,13 @@ public class RefreshShowHelper {
         return ratio;
     }
 
-    void setRefreshShowGravity(int headerShowGravity, int footerShowGravity) {
+    void setHeaderShowGravity(int headerShowGravity) {
         this.headerShowState = headerShowGravity;
-        this.footerShowState = footerShowGravity;
         dellRefreshHeaderShow();
+    }
+
+    void setFooterShowGravity(int footerShowGravity) {
+        this.footerShowState = footerShowGravity;
         dellRefreshFooterShow();
     }
 
