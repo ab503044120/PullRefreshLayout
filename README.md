@@ -14,7 +14,7 @@ compile 'com.yan:pullrefreshlayout:1.1.2'
 支持所有基础控件
 <br/>
 <br/>
-#### loading 出现效果默认6种(STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER、STATE_FOLLOW_CENTER、STATE_CENTER_FOLLOW)
+#### loading 出现效果默认(STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER、STATE_FOLLOW_CENTER、STATE_CENTER_FOLLOW)
 ![STATE_FOLLOW](gif/show_demo_1.gif)![STATE_PLACEHOLDER_FOLLOW](gif/show_demo_2.gif)
 ![STATE_PLACEHOLDER_CENTER](gif/show_demo_3.gif)![STATE_CENTER](gif/show_demo_4.gif)
 ![STATE_FOLLOW_CENTER](gif/show_demo_5.gif)![STATE_CENTER_FOLLOW](gif/show_demo_6.gif)
@@ -43,6 +43,7 @@ compile 'com.yan:pullrefreshlayout:1.1.2'
     * 设置header或者footer的的出现方式,默认6种方式
     * STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW, STATE_PLACEHOLDER_CENTER
     * , STATE_CENTER, STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
+    * ,STATE_PLACEHOLDER
     */
     refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER,RefreshShowHelper.STATE_CENTER);
     refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_CENTER)// header出现动画
