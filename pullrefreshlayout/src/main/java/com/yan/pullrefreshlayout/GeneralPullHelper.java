@@ -1,8 +1,11 @@
 package com.yan.pullrefreshlayout;
 
+import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+
+import java.util.Arrays;
 
 
 /**
@@ -17,7 +20,7 @@ class GeneralPullHelper {
     /**
      * last motion point y
      */
-    private float lastMotionPointY;
+    private int lastMotionPointY;
 
     /**
      * is last motion point y set
@@ -96,7 +99,7 @@ class GeneralPullHelper {
                         || (pullRefreshLayout.moveDistance != 0)) {
                     if (!isLastMotionPointYSet) {
                         isLastMotionPointYSet = true;
-                        lastMotionPointY = ev.getY();
+                        lastMotionPointY = (int) ev.getY();
                     }
                     onTouchEvent(ev);
                 }
@@ -140,17 +143,19 @@ class GeneralPullHelper {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 firstTouchEventId = event.getPointerId(0);
-                pullRefreshLayout.onStartNestedScroll(null, null, 0);
-                lastMotionPointY = event.getY();
+                pullRefreshLayout.onNestedScrollAccepted(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
+                pullRefreshLayout.startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                pullRefreshLayout.onStartNestedScroll(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
+                lastMotionPointY = (int) event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (firstTouchEventId != event.getPointerId(0)) {
-                    lastMotionPointY = event.getY();
+                    lastMotionPointY = (int) event.getY();
                     firstTouchEventId = event.getPointerId(0);
                 }
-                float tempPointX = event.getX();
-                float tempPointY = event.getY();
-                float tempOffsetY = tempPointY - lastMotionPointY;
+                int tempPointX = (int) event.getX();
+                int tempPointY = (int) event.getY();
+                int tempOffsetY = tempPointY - lastMotionPointY;
                 if (tempOffsetY > 0) {
                     isDragDown = true;
                 } else if (tempOffsetY < 0) {
@@ -158,14 +163,13 @@ class GeneralPullHelper {
                 }
                 if ((isDragDown && !pullRefreshLayout.canChildScrollUp())
                         || (!isDragDown && !pullRefreshLayout.canChildScrollDown())) {
-                    pullRefreshLayout.onNestedScroll(null, 0, 0, 0, -(int) tempOffsetY);
+                    pullRefreshLayout.onNestedScroll(null, 0, 0, 0, -tempOffsetY);
                 } else if (pullRefreshLayout.moveDistance > 0 && !isDragDown) {
-                    pullRefreshLayout.onNestedPreScroll(null, 0, -(int) tempOffsetY, consumed);
+                    pullRefreshLayout.onNestedPreScroll(null, 0, -tempOffsetY, consumed);
                 } else if (pullRefreshLayout.moveDistance < 0 && isDragDown) {
-                    pullRefreshLayout.onNestedPreScroll(null, 0, -(int) tempOffsetY, consumed);
+                    pullRefreshLayout.onNestedPreScroll(null, 0, -tempOffsetY, consumed);
                 }
                 lastMotionPointY = tempPointY;
-
                 event.setLocation(tempPointX + consumed[0], tempPointY + consumed[1]);
                 break;
             case MotionEvent.ACTION_UP:
@@ -173,9 +177,11 @@ class GeneralPullHelper {
                 consumed[0] = 0;
                 consumed[1] = 0;
                 if (isLastMotionPointYSet) {
-                    pullRefreshLayout.onNestedPreFling(null, 0, -velocityY);
+                    if (!pullRefreshLayout.dispatchNestedPreFling(0, -velocityY)) {
+                        pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, -velocityY);
+                    }
                 }
-                pullRefreshLayout.onStopNestedScroll(null);
+                pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
                 break;
         }
         return true;

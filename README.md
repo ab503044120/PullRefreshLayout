@@ -1,6 +1,7 @@
 # PullRefreshLayout[ ![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion)
 #
 ![演示gif](gif/demo_gif.gif)
+![演示gif](gif/demo_gif2.gif)
 
 ###### 首先吐槽一下现在流行的刷新库，一个字大，包涵个人很多集成到项目中不需要的类，也很难找到很满意的效果，所以自己自己动手丰衣足食，撸一个。
 ## 1.概述

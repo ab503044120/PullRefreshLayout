@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.view.NestedScrollingChild;
+import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
@@ -27,9 +28,13 @@ import android.widget.FrameLayout;
 /**
  * Created by yan on 2017/4/11.
  */
-public class PullRefreshLayout extends FrameLayout implements NestedScrollingParent {
+public class PullRefreshLayout extends FrameLayout implements NestedScrollingParent,
+        NestedScrollingChild {
+    private float mTotalUnconsumed;
     private NestedScrollingParentHelper parentHelper;
-
+    private NestedScrollingChildHelper childHelper;
+    private final int[] mParentScrollConsumed = new int[2];
+    private final int[] mParentOffsetInWindow = new int[2];
     /**
      * refresh header layout
      */
@@ -210,6 +215,9 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         refreshShowHelper = new RefreshShowHelper(this);
 
         parentHelper = new NestedScrollingParentHelper(this);
+        childHelper = new NestedScrollingChildHelper(this);
+        setNestedScrollingEnabled(true);
+
         headerHeight = dipToPx(context, headerHeight);
         footerHeight = dipToPx(context, footerHeight);
 
@@ -329,13 +337,21 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             scrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    onScroll((Integer) animation.getAnimatedValue() * overScrollDampingRatio);
+                    onNestedScroll(targetView, 0, 0, 0, (int) (-(Integer) animation.getAnimatedValue() * overScrollDampingRatio));
+//                    onScroll((Integer) animation.getAnimatedValue() * overScrollDampingRatio);
                 }
             });
             scrollAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    onNestedScrollAccepted(targetView, targetView, 2);
+                }
+
+                @Override
                 public void onAnimationEnd(Animator animation) {
                     handleAction();
+                    onStopNestedScroll(targetView);
                 }
             });
 //            scrollAnimation.setInterpolator(new DecelerateInterpolator(1f));
@@ -407,20 +423,18 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         headerViewLayout.layout(0, 0, getMeasuredWidth(), moveDistance);
-        footerViewLayout.layout(0, bottom + moveDistance, getMeasuredWidth(), bottom);
+        footerViewLayout.layout(0, getMeasuredHeight() + moveDistance, getMeasuredWidth(), getMeasuredHeight());
     }
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        isOverScrollTrigger = false;
-        cancelCurrentAnimation();
-        overScrollState = 0;
-        return true;
+        return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(View child, View target, int axes) {
         parentHelper.onNestedScrollAccepted(child, target, axes);
+        startNestedScroll(axes & ViewCompat.SCROLL_AXIS_VERTICAL);
     }
 
     /**
@@ -431,6 +445,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
+        stopNestedScroll();
     }
 
     /**
@@ -464,12 +479,21 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
             onScroll(-dy);
             consumed[1] += dy;
         }
+
+        final int[] parentConsumed = mParentScrollConsumed;
+        if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
+            consumed[0] += parentConsumed[0];
+            consumed[1] += parentConsumed[1];
+        }
     }
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        dyUnconsumed = (int) (dyUnconsumed * dragDampingRatio);
-        onScroll(-dyUnconsumed);
+        dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
+                mParentOffsetInWindow);
+        int dy = dyUnconsumed + mParentOffsetInWindow[1];
+        dy = (int) (dy * dragDampingRatio);
+        onScroll(-dy);
     }
 
     @Override
@@ -479,6 +503,10 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        boolean nestedPreFling = dispatchNestedPreFling(velocityX, velocityY);
+        if (nestedPreFling) {
+            return true;
+        }
         if (pullTwinkEnable || autoLoadingEnable) {
             currentVelocityY = velocityY;
             scroller.fling(0, 0, 0, (int) Math.abs(currentVelocityY), 0, 0, 0, Integer.MAX_VALUE);
@@ -490,7 +518,55 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        return false;
+        return dispatchNestedFling(velocityX, velocityY, consumed);
+    }
+
+    @Override
+    public void setNestedScrollingEnabled(boolean enabled) {
+        childHelper.setNestedScrollingEnabled(enabled);
+    }
+
+    @Override
+    public boolean isNestedScrollingEnabled() {
+        return childHelper.isNestedScrollingEnabled();
+    }
+
+    @Override
+    public boolean startNestedScroll(int axes) {
+        return childHelper.startNestedScroll(axes);
+    }
+
+    @Override
+    public void stopNestedScroll() {
+        childHelper.stopNestedScroll();
+    }
+
+    @Override
+    public boolean hasNestedScrollingParent() {
+        return childHelper.hasNestedScrollingParent();
+    }
+
+    @Override
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
+                                        int dyUnconsumed, int[] offsetInWindow) {
+        return childHelper.dispatchNestedScroll(dxConsumed, dyConsumed,
+                dxUnconsumed, dyUnconsumed, offsetInWindow);
+    }
+
+    @Override
+    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
+        return childHelper.dispatchNestedPreScroll(
+                dx, dy, consumed, offsetInWindow);
+    }
+
+    @Override
+    public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+        return childHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+    }
+
+    @Override
+    public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
+        return childHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
     @Override
@@ -519,6 +595,11 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            isOverScrollTrigger = false;
+            cancelCurrentAnimation();
+            overScrollState = 0;
+        }
         if (!(targetView instanceof NestedScrollingChild)) {
             actionEndHandleAction(ev);
             return !generalPullHelper.dispatchTouchEvent(ev) && super.dispatchTouchEvent(ev);
@@ -914,7 +995,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (currentAnimation != null && currentAnimation.isRunning()) {
             currentAnimation.cancel();
         }
-        if (scroller != null && scroller.computeScrollOffset()) {
+        if (scroller != null && !scroller.isFinished()) {
             scroller.abortAnimation();
         }
     }
