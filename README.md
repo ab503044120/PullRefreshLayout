@@ -9,7 +9,7 @@
 ，且实现无痕过度。
 
 ### gradle (改用bintray-release，2017-7-8 16:00上传，以下暂时不会生效)
-compile 'com.yan:pullrefreshlayout:<latest-version>'
+compile 'com.yan:pullrefreshlayout:~latest-version~'
 
 ## 2.说明  
 支持所有基础控件
