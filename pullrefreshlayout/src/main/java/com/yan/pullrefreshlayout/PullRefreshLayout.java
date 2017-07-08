@@ -873,7 +873,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         refreshState = 0;
         isResetTrigger = false;
         pullStateControl = true;
-
     }
 
     /**
@@ -927,7 +926,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         float ratio = Math.abs((float) moveDistance / (float) displayMetrics.heightPixels);
         return (long) (Math.pow(2000 * ratio, 0.5) * duringAdjustValue);
     }
-
 
     private float dipToPx(Context context, float value) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
