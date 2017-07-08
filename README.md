@@ -40,7 +40,7 @@ compile 'com.yan:pullrefreshlayout:1.1.2'
     refreshLayout.setFooterView(footerView);// 设置footerView
     
     /**
-    * 设置header或者footer的的出现方式,默认6种方式
+    * 设置header或者footer的的出现方式,默认7种方式
     * STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW, STATE_PLACEHOLDER_CENTER
     * , STATE_CENTER, STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
     * ,STATE_PLACEHOLDER
