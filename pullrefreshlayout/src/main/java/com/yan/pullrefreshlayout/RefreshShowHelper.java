@@ -21,6 +21,7 @@ public class RefreshShowHelper {
     @IntDef({STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW
             , STATE_PLACEHOLDER_CENTER, STATE_CENTER
             , STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
+            , STATE_PLACEHOLDER
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShowState {
@@ -31,6 +32,7 @@ public class RefreshShowHelper {
     public static final int STATE_PLACEHOLDER_CENTER = 2;
     public static final int STATE_CENTER_FOLLOW = 3;
     public static final int STATE_FOLLOW_CENTER = 4;
+    public static final int STATE_PLACEHOLDER = 5;
     public static final int STATE_CENTER = Gravity.CENTER_VERTICAL;
 
     private PullRefreshLayout pullRefreshLayout;
@@ -52,6 +54,9 @@ public class RefreshShowHelper {
         if (headerShowState == STATE_CENTER) {
             pullRefreshLayout.headerView.setLayoutParams(getLayoutParams(headerShowState));
         }
+        if (headerShowState == STATE_PLACEHOLDER) {
+            pullRefreshLayout.headerView.setLayoutParams(getLayoutParams(Gravity.TOP));
+        }
     }
 
     void dellRefreshFooterShow() {
@@ -63,6 +68,9 @@ public class RefreshShowHelper {
         }
         if (footerShowState == STATE_CENTER) {
             pullRefreshLayout.footerView.setLayoutParams(getLayoutParams(footerShowState));
+        }
+        if (footerShowState == STATE_PLACEHOLDER) {
+            pullRefreshLayout.footerView.setLayoutParams(getLayoutParams(Gravity.BOTTOM));
         }
     }
 
