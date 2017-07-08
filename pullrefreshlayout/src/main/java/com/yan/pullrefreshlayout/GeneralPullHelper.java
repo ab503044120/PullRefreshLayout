@@ -114,38 +114,6 @@ class GeneralPullHelper {
         return false;
     }
 
-    /**
-     * velocityTracker dell
-     *
-     * @param ev MotionEvent
-     */
-    private void initVelocityTracker(MotionEvent ev) {
-        if (velocityTracker == null) {
-            velocityTracker = VelocityTracker.obtain();
-        }
-        velocityTracker.addMovement(ev);
-    }
-
-    private void velocityTrackerCompute(MotionEvent ev) {
-        try {
-            velocityTracker.addMovement(ev);
-            velocityTracker.computeCurrentVelocity(1000);
-            velocityY = velocityTracker.getYVelocity();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void cancelVelocityTracker() {
-        try {
-            velocityTracker.clear();
-            velocityTracker.recycle();
-            velocityTracker = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     boolean onInterceptTouchEvent(MotionEvent ev) {
         if (pullRefreshLayout.moveDistance != 0) {
             return true;
@@ -213,13 +181,43 @@ class GeneralPullHelper {
         return true;
     }
 
+    /**
+     * velocityTracker dell
+     *
+     * @param ev MotionEvent
+     */
+    private void initVelocityTracker(MotionEvent ev) {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
+        }
+        velocityTracker.addMovement(ev);
+    }
+
+    private void velocityTrackerCompute(MotionEvent ev) {
+        try {
+            velocityTracker.addMovement(ev);
+            velocityTracker.computeCurrentVelocity(1000);
+            velocityY = velocityTracker.getYVelocity();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cancelVelocityTracker() {
+        try {
+            velocityTracker.clear();
+            velocityTracker.recycle();
+            velocityTracker = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     void autoRefreshDell() {
         movingPointY = 100;
         actionDownPointY = 0;
         movingPointX = 0;
         actionDownPointX = 0;
-
     }
 
 }
