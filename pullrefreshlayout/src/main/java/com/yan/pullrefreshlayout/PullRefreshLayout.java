@@ -340,7 +340,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     onNestedScroll(targetView, 0, 0, 0, (int) (-(Integer) animation.getAnimatedValue() * overScrollDampingRatio));
-//                    onScroll((Integer) animation.getAnimatedValue() * overScrollDampingRatio);
                 }
             });
             scrollAnimation.addListener(new AnimatorListenerAdapter() {
@@ -410,74 +409,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int count = getChildCount();
-
-        final boolean measureMatchParentChildren =
-                MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY ||
-                        MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
-        matchParentChildren.clear();
-
-        int maxHeight = 0;
-        int maxWidth = 0;
-        int childState = 0;
-
-        for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
-            if (child.getVisibility() != GONE) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-                maxWidth = Math.max(maxWidth,
-                        child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                maxHeight = Math.max(maxHeight,
-                        child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-                childState = combineMeasuredStates(childState, child.getMeasuredState());
-                if (measureMatchParentChildren) {
-                    if (lp.width == LayoutParams.MATCH_PARENT ||
-                            lp.height == LayoutParams.MATCH_PARENT) {
-                        matchParentChildren.add(child);
-                    }
-                }
-            }
-        }
-        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-
-        setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
-                resolveSizeAndState(maxHeight, heightMeasureSpec,
-                        childState << MEASURED_HEIGHT_STATE_SHIFT));
-
-        count = matchParentChildren.size();
-        if (count > 1) {
-            for (int i = 0; i < count; i++) {
-                final View child = matchParentChildren.get(i);
-                final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-
-                final int childWidthMeasureSpec;
-                if (lp.width == LayoutParams.MATCH_PARENT) {
-                    final int width = Math.max(0, getMeasuredWidth()
-                            - lp.leftMargin - lp.rightMargin);
-                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
-                            width, MeasureSpec.EXACTLY);
-                } else {
-                    childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                            lp.leftMargin + lp.rightMargin, lp.width);
-                }
-
-                final int childHeightMeasureSpec;
-                if (lp.height == LayoutParams.MATCH_PARENT) {
-                    final int height = Math.max(0, getMeasuredHeight()
-                            - lp.topMargin - lp.bottomMargin);
-                    childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                            height, MeasureSpec.EXACTLY);
-                } else {
-                    childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
-                            lp.topMargin + lp.bottomMargin, lp.height);
-                }
-
-                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
-            }
-        }
-
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        measureChildren(widthMeasureSpec, heightMeasureSpec);
         if (headerView != null && !isHeaderHeightSet) {
             headerView.measure(0, 0);
             refreshTriggerDistance = headerView.getMeasuredHeight();
