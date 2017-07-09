@@ -11,7 +11,6 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -427,6 +426,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         targetView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
         headerViewLayout.layout(0, 0, getMeasuredWidth(), moveDistance);
         footerViewLayout.layout(0, getMeasuredHeight() + moveDistance, getMeasuredWidth(), getMeasuredHeight());
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        cancelCurrentAnimation();
     }
 
     @Override
