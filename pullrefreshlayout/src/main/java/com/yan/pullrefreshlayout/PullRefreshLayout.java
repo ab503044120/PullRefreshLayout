@@ -11,6 +11,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -419,24 +420,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             footerViewLayout.measure(0, 0);
             loadTriggerDistance = footerView.getMeasuredHeight();
         }
-    }
-
-    @Override
-    public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new MarginLayoutParams(getContext(), attrs);
-    }
-
-    @Override
-    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        return p instanceof MarginLayoutParams;
-    }
-
-    @Override
-    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
-        if (lp instanceof MarginLayoutParams) {
-            return new MarginLayoutParams((MarginLayoutParams) lp);
-        }
-        return new MarginLayoutParams(lp);
     }
 
     @Override

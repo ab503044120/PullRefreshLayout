@@ -39,7 +39,6 @@ public class ScrollingActivity extends AppCompatActivity {
         }, 150);
     }
 
-
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
         refreshLayout.setLoadMoreEnable(true);
