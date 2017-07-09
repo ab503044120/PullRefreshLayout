@@ -1,7 +1,6 @@
 package com.yan.pullrefreshlayout;
 
-import android.support.v4.view.ViewCompat;
-import android.util.Log;
+import android.support.v4.view.MotionEventCompat;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
@@ -13,11 +12,6 @@ import android.view.VelocityTracker;
 class GeneralPullHelper {
     private static final String TAG = "GeneralPullHelper";
     private PullRefreshLayout pullRefreshLayout;
-
-    /**
-     * last motion point y
-     */
-    private int lastMotionPointY;
 
     /**
      * is last motion point y set
@@ -50,9 +44,24 @@ class GeneralPullHelper {
     private boolean isDragDown;
 
     /**
-     * motionEvent consumed
+     * motionEvent childConsumed
      */
-    private int[] consumed = new int[2];
+    private int[] childConsumed = new int[2];
+
+    /**
+     * motionEvent last Child Consumed Y
+     */
+    private int lastChildConsumedY;
+
+    /**
+     * active Pointer Id
+     */
+    private int activePointerId;
+
+    /**
+     * last Motion Y
+     */
+    private int lastMotionY;
 
     /**
      * dell the interceptTouchEvent
@@ -70,16 +79,12 @@ class GeneralPullHelper {
      */
     private float velocityY;
 
-    /**
-     * first touch event id , to dell the different finger touch event
-     */
-    private int firstTouchEventId;
-
     GeneralPullHelper(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
     }
 
-    boolean dispatchTouchEvent(MotionEvent ev) {
+    boolean dispatchTouchEvent(MotionEvent ev, MotionEvent[] finalMotionEvent) {
+        finalMotionEvent[0] = ev;
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 onTouchEvent(ev);
@@ -87,13 +92,14 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_MOVE:
                 velocityTrackerCompute(ev);
+
                 if (interceptTouchLastCount != interceptTouchCount) {
                     interceptTouchLastCount = interceptTouchCount;
                 } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
                         || (pullRefreshLayout.moveDistance != 0)) {
                     if (!isLastMotionPointYSet) {
                         isLastMotionPointYSet = true;
-                        lastMotionPointY = (int) ev.getY();
+                        lastMotionY = (int) ev.getY();
                     }
                     onTouchEvent(ev);
                 }
@@ -102,10 +108,10 @@ class GeneralPullHelper {
             case MotionEvent.ACTION_CANCEL:
                 onTouchEvent(ev);
                 cancelVelocityTracker();
+                isLastMotionPointYSet = false;
                 velocityY = 0;
                 interceptTouchLastCount = -1;
                 interceptTouchCount = 0;
-                isLastMotionPointYSet = false;
                 break;
         }
         return false;
@@ -129,55 +135,53 @@ class GeneralPullHelper {
             case MotionEvent.ACTION_CANCEL:
                 break;
         }
-
         return false;
     }
 
-    boolean onTouchEvent(MotionEvent event) {
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                firstTouchEventId = event.getPointerId(0);
-                pullRefreshLayout.onNestedScrollAccepted(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
-                pullRefreshLayout.startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
-                pullRefreshLayout.onStartNestedScroll(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
-                lastMotionPointY = (int) event.getY();
+    boolean onTouchEvent(MotionEvent ev) {
+        MotionEvent vtev = MotionEvent.obtain(ev);
+        final int actionMasked = MotionEventCompat.getActionMasked(ev);
+        switch (actionMasked) {
+            case MotionEvent.ACTION_DOWN: {
+                lastMotionY = (int) ev.getY();
+                activePointerId = ev.getPointerId(0);
                 break;
+            }
             case MotionEvent.ACTION_MOVE:
-                if (firstTouchEventId != event.getPointerId(0)) {
-                    lastMotionPointY = (int) event.getY();
-                    firstTouchEventId = event.getPointerId(0);
+                if (activePointerId != vtev.getPointerId(0)) {
+                    lastMotionY = (int) vtev.getY();
+                    activePointerId = vtev.getPointerId(0);
                 }
-                int tempPointX = (int) event.getX();
-                int tempPointY = (int) event.getY();
-                int tempOffsetY = tempPointY - lastMotionPointY;
-                if (tempOffsetY > 0) {
+                final int y = (int) ev.getY();
+                int deltaY = lastMotionY - y;
+                lastMotionY = y;
+                if (deltaY < 0) {
                     isDragDown = true;
-                } else if (tempOffsetY < 0) {
+                } else if (deltaY > 0) {
                     isDragDown = false;
                 }
                 if ((isDragDown && !pullRefreshLayout.canChildScrollUp())
                         || (!isDragDown && !pullRefreshLayout.canChildScrollDown())) {
-                    pullRefreshLayout.onNestedScroll(null, 0, 0, 0, -tempOffsetY);
-                } else if (pullRefreshLayout.moveDistance > 0 && !isDragDown) {
-                    pullRefreshLayout.onNestedPreScroll(null, 0, -tempOffsetY, consumed);
-                } else if (pullRefreshLayout.moveDistance < 0 && isDragDown) {
-                    pullRefreshLayout.onNestedPreScroll(null, 0, -tempOffsetY, consumed);
+                    pullRefreshLayout.onNestedScroll(null, 0, 0, 0, deltaY);
+                } else if ((pullRefreshLayout.moveDistance < 0 && isDragDown)
+                        || (pullRefreshLayout.moveDistance > 0 && !isDragDown)) {
+                    pullRefreshLayout.onNestedPreScroll(null, 0, deltaY, childConsumed);
+                    vtev.offsetLocation(0, childConsumed[1] - lastChildConsumedY);
+                    lastChildConsumedY = childConsumed[1];
                 }
-                lastMotionPointY = tempPointY;
-                event.setLocation(tempPointX + consumed[0], tempPointY + consumed[1]);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                consumed[0] = 0;
-                consumed[1] = 0;
                 if (isLastMotionPointYSet) {
                     if (!pullRefreshLayout.dispatchNestedPreFling(0, -velocityY)) {
                         pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, -velocityY);
                     }
                 }
                 pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
+                lastChildConsumedY = 0;
                 break;
         }
+        vtev.recycle();
         return true;
     }
 
@@ -219,5 +223,4 @@ class GeneralPullHelper {
         movingPointX = 0;
         actionDownPointX = 0;
     }
-
 }

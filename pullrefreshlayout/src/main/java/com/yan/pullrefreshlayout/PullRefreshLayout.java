@@ -24,25 +24,27 @@ import android.view.animation.Interpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
+import java.util.ArrayList;
+
 /**
  * Created by yan on 2017/4/11.
  */
-public class PullRefreshLayout extends FrameLayout implements NestedScrollingParent,
+public class PullRefreshLayout extends ViewGroup implements NestedScrollingParent,
         NestedScrollingChild {
-    private NestedScrollingParentHelper parentHelper;
-    private NestedScrollingChildHelper childHelper;
+    private final NestedScrollingParentHelper parentHelper;
+    private final NestedScrollingChildHelper childHelper;
     private final int[] parentScrollConsumed = new int[2];
     private final int[] parentOffsetInWindow = new int[2];
 
     /**
      * refresh header layout
      */
-    PullFrameLayout headerViewLayout;
+    final PullFrameLayout headerViewLayout;
 
     /**
      * refresh footer layout
      */
-    PullFrameLayout footerViewLayout;
+    final PullFrameLayout footerViewLayout;
 
     /**
      * refresh header
@@ -180,6 +182,12 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
      */
     private long refreshBackTime = 350;
 
+    private final ArrayList<View> matchParentChildren = new ArrayList<>(1);
+
+    private final RefreshShowHelper refreshShowHelper;
+
+    private GeneralPullHelper generalPullHelper;
+
     private OnRefreshListener onRefreshListener;
 
     private ValueAnimator currentAnimation;
@@ -188,23 +196,31 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     private ScrollerCompat scroller;
 
-    private GeneralPullHelper generalPullHelper;
-
-    private RefreshShowHelper refreshShowHelper;
-
     public PullRefreshLayout(Context context) {
-        super(context);
-        pullInit(context);
+        this(context, null, 0);
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        pullInit(context);
+        this(context, attrs, 0);
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        pullInit(context);
+        refreshShowHelper = new RefreshShowHelper(this);
+        parentHelper = new NestedScrollingParentHelper(this);
+        childHelper = new NestedScrollingChildHelper(this);
+        setNestedScrollingEnabled(true);
+
+        this.headerViewLayout = new PullFrameLayout(context);
+        this.footerViewLayout = new PullFrameLayout(context);
+
+        refreshTriggerDistance = dipToPx(context, refreshTriggerDistance);
+        loadTriggerDistance = dipToPx(context, loadTriggerDistance);
+
+        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT
+                , LayoutParams.WRAP_CONTENT);
+        addView(headerViewLayout, layoutParams);
+        addView(footerViewLayout, layoutParams);
     }
 
     @Override
@@ -217,26 +233,6 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         if (!(targetView instanceof NestedScrollingChild)) {
             generalPullHelper = new GeneralPullHelper(this);
         }
-    }
-
-    private void pullInit(Context context) {
-        refreshShowHelper = new RefreshShowHelper(this);
-
-        parentHelper = new NestedScrollingParentHelper(this);
-        childHelper = new NestedScrollingChildHelper(this);
-        setNestedScrollingEnabled(true);
-
-        refreshTriggerDistance = dipToPx(context, refreshTriggerDistance);
-        loadTriggerDistance = dipToPx(context, loadTriggerDistance);
-
-        headerViewLayout = new PullFrameLayout(getContext());
-        footerViewLayout = new PullFrameLayout(getContext());
-        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT
-                , LayoutParams.WRAP_CONTENT);
-        addView(headerViewLayout, layoutParams);
-        addView(footerViewLayout, layoutParams);
-        setHeaderView(headerView);
-        setFooterView(footerView);
     }
 
     private void readyScroller() {
@@ -416,7 +412,74 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int count = getChildCount();
+
+        final boolean measureMatchParentChildren =
+                MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY ||
+                        MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
+        matchParentChildren.clear();
+
+        int maxHeight = 0;
+        int maxWidth = 0;
+        int childState = 0;
+
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child.getVisibility() != GONE) {
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+                maxWidth = Math.max(maxWidth,
+                        child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+                maxHeight = Math.max(maxHeight,
+                        child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+                childState = combineMeasuredStates(childState, child.getMeasuredState());
+                if (measureMatchParentChildren) {
+                    if (lp.width == LayoutParams.MATCH_PARENT ||
+                            lp.height == LayoutParams.MATCH_PARENT) {
+                        matchParentChildren.add(child);
+                    }
+                }
+            }
+        }
+        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
+        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
+
+        setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
+                resolveSizeAndState(maxHeight, heightMeasureSpec,
+                        childState << MEASURED_HEIGHT_STATE_SHIFT));
+
+        count = matchParentChildren.size();
+        if (count > 1) {
+            for (int i = 0; i < count; i++) {
+                final View child = matchParentChildren.get(i);
+                final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+
+                final int childWidthMeasureSpec;
+                if (lp.width == LayoutParams.MATCH_PARENT) {
+                    final int width = Math.max(0, getMeasuredWidth()
+                            - lp.leftMargin - lp.rightMargin);
+                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
+                            width, MeasureSpec.EXACTLY);
+                } else {
+                    childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
+                            lp.leftMargin + lp.rightMargin, lp.width);
+                }
+
+                final int childHeightMeasureSpec;
+                if (lp.height == LayoutParams.MATCH_PARENT) {
+                    final int height = Math.max(0, getMeasuredHeight()
+                            - lp.topMargin - lp.bottomMargin);
+                    childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                            height, MeasureSpec.EXACTLY);
+                } else {
+                    childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
+                            lp.topMargin + lp.bottomMargin, lp.height);
+                }
+
+                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            }
+        }
+
         if (headerView != null && !isHeaderHeightSet) {
             headerView.measure(0, 0);
             refreshTriggerDistance = headerView.getMeasuredHeight();
@@ -428,8 +491,26 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
     }
 
     @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(), attrs);
+    }
+
+    @Override
+    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
+        return p instanceof MarginLayoutParams;
+    }
+
+    @Override
+    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+        if (lp instanceof MarginLayoutParams) {
+            return new MarginLayoutParams((MarginLayoutParams) lp);
+        }
+        return new MarginLayoutParams(lp);
+    }
+
+    @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+        targetView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
         headerViewLayout.layout(0, 0, getMeasuredWidth(), moveDistance);
         footerViewLayout.layout(0, getMeasuredHeight() + moveDistance, getMeasuredWidth(), getMeasuredHeight());
     }
@@ -602,6 +683,8 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
     }
 
+    MotionEvent[] finalMotionEvent = new MotionEvent[1];
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
@@ -611,7 +694,7 @@ public class PullRefreshLayout extends FrameLayout implements NestedScrollingPar
         }
         if (!(targetView instanceof NestedScrollingChild)) {
             actionEndHandleAction(ev);
-            return !generalPullHelper.dispatchTouchEvent(ev) && super.dispatchTouchEvent(ev);
+            return !generalPullHelper.dispatchTouchEvent(ev,finalMotionEvent ) && super.dispatchTouchEvent(finalMotionEvent[0]);
         }
         actionEndHandleAction(ev);
         return super.dispatchTouchEvent(ev);
