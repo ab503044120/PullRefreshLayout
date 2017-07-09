@@ -217,10 +217,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         refreshTriggerDistance = dipToPx(context, refreshTriggerDistance);
         loadTriggerDistance = dipToPx(context, loadTriggerDistance);
 
-        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT
-                , LayoutParams.WRAP_CONTENT);
-        addView(headerViewLayout, layoutParams);
-        addView(footerViewLayout, layoutParams);
+        addView(headerViewLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        addView(footerViewLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 
     @Override
@@ -694,7 +692,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         if (!(targetView instanceof NestedScrollingChild)) {
             actionEndHandleAction(ev);
-            return !generalPullHelper.dispatchTouchEvent(ev,finalMotionEvent ) && super.dispatchTouchEvent(finalMotionEvent[0]);
+            return !generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent) && super.dispatchTouchEvent(finalMotionEvent[0]);
         }
         actionEndHandleAction(ev);
         return super.dispatchTouchEvent(ev);
