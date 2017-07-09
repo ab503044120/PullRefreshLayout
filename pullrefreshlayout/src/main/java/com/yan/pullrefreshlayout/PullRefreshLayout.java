@@ -24,8 +24,6 @@ import android.view.animation.Interpolator;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
-import java.util.ArrayList;
-
 /**
  * Created by yan on 2017/4/11.
  */
@@ -181,8 +179,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * if the value equals -1, the field duringAdjustValue will be work
      */
     private long refreshBackTime = 350;
-
-    private final ArrayList<View> matchParentChildren = new ArrayList<>(1);
 
     private final RefreshShowHelper refreshShowHelper;
 
