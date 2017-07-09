@@ -8,8 +8,8 @@
 对所有基础控件(包括，嵌套滑动例如RecyclerView、NestedScrollView，普通的TextView、ListView、ScrollerView、LinearLayout等)提供下拉刷新、上拉加载的支持,处理了横向滑动冲突（例如:顶部banner的情况）
 ，且实现无痕过度。
 
-## gradle [ ![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion)
-compile 'com.yan:pullrefreshlayout:(↑)'
+## gradle  [ ![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) ↘
+compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 ## 2.说明  
 支持所有基础控件
