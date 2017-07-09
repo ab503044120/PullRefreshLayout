@@ -17,6 +17,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".testactivity.NestedActivity"
@@ -36,7 +37,11 @@
         <activity
             android:name=".testactivity.ScrollingActivity"
             android:label="@string/title_activity_scrolling"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".testactivity.TabActivity"
+            android:label="@string/title_activity_tab">
+        </activity>
     </application>
 
 </manifest>
