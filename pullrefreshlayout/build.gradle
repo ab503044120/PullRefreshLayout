@@ -5,7 +5,7 @@ publish {
     userOrg = 'yan157'
     groupId = 'com.yan'
     artifactId = 'pullrefreshlayout'
-    publishVersion = '1.1.9'
+    publishVersion = '1.2.0'
     website = 'https://github.com/genius158/RefreshLayout/'
 }
 
@@ -17,7 +17,7 @@ android {
         minSdkVersion 11
         targetSdkVersion 25
         versionCode 8
-        versionName "1.1.9"
+        versionName "1.2.0"
     }
     buildTypes {
         release {
