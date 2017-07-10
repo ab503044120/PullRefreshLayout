@@ -691,9 +691,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private boolean checkMoving(int distance) {
-        if (distance > 0 && moveDistance >= 0 && onPullAbleCheck != null && !onPullAbleCheck.onCheckPullDownAble()) {
+        if (((distance > 0 && moveDistance == 0) || moveDistance > 0)
+                && onPullAbleCheck != null && !onPullAbleCheck.onCheckPullDownAble()) {
             return true;
-        } else if (distance < 0 && moveDistance <= 0 && onPullAbleCheck != null && !onPullAbleCheck.onCheckPullUpAble()) {
+        } else if (((distance < 0 && moveDistance == 0) || moveDistance < 0)
+                && onPullAbleCheck != null && !onPullAbleCheck.onCheckPullUpAble()) {
             return true;
         }
         return false;
@@ -1048,16 +1050,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         this.targetView = targetView;
     }
 
-    public void setLoadMoreEnable(boolean mPullLoadEnable) {
-        this.pullLoadMoreEnable = mPullLoadEnable;
+    public void setLoadMoreEnable(boolean loadEnable) {
+        this.pullLoadMoreEnable = loadEnable;
     }
 
-    public void setRefreshEnable(boolean mPullRefreshEnable) {
-        this.pullRefreshEnable = mPullRefreshEnable;
+    public void setRefreshEnable(boolean refreshEnable) {
+        this.pullRefreshEnable = refreshEnable;
     }
 
-    public void setPullTwinkEnable(boolean pullTwinkEnable) {
-        this.pullTwinkEnable = pullTwinkEnable;
+    public void setTwinkEnable(boolean twinkEnable) {
+        this.pullTwinkEnable = twinkEnable;
     }
 
     public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
@@ -1136,8 +1138,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return pullRefreshEnable;
     }
 
+    public boolean isTwinkEnable() {
+        return pullTwinkEnable;
+    }
+
     public boolean isRefreshing() {
         return isRefreshing;
+    }
+
+    public boolean isLayoutMoving() {
+        return moveDistance != 0;
     }
 
     public interface OnPullListener {

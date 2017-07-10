@@ -49,7 +49,7 @@ public class ScrollingActivity2 extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setPullTwinkEnable(true);
+        refreshLayout.setTwinkEnable(true);
         refreshLayout.setLoadMoreEnable(true);
         refreshLayout.setTargetView(nestedScrollView);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator", Color.WHITE));
@@ -86,8 +86,7 @@ public class ScrollingActivity2 extends AppCompatActivity {
                 new PullRefreshLayout.OnPullAbleCheck() {
                     @Override
                     public boolean onCheckPullDownAble() {
-                        Log.e(TAG, "onCheckPullDownAble: "+verticalOffset);
-                        return verticalOffset >= 0;
+                        return verticalOffset >= 0 || (verticalOffset < 0 && refreshLayout.isLayoutMoving());
                     }
                 }
         );

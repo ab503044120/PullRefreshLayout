@@ -2,9 +2,12 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 
+import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
@@ -18,12 +21,36 @@ public class CommonActivity2 extends CommonActivity1 {
         super.initRefreshLayout();
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "BallScaleRippleMultipleIndicator"));
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER,RefreshShowHelper.STATE_CENTER);
+        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER, RefreshShowHelper.STATE_CENTER);
+        HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.hsv);
+        final boolean[] isTouch = {false};
+        horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                isTouch[0] = true;
 
+                if (event.getActionMasked() == MotionEvent.ACTION_UP||event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                    isTouch[0] = false;
+                }
+                return false;
+            }
+        });
+        refreshLayout.setOnPullAbleCheck(new PullRefreshLayout.OnPullAbleCheck() {
+            @Override
+            public boolean onCheckPullDownAble() {
+                return !isTouch[0];
+            }
+
+            @Override
+            public boolean onCheckPullUpAble() {
+                return !isTouch[0];
+            }
+        });
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        refreshLayout.setPullTwinkEnable(false);
+//        refreshLayout.setTwinkEnable(false);
     }
 }

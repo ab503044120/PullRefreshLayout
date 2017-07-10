@@ -32,12 +32,19 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setRefreshBackTime(300);
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
-    refreshLayout.setPullTwinkEnable(true);// 回弹是否可用 default true 
+    refreshLayout.setTwinkEnable(true);// 回弹是否可用 default true 
     refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
     refreshLayout.setHeaderView(headerView);// 设置headerView
     refreshLayout.setFooterView(footerView);// 设置footerView
+    
+    refreshLayout.isLayoutMoving();// 是否处于移动的过程中
+    refreshLayout.isRefreshing();// 是否处于刷新状态
+    
+    refreshLayout.isTwinkEnable();// 是否支持回弹
+    refreshLayout.isRefreshEnable();// 是否支持刷新
+    refreshLayout.isLoadMoreEnable();// 是否支持加载更多
     
     refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度
     refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度

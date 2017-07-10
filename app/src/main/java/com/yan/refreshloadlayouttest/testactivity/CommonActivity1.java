@@ -36,7 +36,7 @@ public class CommonActivity1 extends AppCompatActivity {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
 //        refreshLayout.setOverScrollDampingRatio(0.4f);
 //        refreshLayout.setAdjustTwinkDuring(2);
-//        refreshLayout.setPullTwinkEnable(false);
+//        refreshLayout.setTwinkEnable(false);
         refreshLayout.setLoadMoreEnable(true);
         refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_PLACEHOLDER_FOLLOW,RefreshShowHelper.STATE_PLACEHOLDER_FOLLOW);
 //        refreshLayout.setRefreshEnable(false);

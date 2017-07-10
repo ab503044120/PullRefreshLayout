@@ -2,6 +2,7 @@ package com.yan.pullrefreshlayout;
 
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
@@ -217,12 +218,13 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-
                 if (isLastMotionPointYSet) {
                     flingWithNestedDispatch(-(int) velocityY);
                 }
                 pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
                 activePointerId = -1;
+                childConsumed[0] = 0;
+                childConsumed[1] = 0;
                 lastChildConsumedY = 0;
                 scrollOffset[1] = 0;
                 break;
