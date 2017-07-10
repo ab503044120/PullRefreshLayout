@@ -24,6 +24,7 @@ public class HeaderOrFooter extends PullRefreshView {
 
     public HeaderOrFooter(Context context, String animationName) {
         super(context);
+        color = ContextCompat.getColor(context, R.color.colorPrimary);
         this.animationName = animationName;
         loadingView.setIndicator(animationName);
     }
@@ -34,7 +35,7 @@ public class HeaderOrFooter extends PullRefreshView {
         loadingView.setIndicator(animationName);
         loadingView.setIndicatorColor(color);
         tv.setTextColor(color);
-        setBackgroundColor(ContextCompat.getColor(getContext(),R.color.colorPrimary));
+        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
     }
 
     @Override

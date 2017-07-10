@@ -54,7 +54,7 @@ public class ScrollingActivity2 extends AppCompatActivity {
         refreshLayout.setTargetView(nestedScrollView);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator", Color.WHITE));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator", Color.WHITE));
-        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListenerAdapter() {
             @Override
             public void onRefresh() {
                 Log.e(TAG, "refreshLayout onRefresh: ");
@@ -83,7 +83,7 @@ public class ScrollingActivity2 extends AppCompatActivity {
             }
         });
         refreshLayout.setOnPullAbleCheck(
-                new PullRefreshLayout.OnPullAbleCheck() {
+                new PullRefreshLayout.OnPullAbleCheckAdapter() {
                     @Override
                     public boolean onCheckPullDownAble() {
                         return verticalOffset >= 0 || (verticalOffset < 0 && refreshLayout.isLayoutMoving());

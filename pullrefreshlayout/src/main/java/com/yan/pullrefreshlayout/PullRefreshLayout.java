@@ -14,7 +14,6 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -84,6 +83,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * drag move distance
      */
     volatile int moveDistance = 0;
+
+    /**
+     * final motion event
+     */
+    private MotionEvent[] finalMotionEvent = new MotionEvent[1];
 
     /**
      * header height
@@ -216,8 +220,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         refreshTriggerDistance = dipToPx(context, refreshTriggerDistance);
         loadTriggerDistance = dipToPx(context, loadTriggerDistance);
 
-        addView(headerViewLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        addView(footerViewLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        addView(headerViewLayout, new LayoutParams(-1, -2));
+        addView(footerViewLayout, new LayoutParams(-1, -2));
     }
 
     @Override
@@ -413,18 +417,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         measureChildren(widthMeasureSpec, heightMeasureSpec);
         if (headerView != null && !isHeaderHeightSet) {
-            headerView.measure(0, 0);
+            headerView.measure(widthMeasureSpec, 0);
             refreshTriggerDistance = headerView.getMeasuredHeight();
         }
         if (footerView != null && !isFooterHeightSet) {
-            footerViewLayout.measure(0, 0);
+            footerView.measure(widthMeasureSpec, 0);
             loadTriggerDistance = footerView.getMeasuredHeight();
         }
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        getChildAt(2).layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        getPullContentView().layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
         headerViewLayout.layout(0, 0, getMeasuredWidth(), moveDistance);
         footerViewLayout.layout(0, getMeasuredHeight() + moveDistance, getMeasuredWidth(), getMeasuredHeight());
     }
@@ -597,7 +601,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    MotionEvent[] finalMotionEvent = new MotionEvent[1];
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -726,11 +729,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param distance
      */
     private void dellRefreshViewCenter(float distance) {
-        ViewGroup.LayoutParams headerLayoutParams = headerViewLayout.getLayoutParams();
+        LayoutParams headerLayoutParams = headerViewLayout.getLayoutParams();
         headerLayoutParams.height = (int) distance;
         headerViewLayout.setLayoutParams(headerLayoutParams);
 
-        ViewGroup.LayoutParams footerLayoutParams = footerViewLayout.getLayoutParams();
+        LayoutParams footerLayoutParams = footerViewLayout.getLayoutParams();
         footerLayoutParams.height = (int) distance;
         footerViewLayout.setLayoutParams(footerLayoutParams);
     }
@@ -1165,7 +1168,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     }
 
-    public static class OnPullAbleCheck {
+    public interface OnPullAbleCheck {
+        boolean onCheckPullDownAble();
+
+        boolean onCheckPullUpAble();
+    }
+
+    public static class OnPullAbleCheckAdapter implements OnPullAbleCheck {
         public boolean onCheckPullDownAble() {
             return true;
         }
@@ -1175,7 +1184,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    public static class OnRefreshListener {
+    public interface OnRefreshListener {
+        void onRefresh();
+
+        void onLoading();
+    }
+
+    public static class OnRefreshListenerAdapter implements OnRefreshListener {
         public void onRefresh() {
         }
 
