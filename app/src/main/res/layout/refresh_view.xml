@@ -10,7 +10,6 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="110dp"
-        app:indicatorColor="@color/colorPrimary"
         app:indicatorName="BallClipRotatePulseIndicator" />
 
     <TextView

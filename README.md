@@ -43,6 +43,18 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度
     refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
 
+    refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断效果 见 BEHAIVOR2
+   
+    refreshLayout.refreshLayout.setOnPullAbleCheck(OnPullAbleCheck);// 设置滑动判定 见 BEHAIVOR2
+    public static class OnPullAbleCheck {
+        public boolean onCheckPullDownAble() {// 检查是否可以下拉
+            return true;
+        }
+        public boolean onCheckPullUpAble() {// 检查是否可以上拉
+            return true;
+        }
+    }
+    
     /**
     * 设置header或者footer的的出现方式,默认7种方式
     * STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW, STATE_PLACEHOLDER_CENTER

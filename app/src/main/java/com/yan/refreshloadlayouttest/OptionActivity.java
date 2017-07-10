@@ -12,6 +12,7 @@ import com.yan.refreshloadlayouttest.testactivity.CommonActivity3;
 import com.yan.refreshloadlayouttest.testactivity.CommonActivity4;
 import com.yan.refreshloadlayouttest.testactivity.NestedActivity;
 import com.yan.refreshloadlayouttest.testactivity.ScrollingActivity;
+import com.yan.refreshloadlayouttest.testactivity.ScrollingActivity2;
 
 public class OptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,11 @@ public class OptionActivity extends AppCompatActivity {
                         case 4:
                             startActivity(new Intent(getBaseContext(), CommonActivity4.class));
                             break;
-                       case 5:
+                        case 5:
                             startActivity(new Intent(getBaseContext(), ScrollingActivity.class));
+                            break;
+                        case 6:
+                            startActivity(new Intent(getBaseContext(), ScrollingActivity2.class));
                             break;
                     }
                 }

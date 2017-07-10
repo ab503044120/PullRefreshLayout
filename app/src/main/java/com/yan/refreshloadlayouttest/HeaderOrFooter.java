@@ -1,6 +1,7 @@
 package com.yan.refreshloadlayouttest;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,11 +20,21 @@ public class HeaderOrFooter extends PullRefreshView {
     private String animationName;
 
     private boolean isStateFinish;
+    private int color;
 
     public HeaderOrFooter(Context context, String animationName) {
         super(context);
         this.animationName = animationName;
         loadingView.setIndicator(animationName);
+    }
+
+    public HeaderOrFooter(Context context, String animationName, int color) {
+        super(context);
+        this.color = color;
+        loadingView.setIndicator(animationName);
+        loadingView.setIndicatorColor(color);
+        tv.setTextColor(color);
+        setBackgroundColor(ContextCompat.getColor(getContext(),R.color.colorPrimary));
     }
 
     @Override
@@ -34,6 +45,7 @@ public class HeaderOrFooter extends PullRefreshView {
     @Override
     protected void initView() {
         tv = (TextView) findViewById(R.id.title);
+
         loadingView = (AVLoadingIndicatorView) findViewById(R.id.loading_view);
         if (!TextUtils.isEmpty(animationName)) {
             loadingView.setIndicator(animationName);
