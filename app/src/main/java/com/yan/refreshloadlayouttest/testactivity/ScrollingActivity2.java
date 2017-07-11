@@ -9,6 +9,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -49,7 +50,7 @@ public class ScrollingActivity2 extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setTwinkEnable(true);
+        refreshLayout.setTwinkEnable(false);
         refreshLayout.setLoadMoreEnable(true);
         refreshLayout.setTargetView(nestedScrollView);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator", Color.WHITE));
@@ -86,7 +87,12 @@ public class ScrollingActivity2 extends AppCompatActivity {
                 new PullRefreshLayout.OnPullAbleCheckAdapter() {
                     @Override
                     public boolean onCheckPullDownAble() {
-                        return verticalOffset >= 0 || (verticalOffset < 0 && refreshLayout.isLayoutMoving());
+                        return verticalOffset == 0 || refreshLayout.isLayoutMoving();
+                    }
+
+                    @Override
+                    public boolean onCheckPullUpAble() {
+                        return verticalOffset==-appBarLayout.getTotalScrollRange();
                     }
                 }
         );

@@ -27,6 +27,7 @@ public class HeaderOrFooter extends PullRefreshView {
         color = ContextCompat.getColor(context, R.color.colorPrimary);
         this.animationName = animationName;
         loadingView.setIndicator(animationName);
+        loadingView.setIndicatorColor(color);
     }
 
     public HeaderOrFooter(Context context, String animationName, int color) {

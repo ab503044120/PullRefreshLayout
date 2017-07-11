@@ -1,6 +1,7 @@
 package com.yan.pullrefreshlayout;
 
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -42,7 +43,11 @@ class GeneralPullHelper {
     /**
      * is touch direct down
      */
-    private boolean isDragDown;
+    int isDragDown;
+    /**
+     * is touch final direct down
+     */
+    private boolean isConsumedDragDown;
 
     /**
      * motionEvent childConsumed
@@ -61,9 +66,14 @@ class GeneralPullHelper {
     private int nestedYOffset;
 
     /**
-     * last notion y
+     * last motion y
      */
     private int lastMotionY;
+
+    /**
+     * last motion y
+     */
+    private float lastTouchY;
 
     /**
      * scroll Consumed Offset
@@ -90,6 +100,24 @@ class GeneralPullHelper {
 
     GeneralPullHelper(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
+    }
+
+    void dellDirection(MotionEvent event) {
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            lastTouchY = event.getY();
+            return;
+        }
+        if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
+            float tempY = event.getY();
+            if (tempY - lastTouchY > 0) {
+                isDragDown = 1;
+            } else if (tempY - lastTouchY < 0) {
+                isDragDown = -1;
+            }
+            lastTouchY = tempY;
+        } else if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+            isDragDown = 0;
+        }
     }
 
     boolean dispatchTouchEvent(MotionEvent ev, MotionEvent[] finalMotionEvent) {
@@ -172,24 +200,21 @@ class GeneralPullHelper {
 
                 final int y = (int) ev.getY();
                 int deltaY = lastMotionY - y;
-
                 if (pullRefreshLayout.dispatchNestedPreScroll(0, deltaY, scrollConsumed, scrollOffset)) {
                     deltaY -= scrollConsumed[1];
                     vtev.offsetLocation(0, scrollOffset[1]);
                     nestedYOffset += scrollOffset[1];
                 }
-
                 lastMotionY = y - scrollOffset[1];
                 final int oldY = pullRefreshLayout.targetView.getScrollY();
 
                 if (deltaY < 0) {
-                    isDragDown = true;
+                    isConsumedDragDown = true;
                 } else if (deltaY > 0) {
-                    isDragDown = false;
+                    isConsumedDragDown = false;
                 }
-
-                if ((pullRefreshLayout.moveDistance < 0 && isDragDown)
-                        || (pullRefreshLayout.moveDistance > 0 && !isDragDown)) {
+                if ((pullRefreshLayout.moveDistance < 0 && isConsumedDragDown)
+                        || (pullRefreshLayout.moveDistance > 0 && !isConsumedDragDown)) {
                     pullRefreshLayout.onNestedPreScroll(null, 0, deltaY, childConsumed);
                     vtev.offsetLocation(0, childConsumed[1] - lastChildConsumedY);
                     lastChildConsumedY = childConsumed[1];
@@ -201,16 +226,16 @@ class GeneralPullHelper {
 
                 if (pullRefreshLayout.dispatchNestedScroll(0, 0
                         , (pullRefreshLayout.canChildScrollUp() && pullRefreshLayout.canChildScrollDown() && pullRefreshLayout.moveDistance == 0 ? deltaY : 0)
-                        , ((isDragDown && !pullRefreshLayout.canChildScrollUp())
-                                || (!isDragDown && !pullRefreshLayout.canChildScrollDown())) ? unconsumedY : 0
+                        , ((isConsumedDragDown && !pullRefreshLayout.canChildScrollUp())
+                                || (!isConsumedDragDown && !pullRefreshLayout.canChildScrollDown())) ? unconsumedY : 0
                         , scrollOffset)) {
                     lastMotionY -= scrollOffset[1];
                     vtev.offsetLocation(0, scrollOffset[1]);
                     nestedYOffset += scrollOffset[1];
 
                 }
-                if ((isDragDown && !pullRefreshLayout.canChildScrollUp())
-                        || (!isDragDown && !pullRefreshLayout.canChildScrollDown())) {
+                if ((isConsumedDragDown && !pullRefreshLayout.canChildScrollUp())
+                        || (!isConsumedDragDown && !pullRefreshLayout.canChildScrollDown())) {
                     pullRefreshLayout.onNestedScroll(null, 0, 0, 0, scrollOffset[1] == 0 ? deltaY : 0);
                 }
 
@@ -278,4 +303,5 @@ class GeneralPullHelper {
             pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, velocityY);
         }
     }
+
 }
