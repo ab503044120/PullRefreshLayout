@@ -14,7 +14,6 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -1155,11 +1154,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public boolean isDragDown() {
-        return generalPullHelper.isDragDown == 1;
+        return generalPullHelper.dragState == 1;
     }
 
     public boolean isDragUp() {
-        return generalPullHelper.isDragDown == -1;
+        return generalPullHelper.dragState == -1;
     }
 
     public boolean isMovingDirectDown() {

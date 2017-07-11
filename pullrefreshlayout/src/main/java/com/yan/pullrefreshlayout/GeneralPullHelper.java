@@ -1,7 +1,6 @@
 package com.yan.pullrefreshlayout;
 
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -53,7 +52,7 @@ class GeneralPullHelper {
     /**
      * is touch direct down
      */
-    int isDragDown;
+    int dragState;
     /**
      * motion event child consumed
      */
@@ -114,15 +113,15 @@ class GeneralPullHelper {
         if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
             float tempY = event.getY();
             if (tempY - lastTouchY > 0) {
-                isDragDown = 1;
+                dragState = 1;
                 isMovingDirectDown = true;
             } else if (tempY - lastTouchY < 0) {
-                isDragDown = -1;
+                dragState = -1;
                 isMovingDirectDown = false;
             }
             lastTouchY = tempY;
         } else if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
-            isDragDown = 0;
+            dragState = 0;
         }
     }
 
