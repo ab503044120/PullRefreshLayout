@@ -35,14 +35,14 @@ public class CommonActivity2 extends CommonActivity1 {
                 return false;
             }
         });
-        refreshLayout.setOnPullAbleCheck(new PullRefreshLayout.OnPullAbleCheck() {
+        refreshLayout.setOnDragIntercept(new PullRefreshLayout.OnDragIntercept() {
             @Override
-            public boolean onCheckPullDownAble() {
+            public boolean onDragDownIntercept() {
                 return !isTouch[0];
             }
 
             @Override
-            public boolean onCheckPullUpAble() {
+            public boolean onDragUpIntercept() {
                 return !isTouch[0];
             }
         });

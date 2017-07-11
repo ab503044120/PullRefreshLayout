@@ -9,7 +9,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -83,16 +82,17 @@ public class ScrollingActivity2 extends AppCompatActivity {
                 ScrollingActivity2.this.verticalOffset = verticalOffset;
             }
         });
-        refreshLayout.setOnPullAbleCheck(
-                new PullRefreshLayout.OnPullAbleCheckAdapter() {
+        refreshLayout.setOnDragIntercept(
+                new PullRefreshLayout.OnDragInterceptAdapter() {
+
                     @Override
-                    public boolean onCheckPullDownAble() {
-                        return verticalOffset == 0;
+                    public boolean onDragDownIntercept() {
+                        return !refreshLayout.isMovingDirectDown() || verticalOffset == 0;
                     }
 
                     @Override
-                    public boolean onCheckPullUpAble() {
-                        return verticalOffset == -appBarLayout.getTotalScrollRange();
+                    public boolean onDragUpIntercept() {
+                        return refreshLayout.isMovingDirectDown() || verticalOffset == -appBarLayout.getTotalScrollRange();
                     }
                 }
         );

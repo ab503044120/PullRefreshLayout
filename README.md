@@ -57,13 +57,13 @@ compile 'com.yan:pullrefreshlayout:(↖)'
 
     refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断效果 见 BEHAIVOR2
    
-    refreshLayout.refreshLayout.setOnPullAbleCheck(OnPullAbleCheck);// 设置滑动判定 见 BEHAIVOR2
-    public static class OnPullAbleCheck {
-        public boolean onCheckPullDownAble() {// 检查是否可以下拉
-            return true;
+    refreshLayout.setOnDragIntercept(PullRefreshLayout.OnDragIntercept);// 设置滑动判定 见 BEHAIVOR2
+    public static class OnDragIntercept {
+        public boolean onDragDownIntercept() {// 检查是否可以下拉
+            return true;// true将拦截子view的滑动
         }
-        public boolean onCheckPullUpAble() {// 检查是否可以上拉
-            return true;
+        public boolean onDragUpIntercept() {// 检查是否可以上拉
+            return true;// true将拦截子view的滑动
         }
     }
     
