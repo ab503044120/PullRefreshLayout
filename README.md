@@ -26,12 +26,12 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setOverScrollDampingRatio(0.2f);//  值越大overscroll越短 default 0.2
     refreshLayout.setAdjustTwinkDuring(3);// 值越大overscroll越慢 default 3
     refreshLayout.setScrollInterpolator(interpolator);// 设置scroller的插值器
-    refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢 default 10f
     // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现 default 300
     refreshLayout.setRefreshBackTime(300);
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
+    refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setTwinkEnable(true);// 回弹是否可用 default true 
     refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
     
@@ -42,9 +42,14 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.isLayoutMoving();// 是否处于移动的过程中
     refreshLayout.isRefreshing();// 是否处于刷新状态
     
-    refreshLayout.isTwinkEnable();// 是否支持回弹
-    refreshLayout.isRefreshEnable();// 是否支持刷新
-    refreshLayout.isLoadMoreEnable();// 是否支持加载更多
+    refreshLayout.isTwinkEnable();// 是否开启回弹
+    refreshLayout.isRefreshEnable();// 是否开启刷新
+    refreshLayout.isLoadMoreEnable();// 是否开启加载更多
+    
+    refreshLayout.isMovingDirectDown();// 是否处于向下移动的趋势
+    
+    refreshLayout.isDragUp();// 是否正在向上拖拽
+    refreshLayout.isDragDown();// 是否正在向下拖拽
     
     refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度
     refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度

@@ -87,18 +87,12 @@ public class ScrollingActivity2 extends AppCompatActivity {
                 new PullRefreshLayout.OnPullAbleCheckAdapter() {
                     @Override
                     public boolean onCheckPullDownAble() {
-                        if (refreshLayout.isMovingDirectDown()){
-                            return (verticalOffset == 0 );
-                        }
-                        return false;
+                        return verticalOffset == 0;
                     }
 
                     @Override
                     public boolean onCheckPullUpAble() {
-                        if (!refreshLayout.isMovingDirectDown()) {
-                            return verticalOffset == -appBarLayout.getTotalScrollRange();
-                        }
-                        return false;
+                        return verticalOffset == -appBarLayout.getTotalScrollRange();
                     }
                 }
         );
