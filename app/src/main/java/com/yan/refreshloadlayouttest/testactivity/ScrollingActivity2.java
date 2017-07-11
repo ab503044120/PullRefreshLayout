@@ -84,14 +84,13 @@ public class ScrollingActivity2 extends AppCompatActivity {
         });
         refreshLayout.setOnDragIntercept(
                 new PullRefreshLayout.OnDragInterceptAdapter() {
-
                     @Override
-                    public boolean onDragDownIntercept() {
+                    public boolean onHeaderDownIntercept() {
                         return !refreshLayout.isMovingDirectDown() || verticalOffset == 0;
                     }
 
                     @Override
-                    public boolean onDragUpIntercept() {
+                    public boolean onFooterUpIntercept() {
                         return refreshLayout.isMovingDirectDown() || verticalOffset == -appBarLayout.getTotalScrollRange();
                     }
                 }

@@ -695,10 +695,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private boolean checkMoving(float distanceY) {
         if (((distanceY > 0 && moveDistance == 0) || moveDistance > 0)
-                && onDragIntercept != null && !onDragIntercept.onDragDownIntercept()) {
+                && onDragIntercept != null && !onDragIntercept.onHeaderDownIntercept()) {
             return true;
         } else if (((distanceY < 0 && moveDistance == 0) || moveDistance < 0)
-                && onDragIntercept != null && !onDragIntercept.onDragUpIntercept()) {
+                && onDragIntercept != null && !onDragIntercept.onFooterUpIntercept()) {
             return true;
         }
         return false;
@@ -1181,17 +1181,17 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public interface OnDragIntercept {
-        boolean onDragDownIntercept();
+        boolean onHeaderDownIntercept();
 
-        boolean onDragUpIntercept();
+        boolean onFooterUpIntercept();
     }
 
     public static class OnDragInterceptAdapter implements OnDragIntercept {
-        public boolean onDragDownIntercept() {
+        public boolean onHeaderDownIntercept() {
             return true;
         }
 
-        public boolean onDragUpIntercept() {
+        public boolean onFooterUpIntercept() {
             return true;
         }
     }

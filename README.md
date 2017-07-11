@@ -59,10 +59,10 @@ compile 'com.yan:pullrefreshlayout:(↖)'
    
     refreshLayout.setOnDragIntercept(PullRefreshLayout.OnDragIntercept);// 设置滑动判定 见 BEHAIVOR2
     public static class OnDragIntercept {
-        public boolean onDragDownIntercept() {// 检查是否可以下拉
+        public boolean onHeaderDownIntercept() {// header下拉之前的拦截事件
             return true;// true将拦截子view的滑动
         }
-        public boolean onDragUpIntercept() {// 检查是否可以上拉
+        public boolean onFooterUpIntercept() {// footer上拉之前的拦截事件
             return true;// true将拦截子view的滑动
         }
     }

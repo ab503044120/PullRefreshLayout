@@ -37,14 +37,16 @@ public class CommonActivity2 extends CommonActivity1 {
         });
         refreshLayout.setOnDragIntercept(new PullRefreshLayout.OnDragIntercept() {
             @Override
-            public boolean onDragDownIntercept() {
+            public boolean onHeaderDownIntercept() {
                 return !isTouch[0];
             }
 
             @Override
-            public boolean onDragUpIntercept() {
+            public boolean onFooterUpIntercept() {
                 return !isTouch[0];
+
             }
+
         });
     }
 
