@@ -624,7 +624,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param distanceY move distance of Y
      */
     private void onScroll(float distanceY) {
-        if (checkMoving((int) distanceY)) {
+        if (checkMoving()) {
             return;
         }
         if (pullLimitDistance != -1) {
@@ -694,12 +694,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    private boolean checkMoving(int distance) {
-        if (((distance > 0 && moveDistance == 0) || moveDistance > 0)
-                && onPullAbleCheck != null && !onPullAbleCheck.onCheckPullDownAble()) {
+    private boolean checkMoving() {
+        if (moveDistance > 0 && onPullAbleCheck != null
+                && !onPullAbleCheck.onCheckPullDownAble() && isMovingDirectDown()) {
             return true;
-        } else if (((distance < 0 && moveDistance == 0) || moveDistance < 0)
-                && onPullAbleCheck != null && !onPullAbleCheck.onCheckPullUpAble()) {
+        } else if (moveDistance < 0 && onPullAbleCheck != null
+                && !onPullAbleCheck.onCheckPullUpAble() && !isMovingDirectDown()) {
             return true;
         }
         return false;
@@ -1160,6 +1160,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     public boolean isDragUp() {
         return generalPullHelper.isDragDown == -1;
+    }
+
+    public boolean isMovingDirectDown() {
+        return generalPullHelper.isMovingDirectDown;
     }
 
     public interface OnPullListener {

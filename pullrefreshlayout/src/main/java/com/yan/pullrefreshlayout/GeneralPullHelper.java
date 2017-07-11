@@ -21,6 +21,16 @@ class GeneralPullHelper {
     private boolean isLastMotionPointYSet;
 
     /**
+     * is touch final direct down
+     */
+    private boolean isConsumedDragDown;
+
+    /**
+     * is moving direct down
+     */
+     boolean isMovingDirectDown;
+
+    /**
      * first touch point x
      */
     private float actionDownPointX;
@@ -44,11 +54,6 @@ class GeneralPullHelper {
      * is touch direct down
      */
     int isDragDown;
-    /**
-     * is touch final direct down
-     */
-    private boolean isConsumedDragDown;
-
     /**
      * motionEvent childConsumed
      */
@@ -111,8 +116,10 @@ class GeneralPullHelper {
             float tempY = event.getY();
             if (tempY - lastTouchY > 0) {
                 isDragDown = 1;
+                isMovingDirectDown = true;
             } else if (tempY - lastTouchY < 0) {
                 isDragDown = -1;
+                isMovingDirectDown = false;
             }
             lastTouchY = tempY;
         } else if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
