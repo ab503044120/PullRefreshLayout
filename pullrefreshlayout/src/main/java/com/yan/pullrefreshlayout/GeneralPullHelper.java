@@ -22,7 +22,7 @@ class GeneralPullHelper {
     /**
      * is last motion point y set
      */
-    private boolean isLastMotionPointYSet;
+    private boolean isLastMotionYSet;
 
     /**
      * is touch final direct down
@@ -139,8 +139,8 @@ class GeneralPullHelper {
                     interceptTouchLastCount = interceptTouchCount;
                 } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
                         || (pullRefreshLayout.moveDistance != 0)) {
-                    if (!isLastMotionPointYSet) {
-                        isLastMotionPointYSet = true;
+                    if (!isLastMotionYSet) {
+                        isLastMotionYSet = true;
                         lastMotionY = (int) ev.getY();
                     }
                     onTouchEvent(ev);
@@ -153,7 +153,7 @@ class GeneralPullHelper {
                 velocityY = 0;
                 interceptTouchLastCount = -1;
                 interceptTouchCount = 0;
-                isLastMotionPointYSet = false;
+                isLastMotionYSet = false;
                 break;
         }
         return false;
@@ -247,7 +247,7 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isLastMotionPointYSet) {
+                if (isLastMotionYSet) {
                     flingWithNestedDispatch(-(int) velocityY);
                 }
                 pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
