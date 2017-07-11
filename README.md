@@ -30,7 +30,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现 default 300
     refreshLayout.setRefreshBackTime(300);
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
-    refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default false
+    refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default true
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setTwinkEnable(true);// 回弹是否可用 default true 
     refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
