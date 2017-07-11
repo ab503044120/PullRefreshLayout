@@ -626,11 +626,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (checkMoving(distanceY)) {
             return;
         }
+        moveDistance += distanceY;
         if (pullLimitDistance != -1) {
-            moveDistance = (int) Math.min(moveDistance + distanceY, pullLimitDistance);
+            moveDistance = (int) Math.min(moveDistance, pullLimitDistance);
             moveDistance = (int) Math.max(moveDistance, -pullLimitDistance);
-        } else {
-            moveDistance += distanceY;
         }
 
         if (!pullTwinkEnable && isRefreshing
