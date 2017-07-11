@@ -16,6 +16,11 @@ class GeneralPullHelper {
     private PullRefreshLayout pullRefreshLayout;
 
     /**
+     * is moving direct down
+     */
+    boolean isMovingDirectDown;
+
+    /**
      * is last motion point y set
      */
     private boolean isLastMotionPointYSet;
@@ -24,11 +29,6 @@ class GeneralPullHelper {
      * is touch final direct down
      */
     private boolean isConsumedDragDown;
-
-    /**
-     * is moving direct down
-     */
-     boolean isMovingDirectDown;
 
     /**
      * first touch point x
@@ -55,18 +55,18 @@ class GeneralPullHelper {
      */
     int isDragDown;
     /**
-     * motionEvent childConsumed
+     * motion event child consumed
      */
     private int[] childConsumed = new int[2];
     private int lastChildConsumedY;
 
     /**
-     * active Pointer Id
+     * active pointer id
      */
     private int activePointerId;
 
     /**
-     * nested Y Offset
+     * nested y offset
      */
     private int nestedYOffset;
 
@@ -76,18 +76,18 @@ class GeneralPullHelper {
     private int lastMotionY;
 
     /**
-     * last motion y
+     * last touch y
      */
     private float lastTouchY;
 
     /**
-     * scroll Consumed Offset
+     * scroll consumed offset
      */
     private int[] scrollConsumed = new int[2];
     private int[] scrollOffset = new int[2];
 
     /**
-     * dell the interceptTouchEvent
+     * dell the intercept touch event
      */
     private int interceptTouchCount = 0;
     private int interceptTouchLastCount = -1;
@@ -101,7 +101,6 @@ class GeneralPullHelper {
      * velocity y
      */
     private float velocityY;
-
 
     GeneralPullHelper(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
@@ -183,7 +182,7 @@ class GeneralPullHelper {
         return false;
     }
 
-    public boolean onTouchEvent(MotionEvent ev) {
+    boolean onTouchEvent(MotionEvent ev) {
         MotionEvent vtev = MotionEvent.obtain(ev);
 
         final int actionMasked = MotionEventCompat.getActionMasked(ev);

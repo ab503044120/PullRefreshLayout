@@ -121,7 +121,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private float duringAdjustValue = 10f;
 
     /**
-     * animation during adjust value
+     * current velocity y
      */
     private float currentVelocityY = 0;
 
