@@ -237,6 +237,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    /**
+     * ready scroller if need use
+     */
     private void readyScroller() {
         if ((pullTwinkEnable || autoLoadingEnable) && scroller == null) {
             if (targetView instanceof RecyclerView) {
