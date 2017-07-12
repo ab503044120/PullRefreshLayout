@@ -13,6 +13,7 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -274,26 +275,29 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    /**
+     * dell the over scroll compute
+     */
     @Override
     public void computeScroll() {
         if (scroller != null && scroller.computeScrollOffset()) {
-            if (!isOverScrollTrigger && !canChildScrollUp() && canChildScrollDown() && currentVelocityY < 0) {
+            if (!isOverScrollTrigger && !canChildScrollUp() && currentVelocityY < 0) {
                 isOverScrollTrigger = true;
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && canChildScrollUp() && currentVelocityY > 0) {
+            } else if (!isOverScrollTrigger && !canChildScrollDown() && currentVelocityY > 0) {
                 isOverScrollTrigger = true;
                 onOverScrollDown();
             }
 
             int currY = scroller.getCurrY();
             int tempDistance = currY - lastScrollY;
-            if (currentVelocityY > 0 && moveDistance >= 0 && getPullContentView() instanceof NestedScrollingChild) {
+            if (currentVelocityY > 0 && moveDistance >= 0) {
                 if (moveDistance - tempDistance <= 0) {
                     onScroll(-moveDistance);
                 } else if (tempDistance < 1000) {
                     onScroll(tempDistance < 1000 ? -tempDistance : 0);
                 }
-            } else if (currentVelocityY < 0 && moveDistance <= 0 && getPullContentView() instanceof NestedScrollingChild) {
+            } else if (currentVelocityY < 0 && moveDistance <= 0) {
                 if (moveDistance + tempDistance >= 0) {
                     onScroll(-moveDistance);
                 } else if (tempDistance < 1000) {
@@ -323,20 +327,20 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private void overScrollLogic(int tempDistance) {
         if (overScrollState == 1) {
-            startScrollAnimation(tempDistance);
+            startOverScrollAnimation(tempDistance);
         } else if (overScrollState == 2) {
-            startScrollAnimation(-tempDistance);
+            startOverScrollAnimation(-tempDistance);
         }
     }
 
     /**
      * dell over scroll to move children
      */
-    private void startScrollAnimation(final int distanceMove) {
+    private void startOverScrollAnimation(final int distanceMove) {
         overScrollState = 0;
         int finalDistance = getFinalOverScrollDistance();
         cancelCurrentAnimation();
-
+        abortScroller();
         if (scrollAnimation == null) {
             scrollAnimation = ValueAnimator.ofInt(distanceMove, 0);
             scrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -435,6 +439,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         isOverScrollTrigger = false;
         cancelCurrentAnimation();
+        abortScroller();
         overScrollState = 0;
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
@@ -1023,13 +1028,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         startRefresh(0, withAction);
     }
 
+
+    private void abortScroller() {
+        if (scroller != null && !scroller.isFinished()) {
+            scroller.abortAnimation();
+        }
+    }
+
     private void cancelCurrentAnimation() {
         if (currentAnimation != null && currentAnimation.isRunning()) {
             currentAnimation.cancel();
         }
-        if (scroller != null && !scroller.isFinished()) {
-            scroller.abortAnimation();
-        }
+
     }
 
     private long getAnimationTime(int moveDistance) {
