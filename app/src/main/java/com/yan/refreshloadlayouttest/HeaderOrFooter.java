@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wang.avi.AVLoadingIndicatorView;
 import com.yan.pullrefreshlayout.PullRefreshView;
@@ -47,7 +48,12 @@ public class HeaderOrFooter extends PullRefreshView {
     @Override
     protected void initView() {
         tv = (TextView) findViewById(R.id.title);
-
+        tv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "you just touched me", Toast.LENGTH_SHORT).show();
+            }
+        });
         loadingView = (AVLoadingIndicatorView) findViewById(R.id.loading_view);
         if (!TextUtils.isEmpty(animationName)) {
             loadingView.setIndicator(animationName);
