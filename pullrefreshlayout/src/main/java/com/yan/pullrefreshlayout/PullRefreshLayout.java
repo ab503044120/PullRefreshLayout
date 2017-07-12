@@ -4,13 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -122,9 +120,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private float duringAdjustValue = 10f;
 
     /**
-     * current velocity y
+     * animation during adjust value
      */
-    private float currentVelocityY = 0;
+    private boolean isCurrentVicGey = false;
 
     /**
      * switch refresh enable
@@ -281,38 +279,64 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    float finalScrollDistance = -1;
+
     /**
      * dell the over scroll compute
      */
     @Override
     public void computeScroll() {
         if (scroller != null && scroller.computeScrollOffset()) {
-            if (!isOverScrollTrigger && !canChildScrollUp() && currentVelocityY < 0) {
+            int currY = scroller.getCurrY();
+            int tempDistance = currY - lastScrollY;
+            lastScrollY = currY;
+
+            if (tempDistance > 0 && moveDistance > 0) {
+                if (moveDistance - tempDistance <= 0) {
+                    onScroll(-moveDistance);
+                    if (!(getPullContentView() instanceof NestedScrollingChild)) {
+                        onOverScrollUp();
+                        overScrollLogic(tempDistance);
+                    }
+                    return;
+                } else if (finalScrollDistance > moveDistance - refreshTriggerDistance) {
+                    cancelAllAnimation();
+                    onScroll(-tempDistance);
+                } else {
+                    abortScroller();
+                    handleAction();
+                    return;
+                }
+            } else if (tempDistance < 0 && moveDistance < 0) {
+                if (moveDistance - tempDistance >= 0) {
+                    onScroll(-moveDistance);
+                    if (!(getPullContentView() instanceof NestedScrollingChild)) {
+                        onOverScrollDown();
+                        overScrollLogic(tempDistance);
+                    }
+                    return;
+                } else if (finalScrollDistance < moveDistance + loadTriggerDistance) {
+                    cancelAllAnimation();
+                    onScroll(-tempDistance);
+                } else {
+                    abortScroller();
+                    handleAction();
+                    return;
+                }
+            }
+            if (!canChildScrollUp() && !canChildScrollDown()) {
+                invalidate();
+                return;
+            }
+
+            if (!isOverScrollTrigger && !canChildScrollUp() && tempDistance < 0 && moveDistance < refreshTriggerDistance) {
                 isOverScrollTrigger = true;
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && currentVelocityY > 0) {
+            } else if (!isOverScrollTrigger && !canChildScrollDown() && tempDistance > 0 && moveDistance > -loadTriggerDistance) {
                 isOverScrollTrigger = true;
                 onOverScrollDown();
             }
-
-            int currY = scroller.getCurrY();
-            int tempDistance = currY - lastScrollY;
-            if (currentVelocityY > 0 && moveDistance >= 0) {
-                if (moveDistance - tempDistance <= 0) {
-                    onScroll(-moveDistance);
-                } else if (tempDistance < 1000) {
-                    onScroll(tempDistance < 1000 ? -tempDistance : 0);
-                }
-            } else if (currentVelocityY < 0 && moveDistance <= 0) {
-                if (moveDistance + tempDistance >= 0) {
-                    onScroll(-moveDistance);
-                } else if (tempDistance < 1000) {
-                    onScroll(tempDistance);
-                }
-            }
             overScrollLogic(tempDistance);
-            lastScrollY = currY;
-
             invalidate();
         }
     }
@@ -323,7 +347,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @return
      */
     private int getFinalOverScrollDistance() {
-        return (int) (Math.pow((scroller.getFinalY() - scroller.getCurrY()) * adjustTwinkDuring, 0.4));
+        return (int) (Math.pow(Math.abs(scroller.getFinalY() - scroller.getCurrY()) * adjustTwinkDuring, 0.4));
+    }
+
+    private int getScrollerAbleDistance() {
+        return scroller.getFinalY() - scroller.getCurrY();
     }
 
     /**
@@ -332,10 +360,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param tempDistance scroll distance
      */
     private void overScrollLogic(int tempDistance) {
-        if (overScrollState == 1) {
+        if (overScrollState == 1 || overScrollState == 2) {
             startOverScrollAnimation(tempDistance);
-        } else if (overScrollState == 2) {
-            startOverScrollAnimation(-tempDistance);
         }
     }
 
@@ -352,7 +378,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             scrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    onNestedScroll(getPullContentView(), 0, 0, 0, (int) (-(Integer) animation.getAnimatedValue() * overScrollDampingRatio));
+                    onNestedScroll(getPullContentView(), 0, 0, 0, (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
                 }
             });
             scrollAnimation.addListener(new AnimatorListenerAdapter() {
@@ -364,7 +390,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    isFling = false;
                     onStopNestedScroll(getPullContentView());
                 }
             });
@@ -446,6 +471,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         abortScroller();
         isOverScrollTrigger = false;
         overScrollState = 0;
+        finalScrollDistance = -1;
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
@@ -526,18 +552,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (nestedPreFling) {
             return true;
         }
-        if ((pullTwinkEnable || autoLoadingEnable) ) {
-            currentVelocityY = velocityY;
+        if ((pullTwinkEnable || autoLoadingEnable)) {
             readyScroller();
-            isFling = true;
-            scroller.fling(0, 0, 0, (int) Math.abs(currentVelocityY), 0, 0, 0, Integer.MAX_VALUE);
+            scroller.fling(0, 0, 0, (int) velocityY
+                    , 0, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+            finalScrollDistance = getScrollerAbleDistance();
             lastScrollY = 0;
             invalidate();
         }
         return false;
     }
-
-    boolean isFling;
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
@@ -614,10 +638,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (getPullContentView() instanceof NestedScrollingChild) {
             return super.dispatchTouchEvent(ev);
         }
-
         return !generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent)
                 && super.dispatchTouchEvent(finalMotionEvent[0]);
-
     }
 
     /**
@@ -626,7 +648,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param distanceY move distance of Y
      */
     private void onScroll(float distanceY) {
-        if (checkMoving(distanceY)) {
+        if (checkMoving(distanceY) || distanceY == 0) {
             return;
         }
         moveDistance += distanceY;
@@ -771,16 +793,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-
     /**
      * start Refresh
      *
      * @param headerViewHeight
      */
     private void startRefresh(int headerViewHeight, final boolean withAction) {
-        if (isFling) {
-            return;
-        }
         if (headerView != null && headerView instanceof OnPullListener) {
             ((OnPullListener) headerView).onPullHolding();
         }
@@ -904,9 +922,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param loadMoreViewHeight
      */
     private void startLoadMore(int loadMoreViewHeight) {
-        if (isFling) {
-            return;
-        }
         if (footerView != null && footerView instanceof OnPullListener) {
             ((OnPullListener) footerView).onPullHolding();
         }

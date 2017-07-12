@@ -151,7 +151,6 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_MOVE:
                 velocityTrackerCompute(ev);
-
                 if (interceptTouchLastCount != interceptTouchCount) {
                     interceptTouchLastCount = interceptTouchCount;
                 } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
@@ -200,9 +199,7 @@ class GeneralPullHelper {
 
     boolean onTouchEvent(MotionEvent ev) {
         MotionEvent vtev = MotionEvent.obtain(ev);
-
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
-
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             nestedYOffset = 0;
         }
