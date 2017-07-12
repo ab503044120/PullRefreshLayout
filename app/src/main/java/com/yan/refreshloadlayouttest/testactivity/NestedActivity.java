@@ -54,7 +54,7 @@ public class NestedActivity extends AppCompatActivity {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
 //        refreshLayout.setOverScrollDampingRatio(0.4f);
 //        refreshLayout.setAdjustTwinkDuring(2);
-//        refreshLayout.setTwinkEnable(false);
+        refreshLayout.setTwinkEnable(false);
         refreshLayout.setLoadMoreEnable(true);
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAutoLoadingEnable(true);
