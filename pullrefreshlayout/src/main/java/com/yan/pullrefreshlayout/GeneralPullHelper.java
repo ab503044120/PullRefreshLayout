@@ -1,9 +1,10 @@
 package com.yan.pullrefreshlayout;
 
+import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewCompat;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.ViewConfiguration;
 
 /**
  * support general view to pull refresh
@@ -13,6 +14,8 @@ import android.view.VelocityTracker;
 class GeneralPullHelper {
     private static final String TAG = "GeneralPullHelper";
     private PullRefreshLayout pullRefreshLayout;
+
+    private final Context context;
 
     /**
      * is moving direct down
@@ -53,6 +56,7 @@ class GeneralPullHelper {
      * is touch direct down
      */
     int dragState;
+
     /**
      * motion event child consumed
      */
@@ -80,6 +84,16 @@ class GeneralPullHelper {
     private float lastTouchY;
 
     /**
+     * minimumFlingVelocity
+     */
+    private final int minimumFlingVelocity;
+
+    /**
+     * mMaximumVelocity
+     */
+    private final int maximumVelocity;
+
+    /**
      * scroll consumed offset
      */
     private int[] scrollConsumed = new int[2];
@@ -101,8 +115,11 @@ class GeneralPullHelper {
      */
     private float velocityY;
 
-    GeneralPullHelper(PullRefreshLayout pullRefreshLayout) {
+    GeneralPullHelper(PullRefreshLayout pullRefreshLayout, Context context) {
+        this.context = context;
         this.pullRefreshLayout = pullRefreshLayout;
+        minimumFlingVelocity = ViewConfiguration.get(this.context).getScaledMinimumFlingVelocity();
+        maximumVelocity = ViewConfiguration.get(this.context).getScaledMaximumFlingVelocity();
     }
 
     void dellDirection(MotionEvent event) {
@@ -194,7 +211,8 @@ class GeneralPullHelper {
             case MotionEvent.ACTION_DOWN: {
                 lastMotionY = (int) ev.getY();
                 activePointerId = ev.getPointerId(0);
-                pullRefreshLayout.startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                pullRefreshLayout.onNestedScrollAccepted(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
+                pullRefreshLayout.onStartNestedScroll(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -278,7 +296,7 @@ class GeneralPullHelper {
     private void velocityTrackerCompute(MotionEvent ev) {
         try {
             velocityTracker.addMovement(ev);
-            velocityTracker.computeCurrentVelocity(1000);
+            velocityTracker.computeCurrentVelocity(1000, maximumVelocity);
             velocityY = velocityTracker.getYVelocity();
         } catch (Exception e) {
             e.printStackTrace();
@@ -302,11 +320,12 @@ class GeneralPullHelper {
         actionDownPointX = 0;
     }
 
-    void flingWithNestedDispatch(int velocityY) {
+    private void flingWithNestedDispatch(int velocityY) {
         if (!pullRefreshLayout.dispatchNestedPreFling(0, velocityY)) {
             pullRefreshLayout.dispatchNestedFling(0, velocityY, true);
-            pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, velocityY);
+            if ((Math.abs(velocityY) > minimumFlingVelocity)) {
+                pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, velocityY);
+            }
         }
     }
-
 }

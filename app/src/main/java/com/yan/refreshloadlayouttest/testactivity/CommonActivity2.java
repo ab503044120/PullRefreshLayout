@@ -19,6 +19,7 @@ public class CommonActivity2 extends CommonActivity1 {
 
     protected void initRefreshLayout() {
         super.initRefreshLayout();
+//        refreshLayout.setTwinkEnable(false);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "BallScaleRippleMultipleIndicator"));
         refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER, RefreshShowHelper.STATE_CENTER);
@@ -29,7 +30,7 @@ public class CommonActivity2 extends CommonActivity1 {
             public boolean onTouch(View v, MotionEvent event) {
                 isTouch[0] = true;
 
-                if (event.getActionMasked() == MotionEvent.ACTION_UP||event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
                     isTouch[0] = false;
                 }
                 return false;
