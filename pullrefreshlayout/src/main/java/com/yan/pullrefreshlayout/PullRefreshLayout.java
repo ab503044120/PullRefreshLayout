@@ -332,9 +332,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param tempDistance scroll distance
      */
     private void overScrollLogic(int tempDistance) {
-        if (overScrollState == 1&& moveDistance == 0) {
+        if (overScrollState == 1) {
             startOverScrollAnimation(tempDistance);
-        } else if (overScrollState == 2&& moveDistance == 0) {
+        } else if (overScrollState == 2) {
             startOverScrollAnimation(-tempDistance);
         }
     }
