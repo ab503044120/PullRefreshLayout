@@ -299,8 +299,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             }
             return true;
         }
-        if ((type == 1 && finalScrollDistance > moveDistance - refreshTriggerDistance)
-                || (type == 2 && finalScrollDistance < moveDistance + loadTriggerDistance)) {
+        if ((type == 1 && (moveDistance >= refreshTriggerDistance
+                && finalScrollDistance > moveDistance - refreshTriggerDistance)
+                || finalScrollDistance > refreshTriggerDistance)
+                || (type == 2 && (moveDistance < -loadTriggerDistance
+                && finalScrollDistance < moveDistance + loadTriggerDistance)
+                || finalScrollDistance < -loadTriggerDistance)) {
             cancelAllAnimation();
             onScroll(-tempDistance);
             return false;
