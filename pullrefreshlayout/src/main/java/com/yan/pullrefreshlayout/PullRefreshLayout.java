@@ -9,13 +9,10 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.ScrollerCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -165,6 +162,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * is able auto load more
      */
     private boolean autoLoadTrigger = false;
+
+    /**
+     *  is auto refresh trigger
+     */
+    private boolean isAutoRefreshTrigger = false;
 
     /**
      * is over scroll trigger
@@ -657,12 +659,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (!isRefreshing) {
+                    if (!isRefreshing || isAutoRefreshTrigger) {
                         if (onRefreshListener != null && withAction) {
                             onRefreshListener.onRefresh();
                         }
+                        isAutoRefreshTrigger = false;
                         isRefreshing = true;
-
                         if (footerView != null) {
                             footerView.setVisibility(GONE);
                         }
@@ -898,6 +900,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (!(getPullContentView() instanceof NestedScrollingChild)) {
             generalPullHelper.autoRefreshDell();
         }
+        isAutoRefreshTrigger = true;
+        isRefreshing = true;
         startRefresh(0, withAction);
     }
 
