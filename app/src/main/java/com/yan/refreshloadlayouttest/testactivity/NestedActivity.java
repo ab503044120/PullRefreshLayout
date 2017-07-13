@@ -6,13 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
+import com.yan.pullrefreshlayout.PullRefreshView;
 import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
@@ -63,10 +66,10 @@ public class NestedActivity extends AppCompatActivity {
 //        refreshLayout.setRefreshBackTime(300);
 //        refreshLayout.setPullViewHeight(400);// 设置头部和底部的高度
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
-        refreshLayout.setRefreshTriggerDistance(200);
-        refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制
+        refreshLayout.setRefreshTriggerDistance(dipToPx(getApplicationContext(), 90));
+        refreshLayout.setPullLimitDistance(dipToPx(getApplicationContext(), 150));// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator") {
+        refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
             @Override
             protected int contentView() {
                 return R.layout.refresh_view_big;
@@ -76,11 +79,9 @@ public class NestedActivity extends AppCompatActivity {
             public void onPullChange(float percent) {
                 super.onPullChange(percent);
                 if (percent > 1.2) {
-                    findViewById(R.id.loading_view).setScaleY(1 + (percent - 1.2f) * 1.25f);
-                    findViewById(R.id.title).setScaleY(1 + (percent - 1.2f) * 1.25f);
+                    findViewById(R.id.iv_bg).setScaleY(1 + (percent - 1.2f) *0.2f);
                 } else {
-                    findViewById(R.id.loading_view).setScaleY(1f);
-                    findViewById(R.id.title).setScaleY(1f);
+                    findViewById(R.id.iv_bg).setScaleY(1f);
                 }
             }
         });
@@ -101,7 +102,6 @@ public class NestedActivity extends AppCompatActivity {
 
             @Override
             public void onLoading() {
-                Log.e(TAG, "refreshLayout onLoading: ");
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -113,6 +113,11 @@ public class NestedActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private float dipToPx(Context context, float value) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
     }
 
     protected void initData() {

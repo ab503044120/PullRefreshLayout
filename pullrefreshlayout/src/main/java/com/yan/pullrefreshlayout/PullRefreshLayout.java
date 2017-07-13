@@ -13,7 +13,6 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -120,9 +119,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private float duringAdjustValue = 10f;
 
     /**
-     * animation during adjust value
+     * final scroll distance
      */
-    private boolean isCurrentVicGey = false;
+    private float finalScrollDistance = -1;
 
     /**
      * switch refresh enable
@@ -179,6 +178,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private boolean isFooterHeightSet = false;
 
+    /**
+     * is handler action
+     */
+    private boolean isHandlerAction = false;
 
     /**
      * refresh back time
@@ -279,7 +282,33 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    float finalScrollDistance = -1;
+    /**
+     * overScroll Back Dell
+     *
+     * @param type         just to make sure the condition
+     * @param tempDistance temp move distance
+     * @return need continue
+     */
+    private boolean overScrollBackDell(int type, int tempDistance) {
+        if ((type == 1 && moveDistance - tempDistance <= 0)
+                || (type == 2 && moveDistance - tempDistance >= 0)) {
+            onScroll(-moveDistance);
+            if (!(getPullContentView() instanceof NestedScrollingChild)) {
+                overScrollState = 1;
+                overScrollLogic(tempDistance);
+            }
+            return true;
+        }
+        if ((type == 1 && finalScrollDistance > moveDistance - refreshTriggerDistance)
+                || (type == 2 && finalScrollDistance < moveDistance + loadTriggerDistance)) {
+            cancelAllAnimation();
+            onScroll(-tempDistance);
+            return false;
+        }
+        abortScroller();
+        handleAction();
+        return true;
+    }
 
     /**
      * dell the over scroll compute
@@ -290,50 +319,26 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             int currY = scroller.getCurrY();
             int tempDistance = currY - lastScrollY;
             lastScrollY = currY;
-
-            if (tempDistance > 0 && moveDistance > 0) {
-                if (moveDistance - tempDistance <= 0) {
-                    onScroll(-moveDistance);
-                    if (!(getPullContentView() instanceof NestedScrollingChild)) {
-                        onOverScrollUp();
-                        overScrollLogic(tempDistance);
-                    }
-                    return;
-                } else if (finalScrollDistance > moveDistance - refreshTriggerDistance) {
-                    cancelAllAnimation();
-                    onScroll(-tempDistance);
-                } else {
-                    abortScroller();
-                    handleAction();
-                    return;
-                }
-            } else if (tempDistance < 0 && moveDistance < 0) {
-                if (moveDistance - tempDistance >= 0) {
-                    onScroll(-moveDistance);
-                    if (!(getPullContentView() instanceof NestedScrollingChild)) {
-                        onOverScrollDown();
-                        overScrollLogic(tempDistance);
-                    }
-                    return;
-                } else if (finalScrollDistance < moveDistance + loadTriggerDistance) {
-                    cancelAllAnimation();
-                    onScroll(-tempDistance);
-                } else {
-                    abortScroller();
-                    handleAction();
-                    return;
-                }
+            if (tempDistance > 0 && moveDistance > 0 && overScrollBackDell(1, tempDistance)) {
+                return;
+            } else if (tempDistance < 0 && moveDistance < 0 && overScrollBackDell(2, tempDistance)) {
+                return;
+            } else if ((tempDistance < 0 && moveDistance > 0 && !isHandlerAction)
+                    || (tempDistance > 0 && moveDistance < 0 && !isHandlerAction)) {
+                isHandlerAction = true;
+                handleAction();
+                abortScroller();
+                return;
             }
+
             if (!canChildScrollUp() && !canChildScrollDown()) {
                 invalidate();
                 return;
             }
 
-            if (!isOverScrollTrigger && !canChildScrollUp() && tempDistance < 0 && moveDistance < refreshTriggerDistance) {
-                isOverScrollTrigger = true;
+            if (!isOverScrollTrigger && !canChildScrollUp() && tempDistance < 0) {
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && tempDistance > 0 && moveDistance > -loadTriggerDistance) {
-                isOverScrollTrigger = true;
+            } else if (!isOverScrollTrigger && !canChildScrollDown() && tempDistance > 0) {
                 onOverScrollDown();
             }
             overScrollLogic(tempDistance);
@@ -347,7 +352,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @return
      */
     private int getFinalOverScrollDistance() {
-        return (int) (Math.pow(Math.abs(scroller.getFinalY() - scroller.getCurrY()) * adjustTwinkDuring, 0.4));
+        return (int) (Math.pow(Math.abs(getScrollerAbleDistance()) * adjustTwinkDuring, 0.4));
     }
 
     private int getScrollerAbleDistance() {
@@ -361,6 +366,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private void overScrollLogic(int tempDistance) {
         if (overScrollState == 1 || overScrollState == 2) {
+            isOverScrollTrigger = true;
             startOverScrollAnimation(tempDistance);
         }
     }
@@ -470,6 +476,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         cancelAllAnimation();
         abortScroller();
         isOverScrollTrigger = false;
+        isHandlerAction = false;
         overScrollState = 0;
         finalScrollDistance = -1;
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
@@ -488,7 +495,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     @Override
     public void onStopNestedScroll(View child) {
-        handleAction();
+        if (!pullTwinkEnable || scroller != null && scroller.isFinished()) {
+            handleAction();
+        }
         parentHelper.onStopNestedScroll(child);
         stopNestedScroll();
     }

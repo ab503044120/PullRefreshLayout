@@ -19,7 +19,7 @@ public class CommonActivity2 extends CommonActivity1 {
 
     protected void initRefreshLayout() {
         super.initRefreshLayout();
-        refreshLayout.setTwinkEnable(false);
+        refreshLayout.setTwinkEnable(true);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "BallScaleRippleMultipleIndicator"));
         refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER, RefreshShowHelper.STATE_CENTER);
