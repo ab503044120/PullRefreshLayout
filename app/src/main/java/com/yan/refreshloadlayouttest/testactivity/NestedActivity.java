@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.wang.avi.AVLoadingIndicatorView;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.PullRefreshView;
 import com.yan.pullrefreshlayout.RefreshShowHelper;
@@ -73,6 +74,21 @@ public class NestedActivity extends AppCompatActivity {
             @Override
             protected int contentView() {
                 return R.layout.refresh_view_big;
+            }
+
+            @Override
+            protected void initView() {
+                ((AVLoadingIndicatorView)findViewById(R.id.loading_view)).hide();
+            }
+
+            @Override
+            public void onPullHolding() {
+                ((AVLoadingIndicatorView)findViewById(R.id.loading_view)).smoothToShow();
+            }
+
+            @Override
+            public void onPullFinish() {
+                ((AVLoadingIndicatorView)findViewById(R.id.loading_view)).smoothToHide();
             }
 
             @Override
