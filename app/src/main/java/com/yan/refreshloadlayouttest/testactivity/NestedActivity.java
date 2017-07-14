@@ -71,6 +71,8 @@ public class NestedActivity extends AppCompatActivity {
         refreshLayout.setPullLimitDistance(dipToPx(getApplicationContext(), 150));// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
         refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
+            boolean isHolding;
+
             @Override
             protected int contentView() {
                 return R.layout.refresh_view_big;
@@ -78,24 +80,32 @@ public class NestedActivity extends AppCompatActivity {
 
             @Override
             protected void initView() {
-                ((AVLoadingIndicatorView)findViewById(R.id.loading_view)).hide();
+                ((AVLoadingIndicatorView) findViewById(R.id.loading_view)).hide();
             }
 
             @Override
             public void onPullHolding() {
-                ((AVLoadingIndicatorView)findViewById(R.id.loading_view)).smoothToShow();
+                isHolding = true;
+                ((AVLoadingIndicatorView) findViewById(R.id.loading_view)).smoothToShow();
             }
 
             @Override
             public void onPullFinish() {
-                ((AVLoadingIndicatorView)findViewById(R.id.loading_view)).smoothToHide();
+                ((AVLoadingIndicatorView) findViewById(R.id.loading_view)).smoothToHide();
+            }
+
+            @Override
+            public void onPullReset() {
+                super.onPullReset();
+                isHolding = false;
             }
 
             @Override
             public void onPullChange(float percent) {
                 super.onPullChange(percent);
+                if (isHolding) return;
                 if (percent > 1.2) {
-                    findViewById(R.id.iv_bg).setScaleY(1 + (percent - 1.2f) *0.2f);
+                    findViewById(R.id.iv_bg).setScaleY(1 + (percent - 1.2f) * 0.2f);
                 } else {
                     findViewById(R.id.iv_bg).setScaleY(1f);
                 }

@@ -22,6 +22,7 @@ public class HeaderOrFooter extends PullRefreshView {
 
     private boolean isStateFinish;
     private int color;
+    private boolean isHolding;
 
     public HeaderOrFooter(Context context, String animationName) {
         super(context);
@@ -62,10 +63,10 @@ public class HeaderOrFooter extends PullRefreshView {
 
     @Override
     public void onPullChange(float percent) {
-        super.onPullChange(percent);
-        if (isStateFinish) return;
+//        super.onPullChange(percent);
+        if (isStateFinish || isHolding) return;
         percent = Math.abs(percent);
-        if (percent > 0.2) {
+        if (percent > 0.2 && percent < 1) {
             if (loadingView.getVisibility() != VISIBLE) {
                 loadingView.smoothToShow();
             }
@@ -96,6 +97,7 @@ public class HeaderOrFooter extends PullRefreshView {
     @Override
     public void onPullHolding() {
         super.onPullHolding();
+        isHolding = true;
         tv.setText("loading...");
     }
 
@@ -112,5 +114,7 @@ public class HeaderOrFooter extends PullRefreshView {
         super.onPullReset();
         tv.setText("drag");
         isStateFinish = false;
+        isHolding = false;
+
     }
 }

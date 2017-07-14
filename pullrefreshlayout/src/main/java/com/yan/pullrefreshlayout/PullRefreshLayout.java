@@ -139,6 +139,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean pullLoadMoreEnable = false;
 
     /**
+     * is able auto load more
+     */
+    private boolean autoLoadingEnable = false;
+
+    /**
      * refreshState is isRefreshing
      */
     private boolean isRefreshing = false;
@@ -149,22 +154,22 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean pullStateControl = true;
 
     /**
-     * has called the method refreshComplete or loadMoreComplete
+     * is holding trigger
      */
-    private boolean isResetTrigger = false;
+    private boolean isHoldingTrigger = false;
 
     /**
      * is able auto load more
      */
-    private boolean autoLoadingEnable = false;
+    private boolean isAutoLoadTrigger = false;
 
     /**
-     * is able auto load more
+     * is holding finish trigger
      */
-    private boolean autoLoadTrigger = false;
+    private boolean isHoldingFinishTrigger = false;
 
     /**
-     *  is auto refresh trigger
+     * is auto refresh trigger
      */
     private boolean isAutoRefreshTrigger = false;
 
@@ -172,6 +177,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * is over scroll trigger
      */
     private boolean isOverScrollTrigger = false;
+
+    /**
+     * has called the method refreshComplete or loadMoreComplete
+     */
+    private boolean isResetTrigger = false;
 
     /**
      * is header height set
@@ -281,8 +291,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private void onOverScrollDown() {
         overScrollState = 2;
-        if (autoLoadingEnable && !isRefreshing && !autoLoadTrigger && onRefreshListener != null) {
-            autoLoadTrigger = true;
+        if (autoLoadingEnable && !isRefreshing && !isAutoLoadTrigger && onRefreshListener != null) {
+            isAutoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
     }
@@ -584,8 +594,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private void dellAutoLoading() {
         if (moveDistance <= 0 && autoLoadingEnable
                 && !isRefreshing && onRefreshListener != null
-                && !autoLoadTrigger && !canChildScrollDown()) {
-            autoLoadTrigger = true;
+                && !isAutoLoadTrigger && !canChildScrollDown()) {
+            isAutoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
     }
@@ -633,8 +643,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param headerViewHeight
      */
     private void startRefresh(int headerViewHeight, final boolean withAction) {
-        if (headerView != null && headerView instanceof OnPullListener) {
+        if (headerView != null && !isHoldingTrigger && headerView instanceof OnPullListener) {
             ((OnPullListener) headerView).onPullHolding();
+            isHoldingTrigger = true;
         }
         cancelAllAnimation();
 
@@ -683,7 +694,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         startRefreshAnimator.start();
     }
 
-
     /**
      * reset refresh refreshState
      *
@@ -713,8 +723,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    if (headerView != null && isRefreshing && refreshState == 1 && headerView instanceof OnPullListener) {
+                    if (headerView != null && isRefreshing && refreshState == 1 && !isHoldingFinishTrigger
+                            && headerView instanceof OnPullListener) {
                         ((OnPullListener) headerView).onPullFinish();
+                        isHoldingFinishTrigger = true;
                     }
                 }
 
@@ -743,12 +755,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (footerView != null) {
             footerView.setVisibility(VISIBLE);
         }
-        isRefreshing = false;
-        refreshState = 0;
-        isResetTrigger = false;
-        pullStateControl = true;
+        resetState();
     }
-
 
     /**
      * start loadMore
@@ -756,8 +764,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param loadMoreViewHeight
      */
     private void startLoadMore(int loadMoreViewHeight) {
-        if (footerView != null && footerView instanceof OnPullListener) {
+        if (footerView != null && !isHoldingTrigger && footerView instanceof OnPullListener) {
             ((OnPullListener) footerView).onPullHolding();
+            isHoldingTrigger = true;
         }
         cancelAllAnimation();
 
@@ -802,7 +811,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         startLoadMoreAnimator.start();
     }
 
-
     /**
      * reset loadMore refreshState
      *
@@ -832,8 +840,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 boolean isCancel;
 
                 public void onAnimationStart(Animator animation) {
-                    if (footerView != null && isRefreshing && refreshState == 2 && footerView instanceof OnPullListener) {
+                    if (footerView != null && isRefreshing && refreshState == 2 && !isHoldingFinishTrigger
+                            && footerView instanceof OnPullListener) {
                         ((OnPullListener) footerView).onPullFinish();
+                        isHoldingFinishTrigger = true;
                     }
                 }
 
@@ -862,10 +872,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (headerView != null) {
             headerView.setVisibility(VISIBLE);
         }
-        isRefreshing = false;
-        refreshState = 0;
-        isResetTrigger = false;
-        pullStateControl = true;
+        resetState();
     }
 
     /**
@@ -886,7 +893,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
-        autoLoadTrigger = false;
+        isAutoLoadTrigger = false;
     }
 
     public void autoRefresh() {
@@ -903,6 +910,15 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         isAutoRefreshTrigger = true;
         isRefreshing = true;
         startRefresh(0, withAction);
+    }
+
+    private void resetState() {
+        isRefreshing = false;
+        isResetTrigger = false;
+        isHoldingTrigger = false;
+        isHoldingFinishTrigger = false;
+        pullStateControl = true;
+        refreshState = 0;
     }
 
     private void abortScroller() {
