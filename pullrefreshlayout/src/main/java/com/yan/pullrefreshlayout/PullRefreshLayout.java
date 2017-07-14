@@ -144,11 +144,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean autoLoadingEnable = false;
 
     /**
-     * refreshState is isRefreshing
-     */
-    private boolean isRefreshing = false;
-
-    /**
      * make sure header or footer hold trigger one time
      */
     private boolean pullStateControl = true;
@@ -291,7 +286,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private void onOverScrollDown() {
         overScrollState = 2;
-        if (autoLoadingEnable && !isRefreshing && !isAutoLoadTrigger && onRefreshListener != null) {
+        if (autoLoadingEnable && refreshState == 0 && !isAutoLoadTrigger && onRefreshListener != null) {
             isAutoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
@@ -390,8 +385,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * dell over scroll to move children
      */
     private void startOverScrollAnimation(final int distanceMove) {
+        final int finalDistance = getFinalOverScrollDistance();
         overScrollState = 0;
-        int finalDistance = getFinalOverScrollDistance();
         cancelAllAnimation();
         abortScroller();
         if (scrollAnimation == null) {
@@ -399,7 +394,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             scrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    onNestedScroll(getPullContentView(), 0, 0, 0, (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
+                    onNestedScroll(getPullContentView(), 0, 0, 0
+                            , (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
                 }
             });
             scrollAnimation.addListener(new AnimatorListenerAdapter() {
@@ -500,16 +496,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             moveDistance = (int) Math.max(moveDistance, -pullLimitDistance);
         }
 
-        if (!pullTwinkEnable && isRefreshing
-                && ((refreshState == 1 && moveDistance < 0)
+        if (!pullTwinkEnable && ((refreshState == 1 && moveDistance < 0)
                 || (refreshState == 2 && moveDistance > 0))) {
             moveDistance = 0;
             return;
         }
-
         if ((pullLoadMoreEnable && moveDistance <= 0)
-                || (pullRefreshEnable && moveDistance >= 0)
-                || pullTwinkEnable) {
+                || (pullRefreshEnable && moveDistance >= 0) || pullTwinkEnable) {
             moveChildren(moveDistance);
         } else {
             moveDistance = 0;
@@ -525,7 +518,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             if (moveDistance >= refreshTriggerDistance) {
                 if (pullStateControl) {
                     pullStateControl = false;
-                    if (headerView != null && !isRefreshing && headerView instanceof OnPullListener) {
+                    if (headerView != null && refreshState == 0 && headerView instanceof OnPullListener) {
                         ((OnPullListener) headerView).onPullHoldTrigger();
                     }
                 }
@@ -533,7 +526,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             }
             if (!pullStateControl) {
                 pullStateControl = true;
-                if (headerView != null && !isRefreshing && headerView instanceof OnPullListener) {
+                if (headerView != null && refreshState == 0 && headerView instanceof OnPullListener) {
                     ((OnPullListener) headerView).onPullHoldUnTrigger();
                 }
             }
@@ -547,7 +540,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (moveDistance <= -loadTriggerDistance) {
             if (pullStateControl) {
                 pullStateControl = false;
-                if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
+                if (footerView != null && refreshState == 0 && footerView instanceof OnPullListener) {
                     ((OnPullListener) footerView).onPullHoldTrigger();
                 }
             }
@@ -555,7 +548,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         if (!pullStateControl) {
             pullStateControl = true;
-            if (footerView != null && !isRefreshing && footerView instanceof OnPullListener) {
+            if (footerView != null && refreshState == 0 && footerView instanceof OnPullListener) {
                 ((OnPullListener) footerView).onPullHoldUnTrigger();
             }
         }
@@ -584,17 +577,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private void moveChildren(int distance) {
         moveDistance = distance;
         dellAutoLoading();
-        ViewCompat.setTranslationY(getPullContentView(), moveDistance);
         dellHeaderFooterMoving(moveDistance);
+        ViewCompat.setTranslationY(getPullContentView(), moveDistance);
     }
 
     /**
      * dell auto loading
      */
     private void dellAutoLoading() {
-        if (moveDistance <= 0 && autoLoadingEnable
-                && !isRefreshing && onRefreshListener != null
-                && !isAutoLoadTrigger && !canChildScrollDown()) {
+        if (moveDistance <= 0 && autoLoadingEnable && refreshState == 0
+                && onRefreshListener != null && !canChildScrollDown() && !isAutoLoadTrigger) {
             isAutoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
@@ -622,17 +614,14 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (pullRefreshEnable && refreshState != 2
                 && !isResetTrigger && moveDistance >= refreshTriggerDistance) {
             startRefresh(moveDistance, true);
-        } else if ((!isRefreshing && moveDistance > 0 && refreshState != 2)
-                || (isResetTrigger && refreshState == 1)
-                || moveDistance > 0 && refreshState == 2) {
+        } else if ((moveDistance > 0 && refreshState != 1) || (isResetTrigger && refreshState == 1)) {
             resetHeaderView(moveDistance);
         }
+
         if (pullLoadMoreEnable && refreshState != 1
                 && !isResetTrigger && moveDistance <= -loadTriggerDistance) {
             startLoadMore(moveDistance);
-        } else if ((!isRefreshing && moveDistance < 0 && refreshState != 1)
-                || (isResetTrigger && refreshState == 2)
-                || moveDistance < 0 && refreshState == 1) {
+        } else if ((moveDistance < 0 && refreshState != 2) || (isResetTrigger && refreshState == 2)) {
             resetFootView(moveDistance);
         }
     }
@@ -648,7 +637,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             isHoldingTrigger = true;
         }
         cancelAllAnimation();
-
         if (startRefreshAnimator == null) {
             startRefreshAnimator = ValueAnimator.ofInt(headerViewHeight, (int) refreshTriggerDistance);
             startRefreshAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -664,18 +652,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             });
             startRefreshAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
-                public void onAnimationStart(Animator animation) {
-                    refreshState = 1;
-                }
-
-                @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (!isRefreshing || isAutoRefreshTrigger) {
+                    if (refreshState == 0 || isAutoRefreshTrigger) {
                         if (onRefreshListener != null && withAction) {
                             onRefreshListener.onRefresh();
                         }
                         isAutoRefreshTrigger = false;
-                        isRefreshing = true;
+                        refreshState = 1;
                         if (footerView != null) {
                             footerView.setVisibility(GONE);
                         }
@@ -719,17 +702,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 }
             });
             resetHeaderAnimator.addListener(new AnimatorListenerAdapter() {
-                boolean isCancel;
+                private boolean isCancel;
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    if (headerView != null && isRefreshing && refreshState == 1 && !isHoldingFinishTrigger
-                            && headerView instanceof OnPullListener) {
+                    if (headerView != null && refreshState == 1
+                            && !isHoldingFinishTrigger && headerView instanceof OnPullListener) {
                         ((OnPullListener) headerView).onPullFinish();
                         isHoldingFinishTrigger = true;
                     }
                 }
 
+                @Override
                 public void onAnimationCancel(Animator animation) {
                     isCancel = true;
                 }
@@ -739,6 +723,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                     if (refreshState == 1 && !isCancel) {
                         resetRefreshState();
                     }
+                    isCancel = false;
                 }
             });
         } else {
@@ -769,7 +754,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             isHoldingTrigger = true;
         }
         cancelAllAnimation();
-
         if (startLoadMoreAnimator == null) {
             startLoadMoreAnimator = ValueAnimator.ofInt(loadMoreViewHeight, -(int) loadTriggerDistance);
             startLoadMoreAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -785,19 +769,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             });
             startLoadMoreAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
-                public void onAnimationStart(Animator animation) {
-                    refreshState = 2;
-                }
-
-                @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (onRefreshListener != null && !isRefreshing) {
+                    if (onRefreshListener != null && refreshState == 0) {
                         onRefreshListener.onLoading();
-                        isRefreshing = true;
-
                         if (headerView != null) {
                             headerView.setVisibility(GONE);
                         }
+                        refreshState = 2;
                     }
                 }
             });
@@ -837,10 +815,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 }
             });
             resetFootAnimator.addListener(new AnimatorListenerAdapter() {
-                boolean isCancel;
+                private boolean isCancel;
 
                 public void onAnimationStart(Animator animation) {
-                    if (footerView != null && isRefreshing && refreshState == 2 && !isHoldingFinishTrigger
+                    if (footerView != null && refreshState == 2 && !isHoldingFinishTrigger
                             && footerView instanceof OnPullListener) {
                         ((OnPullListener) footerView).onPullFinish();
                         isHoldingFinishTrigger = true;
@@ -856,6 +834,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                     if (refreshState == 2 && !isCancel) {
                         resetLoadMoreState();
                     }
+                    isCancel = false;
                 }
             });
         } else {
@@ -908,12 +887,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             generalPullHelper.autoRefreshDell();
         }
         isAutoRefreshTrigger = true;
-        isRefreshing = true;
+        refreshState = 1;
         startRefresh(0, withAction);
     }
 
     private void resetState() {
-        isRefreshing = false;
         isResetTrigger = false;
         isHoldingTrigger = false;
         isHoldingFinishTrigger = false;
@@ -1252,7 +1230,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public boolean isRefreshing() {
-        return isRefreshing;
+        return refreshState != 0;
     }
 
     public boolean isLayoutMoving() {
