@@ -40,7 +40,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setFooterView(footerView);// 设置footerView
     
     refreshLayout.isLayoutMoving();// 是否处于移动的过程中
-    refreshLayout.isRefreshing();// 是否处于刷新状态
+    refreshLayout.isRefreshing();// 是否处于刷新加载状态
     
     refreshLayout.isTwinkEnable();// 是否开启回弹
     refreshLayout.isRefreshEnable();// 是否开启刷新
@@ -90,7 +90,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
 ## 3.版本说明
  version:1.2.7 ： 滑动顺滑柔和度已达到预期效果，各个刷新状态各种手势操作无限制，强迫症患者最佳体验
  <br/>
- version:1.2.9 ： 状态触发调整，之前finish和holding触发次数没有控制,代码微调
+ version:1.3.0 ： 状态触发调整，之前finish和holding触发次数没有控制,代码微调
 
 
 ## 4.demo用到的库
