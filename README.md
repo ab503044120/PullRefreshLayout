@@ -117,6 +117,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:1.2.7 ： 滑动顺滑柔和度已达到预期效果，各个刷新状态各种手势操作无限制，强迫症患者最佳体验
  <br/>
  version:1.3.0 ： 状态触发调整，之前finish和holding触发次数没有控制,代码微调
+ <br/>
  version:1.3.1 ： add xml setting 
 
 
