@@ -56,54 +56,6 @@ public class NestedActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-//        refreshLayout.setOverScrollDampingRatio(0.4f);
-//        refreshLayout.setAdjustTwinkDuring(2);
-//        refreshLayout.setTwinkEnable(false);
-        refreshLayout.setLoadMoreEnable(true);
-//        refreshLayout.setRefreshEnable(false);
-//        refreshLayout.setAutoLoadingEnable(true);
-//        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢
-        // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现
-//        refreshLayout.setRefreshBackTime(300);
-//        refreshLayout.setPullViewHeight(400);// 设置头部和底部的高度
-//        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
-        refreshLayout.setRefreshTriggerDistance(dipToPx(getApplicationContext(), 90));
-        refreshLayout.setPullLimitDistance(dipToPx(getApplicationContext(), 150));// 拖拽最大范围，为-1时拖拽范围不受限制
-//        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setHeaderView(new PullRefreshView(getBaseContext()) {
-            @Override
-            protected int contentView() {
-                return R.layout.refresh_view_big;
-            }
-
-            @Override
-            protected void initView() {
-                ((AVLoadingIndicatorView) findViewById(R.id.loading_view)).hide();
-            }
-
-            @Override
-            public void onPullHolding() {
-                ((AVLoadingIndicatorView) findViewById(R.id.loading_view)).smoothToShow();
-            }
-
-            @Override
-            public void onPullFinish() {
-                ((AVLoadingIndicatorView) findViewById(R.id.loading_view)).smoothToHide();
-            }
-
-            @Override
-            public void onPullChange(float percent) {
-                super.onPullChange(percent);
-                if (percent > 1.2) {
-                    findViewById(R.id.iv_bg).setScaleY(1 + (percent - 1.2f) * 0.2f);
-                } else {
-                    findViewById(R.id.iv_bg).setScaleY(1f);
-                }
-            }
-        });
-        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator"));
-        refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_PLACEHOLDER);
-//        refreshLayout.setFooterShowGravity(RefreshShowHelper.STATE_PLACEHOLDER);
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -128,14 +80,7 @@ public class NestedActivity extends AppCompatActivity {
                 }, 3000);
             }
         });
-
     }
-
-    private float dipToPx(Context context, float value) {
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
-    }
-
     protected void initData() {
         datas = new ArrayList<>();
         for (int i = 0; i < 20; i++) {

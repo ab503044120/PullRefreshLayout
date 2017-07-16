@@ -86,11 +86,38 @@ compile 'com.yan:pullrefreshlayout:(↖)'
             void onPullHolding(); // 正在刷新
             void onPullFinish();// 刷新完成
         }
+         
+    <!-- xml setting -->     
+    <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:prl_autoLoadingEnable="false"
+        app:prl_dragDampingRatio="0.6"
+        app:prl_duringAdjustValue="10"
+        app:prl_footerShowGravity="stateFollow"
+        app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
+        app:prl_headerViewId="@layout/header_or_footer"
+        app:prl_footerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
+        app:prl_footerViewId="@layout/header_or_footer"
+        app:prl_headerShowGravity="statePlaceholder"
+        app:prl_loadMoreEnable="true"
+        app:prl_loadTriggerDistance="70dp"
+        app:prl_overScrollDampingRatio="0.2"
+        app:prl_pullLimitDistance="150dp"
+        app:prl_refreshBackTime="300"
+        app:prl_refreshEnable="true"
+        app:prl_refreshTriggerDistance="90dp"
+        app:prl_twinkDuringAdjustValue="3"
+        app:prl_twinkEnable="true">     
 ```
+
 ## 3.版本说明
  version:1.2.7 ： 滑动顺滑柔和度已达到预期效果，各个刷新状态各种手势操作无限制，强迫症患者最佳体验
  <br/>
  version:1.3.0 ： 状态触发调整，之前finish和holding触发次数没有控制,代码微调
+ version:1.3.1 ： add xml setting 
 
 
 ## 4.demo用到的库
