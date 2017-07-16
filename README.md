@@ -51,8 +51,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.isDragUp();// 是否正在向上拖拽
     refreshLayout.isDragDown();// 是否正在向下拖拽
     
-    refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度
-    refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度
+    refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度 default 60dp
+    refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度 default 60dp
     refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
 
     refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断效果 见 BEHAIVOR2
