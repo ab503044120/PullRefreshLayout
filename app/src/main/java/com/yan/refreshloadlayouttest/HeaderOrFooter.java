@@ -74,7 +74,7 @@ public class HeaderOrFooter extends PullRefreshView {
 
     @Override
     public void onPullChange(float percent) {
-        super.onPullChange(percent);
+//        super.onPullChange(percent);
         if (isStateFinish || isHolding) return;
         percent = Math.abs(percent);
         if (percent > 0.2 && percent < 1) {

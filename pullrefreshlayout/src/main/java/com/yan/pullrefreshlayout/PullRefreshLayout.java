@@ -638,7 +638,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private void handleAction() {
         if (pullRefreshEnable && refreshState != 2
                 && !isResetTrigger && moveDistance >= refreshTriggerDistance) {
-            startRefresh(moveDistance, true);
+            startRefresh(moveDistance, new boolean[]{true});
         } else if ((moveDistance > 0 && refreshState != 1) || (isResetTrigger && refreshState == 1)) {
             resetHeaderView(moveDistance);
         }
@@ -651,7 +651,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    private void startRefresh(int headerViewHeight, final boolean withAction) {
+    private void startRefresh(int headerViewHeight, final boolean[] withAction) {
         if (headerView != null && !isHoldingTrigger && headerView instanceof OnPullListener) {
             ((OnPullListener) headerView).onPullHolding();
             isHoldingTrigger = true;
@@ -674,7 +674,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     if (refreshState == 0 || isAutoRefreshTrigger) {
-                        if (onRefreshListener != null && withAction) {
+                        if (onRefreshListener != null && withAction[0]) {
                             onRefreshListener.onRefresh();
                         }
                         isAutoRefreshTrigger = false;
@@ -860,14 +860,14 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void refreshComplete() {
-        if (refreshState == 1) {
+        if (refreshState == 1 && !isResetTrigger) {
             isResetTrigger = true;
             resetHeaderView(moveDistance);
         }
     }
 
     public void loadMoreComplete() {
-        if (refreshState == 2) {
+        if (refreshState == 2 && !isResetTrigger) {
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
@@ -887,7 +887,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         isAutoRefreshTrigger = true;
         refreshState = 1;
-        startRefresh(0, withAction);
+        startRefresh(0, new boolean[]{withAction});
     }
 
     private void resetState() {
