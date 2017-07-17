@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -260,8 +261,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (!TextUtils.isEmpty(className)) {
             try {
                 final Class<?>[] CONSTRUCTOR_PARAMS = new Class<?>[]{Context.class};
-                final Class<View> clazz = (Class<View>) Class.forName(className, true,
-                        context.getClassLoader());
+                final Class<View> clazz = (Class<View>) Class.forName(className, true, context.getClassLoader());
                 Constructor<View> constructor = clazz.getConstructor(CONSTRUCTOR_PARAMS);
                 constructor.setAccessible(true);
                 return constructor.newInstance(context);
@@ -273,19 +273,17 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private void initHeaderOrFooter(Context context, TypedArray typedArray) {
-        String headerClassName = typedArray.getString(R.styleable.PullRefreshLayout_prl_headerClass);
-        headerView = parseClassName(context, headerClassName);
+        headerView = parseClassName(context, typedArray.getString(R.styleable.PullRefreshLayout_prl_headerClass));
         if (headerView == null) {
             int headerViewId = typedArray.getResourceId(R.styleable.PullRefreshLayout_prl_headerViewId, View.NO_ID);
-            if (headerViewId != View.NO_ID  ){
+            if (headerViewId != View.NO_ID) {
                 headerView = LayoutInflater.from(context).inflate(headerViewId, null, false);
             }
         }
-       String footerClassName = typedArray.getString(R.styleable.PullRefreshLayout_prl_footerClass);
-        footerView = parseClassName(context, footerClassName);
+        footerView = parseClassName(context, typedArray.getString(R.styleable.PullRefreshLayout_prl_footerClass));
         if (footerView == null) {
             int footerViewId = typedArray.getResourceId(R.styleable.PullRefreshLayout_prl_footerViewId, View.NO_ID);
-            if (footerViewId != View.NO_ID  ){
+            if (footerViewId != View.NO_ID) {
                 footerView = LayoutInflater.from(context).inflate(footerViewId, null, false);
             }
         }
@@ -371,26 +369,19 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             int currY = scroller.getCurrY();
             int tempDistance = currY - lastScrollY;
             lastScrollY = currY;
-            if (tempDistance > 0 && moveDistance > 0 && overScrollBackDell(1, tempDistance)) {
+            if ((tempDistance > 0 && moveDistance > 0 && overScrollBackDell(1, tempDistance))
+                    || (tempDistance < 0 && moveDistance < 0 && overScrollBackDell(2, tempDistance))) {
                 return;
-            } else if (tempDistance < 0 && moveDistance < 0 && overScrollBackDell(2, tempDistance)) {
-                return;
-            } else if ((tempDistance < 0 && moveDistance > 0)
-                    || (tempDistance > 0 && moveDistance < 0)) {
+            } else if ((tempDistance < 0 && moveDistance > 0) || (tempDistance > 0 && moveDistance < 0)) {
                 cancelAllAnimation();
                 abortScroller();
                 handleAction();
                 return;
             }
 
-            if (!canChildScrollUp() && !canChildScrollDown()) {
-                invalidate();
-                return;
-            }
-
-            if (!isOverScrollTrigger && !canChildScrollUp() && tempDistance < 0) {
+            if (!isOverScrollTrigger && !canChildScrollUp() && canChildScrollDown() && tempDistance < 0) {
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && tempDistance > 0) {
+            } else if (!isOverScrollTrigger && !canChildScrollDown() && canChildScrollUp() && tempDistance > 0) {
                 onOverScrollDown();
             }
             overScrollLogic(tempDistance);

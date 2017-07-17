@@ -118,7 +118,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.3.0 ： 状态触发调整，之前finish和holding触发次数没有控制,代码微调
  <br/>
- version:1.3.1 ： add xml setting 
+ version:1.3.4 ： add xml setting 
 
 
 ## 4.demo用到的库
