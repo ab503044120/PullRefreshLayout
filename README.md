@@ -122,7 +122,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.3.4 ： add xml setting  
  <br/>
- version:1.3.9 ： 增加overScroll距离限制的控制setOverScrollMaxTriggerOffset(offset)
+ version:1.4.1 ： 增加overScroll距离限制的控制setOverScrollMaxTriggerOffset(offset)
 
 
 ## 4.demo用到的库
