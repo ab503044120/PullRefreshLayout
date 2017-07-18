@@ -19,6 +19,7 @@
     app:prl_refreshEnable="true"
     app:prl_refreshTriggerDistance="90dp"
     app:prl_twinkDuringAdjustValue="3"
+    app:prl_overScrollMaxTriggerOffset="80dp"
     app:prl_twinkEnable="true">
 
     <android.support.v7.widget.RecyclerView

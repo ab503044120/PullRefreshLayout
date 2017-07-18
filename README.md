@@ -34,6 +34,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setTwinkEnable(true);// 回弹是否可用 default true 
     refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
+    refreshLayout.setOverScrollMaxTriggerOffset(300);// 用于控制overscroll的距离 default 80dp
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
     refreshLayout.setHeaderView(headerView);// 设置headerView
@@ -109,6 +110,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
         app:prl_refreshBackTime="300"
         app:prl_refreshEnable="true"
         app:prl_refreshTriggerDistance="90dp"
+        app:prl_overScrollMaxTriggerOffset="80dp"
         app:prl_twinkDuringAdjustValue="3"
         app:prl_twinkEnable="true">     
 ```
@@ -118,7 +120,9 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.3.0 ： 状态触发调整，之前finish和holding触发次数没有控制,代码微调
  <br/>
- version:1.3.4 ： add xml setting 
+ version:1.3.4 ： add xml setting  
+ <br/>
+ version:1.3.9 ： 增加overScroll距离限制的控制setOverScrollMaxTriggerOffset(offset)
 
 
 ## 4.demo用到的库

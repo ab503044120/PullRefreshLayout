@@ -9,6 +9,7 @@
         <attr name="prl_refreshTriggerDistance" format="dimension" />
         <attr name="prl_loadTriggerDistance" format="dimension" />
         <attr name="prl_pullLimitDistance" format="dimension" />
+        <attr name="prl_overScrollMaxTriggerOffset" format="dimension" />
 
         <attr name="prl_dragDampingRatio" format="float" />
         <attr name="prl_duringAdjustValue" format="float" />
