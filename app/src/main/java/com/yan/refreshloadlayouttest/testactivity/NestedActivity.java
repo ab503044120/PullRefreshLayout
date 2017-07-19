@@ -84,7 +84,7 @@ public class NestedActivity extends AppCompatActivity {
     }
     protected void initData() {
         datas = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 25; i++) {
             datas.add("test" + i);
         }
     }
