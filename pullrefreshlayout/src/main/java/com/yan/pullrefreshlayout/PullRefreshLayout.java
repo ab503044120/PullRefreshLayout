@@ -1106,7 +1106,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         headerView = header;
         addView(header);
-        targetView.bringToFront();
+
+        if (targetView!=null) {
+            targetView.bringToFront();
+        }
     }
 
     public void setFooterView(View footer) {
@@ -1123,7 +1126,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         footerView = footer;
         addView(footer);
-        targetView.bringToFront();
+
+        if (targetView!=null) {
+            targetView.bringToFront();
+        }
     }
 
     public void setTargetView(View targetView) {
