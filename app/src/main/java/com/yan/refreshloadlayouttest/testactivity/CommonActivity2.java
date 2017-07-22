@@ -22,7 +22,7 @@ public class CommonActivity2 extends CommonActivity1 {
         refreshLayout.setTwinkEnable(true);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "BallScaleRippleMultipleIndicator"));
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER, RefreshShowHelper.STATE_CENTER);
+        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER_FOLLOW, RefreshShowHelper.STATE_CENTER);
         HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.hsv);
         final boolean[] isTouch = {false};
         horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {

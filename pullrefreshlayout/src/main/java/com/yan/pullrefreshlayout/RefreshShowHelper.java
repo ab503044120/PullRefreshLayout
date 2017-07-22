@@ -1,8 +1,8 @@
 package com.yan.pullrefreshlayout;
 
 import android.support.annotation.IntDef;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,34 +43,6 @@ public class RefreshShowHelper {
         this.pullRefreshLayout = pullRefreshLayout;
     }
 
-    float headerOffsetRatio(float ratio) {
-        switch (headerShowState) {
-            case STATE_PLACEHOLDER_FOLLOW:
-                break;
-            case STATE_PLACEHOLDER_CENTER:
-                break;
-            case STATE_CENTER_FOLLOW:
-                break;
-            case STATE_FOLLOW_CENTER:
-                break;
-        }
-        return ratio;
-    }
-
-    float footerOffsetRatio(float ratio) {
-        switch (footerShowState) {
-            case STATE_PLACEHOLDER_FOLLOW:
-                break;
-            case STATE_PLACEHOLDER_CENTER:
-                break;
-            case STATE_CENTER_FOLLOW:
-                break;
-            case STATE_FOLLOW_CENTER:
-                break;
-        }
-        return ratio;
-    }
-
     void setHeaderShowGravity(int headerShowGravity) {
         this.headerShowState = headerShowGravity;
     }
@@ -80,17 +52,62 @@ public class RefreshShowHelper {
     }
 
     void dellHeaderFooterMoving(int moveDistance) {
-        if (pullRefreshLayout.headerView != null) {
+        if (pullRefreshLayout.headerView != null && moveDistance >= 0) {
             switch (headerShowState) {
                 case STATE_FOLLOW:
                     pullRefreshLayout.headerView.setTranslationY(moveDistance);
                     break;
+                case STATE_CENTER:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance / 2);
+                    break;
+                case STATE_FOLLOW_CENTER:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
+                            .refreshTriggerDistance ? moveDistance : moveDistance / 2);
+                    break;
+                case STATE_CENTER_FOLLOW:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
+                            .refreshTriggerDistance ? moveDistance / 2 : moveDistance
+                            - pullRefreshLayout.refreshTriggerDistance / 2);
+                    break;
+                case STATE_PLACEHOLDER_CENTER:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance <=
+                            pullRefreshLayout.refreshTriggerDistance ? 0 : (moveDistance
+                            - pullRefreshLayout.refreshTriggerDistance) / 2);
+                    break;
+                case STATE_PLACEHOLDER_FOLLOW:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
+                            .refreshTriggerDistance ? 0 : moveDistance
+                            - pullRefreshLayout.refreshTriggerDistance);
+                    break;
             }
         }
-        if (pullRefreshLayout.footerView != null) {
-            switch (headerShowState) {
+        
+        if (pullRefreshLayout.footerView != null && moveDistance <= 0) {
+            switch (footerShowState) {
                 case STATE_FOLLOW:
                     pullRefreshLayout.footerView.setTranslationY(moveDistance);
+                    break;
+                case STATE_CENTER:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance / 2);
+                    break;
+                case STATE_FOLLOW_CENTER:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
+                            .loadTriggerDistance ? moveDistance : moveDistance / 2);
+                    break;
+                case STATE_CENTER_FOLLOW:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
+                            .loadTriggerDistance ? moveDistance + pullRefreshLayout
+                            .loadTriggerDistance / 2 : moveDistance / 2);
+                    break;
+                case STATE_PLACEHOLDER_CENTER:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
+                            .loadTriggerDistance ? (moveDistance + pullRefreshLayout
+                            .loadTriggerDistance) / 2 : 0);
+                    break;
+                case STATE_PLACEHOLDER_FOLLOW:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
+                            .loadTriggerDistance ? moveDistance + pullRefreshLayout
+                            .loadTriggerDistance : 0);
                     break;
             }
         }
@@ -98,22 +115,38 @@ public class RefreshShowHelper {
 
     void layout(int left, int top, int right, int bottom) {
         if (pullRefreshLayout.headerView != null) {
+            int headerHeight = pullRefreshLayout.headerView.getMeasuredHeight();
             switch (headerShowState) {
                 case STATE_FOLLOW:
-                    pullRefreshLayout.headerView.layout(left, top - pullRefreshLayout.headerView.getMeasuredHeight(), right, 0);
+                case STATE_FOLLOW_CENTER:
+                    pullRefreshLayout.headerView.layout(left, top - headerHeight, right, 0);
                     break;
                 case STATE_PLACEHOLDER:
-                    pullRefreshLayout.headerView.layout(left, top, right, top + pullRefreshLayout.headerView.getMeasuredHeight());
+                case STATE_PLACEHOLDER_CENTER:
+                case STATE_PLACEHOLDER_FOLLOW:
+                    pullRefreshLayout.headerView.layout(left, top, right, top + headerHeight);
+                    break;
+                case STATE_CENTER:
+                case STATE_CENTER_FOLLOW:
+                    pullRefreshLayout.headerView.layout(left, -headerHeight / 2, right, headerHeight / 2);
                     break;
             }
         }
         if (pullRefreshLayout.footerView != null) {
-            switch (headerShowState) {
+            int footerHeight = pullRefreshLayout.footerView.getMeasuredHeight();
+            switch (footerShowState) {
                 case STATE_FOLLOW:
-                    pullRefreshLayout.footerView.layout(left, bottom, right, bottom + pullRefreshLayout.footerView.getMeasuredHeight());
+                case STATE_FOLLOW_CENTER:
+                    pullRefreshLayout.footerView.layout(left, bottom, right, bottom + footerHeight);
                     break;
                 case STATE_PLACEHOLDER:
-                    pullRefreshLayout.footerView.layout(left, bottom - pullRefreshLayout.footerView.getMeasuredHeight(), right, bottom);
+                case STATE_PLACEHOLDER_CENTER:
+                case STATE_PLACEHOLDER_FOLLOW:
+                    pullRefreshLayout.footerView.layout(left, bottom - footerHeight, right, bottom);
+                    break;
+                case STATE_CENTER:
+                case STATE_CENTER_FOLLOW:
+                    pullRefreshLayout.footerView.layout(left, bottom - footerHeight / 2, right, bottom + footerHeight / 2);
                     break;
             }
         }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -84,7 +85,7 @@ public class CommonActivity3 extends Activity {
 //        refreshLayout.setRefreshEnable(false);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_PLACEHOLDER_CENTER, RefreshShowHelper.STATE_PLACEHOLDER_CENTER);
+        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_PLACEHOLDER_CENTER, RefreshShowHelper.STATE_PLACEHOLDER_FOLLOW);
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

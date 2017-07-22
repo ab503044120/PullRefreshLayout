@@ -79,19 +79,15 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     volatile int moveDistance = 0;
 
     /**
-     * header trigger distance
+     * trigger distance
      */
-    private int refreshTriggerDistance = 60;
+    int refreshTriggerDistance = 60;
+    int loadTriggerDistance = 60;
 
     /**
      * over scroll start offset
      */
     private int overScrollMaxTriggerOffset = 80;
-
-    /**
-     * load trigger distance
-     */
-    private int loadTriggerDistance = 60;
 
     /**
      * max drag distance
@@ -245,7 +241,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (typedArray.hasValue(R.styleable.PullRefreshLayout_prl_footerShowGravity)) {
             refreshShowHelper.setFooterShowGravity(typedArray.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, RefreshShowHelper.STATE_FOLLOW));
         }
-
         initHeaderOrFooter(context, typedArray);
 
         typedArray.recycle();
@@ -550,9 +545,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
         if (moveDistance >= 0) {
             if (headerView != null && headerView instanceof OnPullListener) {
-                ((OnPullListener) headerView).onPullChange(
-                        refreshShowHelper.headerOffsetRatio((float) moveDistance / refreshTriggerDistance)
-                );
+                ((OnPullListener) headerView).onPullChange((float) moveDistance / refreshTriggerDistance);
             }
             if (moveDistance >= refreshTriggerDistance) {
                 if (pullStateControl) {
@@ -572,9 +565,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return;
         }
         if (footerView != null && footerView instanceof OnPullListener) {
-            ((OnPullListener) footerView).onPullChange(
-                    refreshShowHelper.footerOffsetRatio((float) moveDistance / loadTriggerDistance)
-            );
+            ((OnPullListener) footerView).onPullChange((float) moveDistance / loadTriggerDistance);
         }
         if (moveDistance <= -loadTriggerDistance) {
             if (pullStateControl) {
@@ -908,7 +899,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         public void onAnimationUpdate(ValueAnimator animation) {
             moveChildren((Integer) animation.getAnimatedValue());
             if (headerView != null && headerView instanceof OnPullListener) {
-                ((OnPullListener) headerView).onPullChange(refreshShowHelper.headerOffsetRatio((float) moveDistance / refreshTriggerDistance));
+                ((OnPullListener) headerView).onPullChange((float) moveDistance / refreshTriggerDistance);
             }
         }
     };
@@ -918,7 +909,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         public void onAnimationUpdate(ValueAnimator animation) {
             moveChildren((Integer) animation.getAnimatedValue());
             if (footerView != null && footerView instanceof OnPullListener) {
-                ((OnPullListener) footerView).onPullChange(refreshShowHelper.footerOffsetRatio((float) moveDistance / loadTriggerDistance));
+                ((OnPullListener) footerView).onPullChange((float) moveDistance / loadTriggerDistance);
             }
         }
     };
@@ -1114,7 +1105,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             header.setLayoutParams(lp);
         }
         headerView = header;
-        addView(header, -1);
+        addView(header);
+        targetView.bringToFront();
     }
 
     public void setFooterView(View footer) {
@@ -1130,9 +1122,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             footer.setLayoutParams(lp);
         }
         footerView = footer;
-        addView(footer, -2);
+        addView(footer);
+        targetView.bringToFront();
     }
-
 
     public void setTargetView(View targetView) {
         this.targetView = targetView;

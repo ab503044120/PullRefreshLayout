@@ -38,7 +38,7 @@ public class CommonActivity1 extends AppCompatActivity {
 //        refreshLayout.setAdjustTwinkDuring(2);
 //        refreshLayout.setTwinkEnable(false);
         refreshLayout.setLoadMoreEnable(true);
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_PLACEHOLDER_FOLLOW,RefreshShowHelper.STATE_PLACEHOLDER_FOLLOW);
+        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_PLACEHOLDER_FOLLOW,RefreshShowHelper.STATE_FOLLOW);
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAutoLoadingEnable(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢

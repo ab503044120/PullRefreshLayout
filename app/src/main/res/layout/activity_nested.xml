@@ -7,7 +7,7 @@
     app:prl_autoLoadingEnable="false"
     app:prl_dragDampingRatio="0.6"
     app:prl_duringAdjustValue="10"
-    app:prl_footerShowGravity="stateFollow"
+    app:prl_footerShowGravity="stateCenterFollow"
     app:prl_footerViewId="@layout/header_or_footer"
     app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
     app:prl_headerShowGravity="statePlaceholder"
