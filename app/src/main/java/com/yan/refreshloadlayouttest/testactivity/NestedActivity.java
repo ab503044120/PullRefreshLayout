@@ -35,6 +35,7 @@ public class NestedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nested);
+
         initData();
         initRecyclerView();
         initRefreshLayout();
@@ -44,6 +45,12 @@ public class NestedActivity extends AppCompatActivity {
                 refreshLayout.autoRefresh();
             }
         }, 150);
+        findViewById(R.id.bt_test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshLayout.autoRefresh();
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -82,6 +89,7 @@ public class NestedActivity extends AppCompatActivity {
             }
         });
     }
+
     protected void initData() {
         datas = new ArrayList<>();
         for (int i = 0; i < 25; i++) {

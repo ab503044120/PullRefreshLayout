@@ -773,7 +773,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         isAutoRefreshTrigger = true;
         refreshState = 1;
-        startRefresh(0, withAction ? refreshWithAction : refreshWithoutAction);
+        startRefresh(moveDistance, withAction ? refreshWithAction : refreshWithoutAction);
     }
 
     private void resetState() {
@@ -1107,7 +1107,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         headerView = header;
         addView(header);
 
-        if (targetView!=null) {
+        if (targetView != null) {
             targetView.bringToFront();
         }
     }
@@ -1127,7 +1127,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         footerView = footer;
         addView(footer);
 
-        if (targetView!=null) {
+        if (targetView != null) {
             targetView.bringToFront();
         }
     }
