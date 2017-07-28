@@ -26,7 +26,6 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AbsListView;
-import android.widget.FrameLayout;
 
 import java.lang.reflect.Constructor;
 
@@ -161,6 +160,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean isFooterHeightSet = false;
 
     /**
+     * refresh with action
+     */
+    private boolean refreshWithAction = true;
+
+    /**
      * refresh back time
      * if the value equals -1, the field duringAdjustValue will be work
      */
@@ -184,9 +188,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private ValueAnimator startLoadMoreAnimator;
     private ValueAnimator resetFootAnimator;
     private ValueAnimator scrollAnimation;
-
-    private final boolean[] refreshWithAction = new boolean[]{true};
-    private final boolean[] refreshWithoutAction = new boolean[]{false};
 
     public PullRefreshLayout(Context context) {
         this(context, null, 0);
@@ -615,13 +616,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-
     /**
      * decide on the action refresh or loadMore
      */
     private void handleAction() {
         if (pullRefreshEnable && refreshState != 2 && !isResetTrigger && moveDistance >= refreshTriggerDistance) {
-            startRefresh(moveDistance, refreshWithAction);
+            startRefresh(moveDistance, true);
         } else if ((moveDistance > 0 && refreshState != 1) || (isResetTrigger && refreshState == 1)) {
             resetHeaderView(moveDistance);
         }
@@ -633,7 +633,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    private void startRefresh(int headerViewHeight, final boolean[] withAction) {
+    private void startRefresh(int headerViewHeight, final boolean withAction) {
         if (headerView != null && !isHoldingTrigger && headerView instanceof OnPullListener) {
             ((OnPullListener) headerView).onPullHolding();
             isHoldingTrigger = true;
@@ -650,10 +650,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                             if (footerView != null) {
                                 footerView.setVisibility(GONE);
                             }
-                            if (onRefreshListener != null && withAction[0]) {
+                            if (onRefreshListener != null && refreshWithAction) {
                                 onRefreshListener.onRefresh();
                             }
-
                         }
                     }
                 });
@@ -665,6 +664,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             } else {
                 startRefreshAnimator.setIntValues(headerViewHeight, refreshTriggerDistance);
             }
+            refreshWithAction = withAction;
             startRefreshAnimator.setInterpolator(new DecelerateInterpolator(2f));
             startRefreshAnimator.start();
         }
@@ -773,7 +773,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         isAutoRefreshTrigger = true;
         refreshState = 1;
-        startRefresh(moveDistance, withAction ? refreshWithAction : refreshWithoutAction);
+        startRefresh(moveDistance, withAction);
     }
 
     private void resetState() {
