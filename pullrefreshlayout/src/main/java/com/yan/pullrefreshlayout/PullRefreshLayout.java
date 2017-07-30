@@ -216,8 +216,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         pullTwinkEnable = typedArray.getBoolean(R.styleable.PullRefreshLayout_prl_twinkEnable, pullTwinkEnable);
         autoLoadingEnable = typedArray.getBoolean(R.styleable.PullRefreshLayout_prl_autoLoadingEnable, autoLoadingEnable);
 
-        refreshTriggerDistance=dipToPx(context, refreshTriggerDistance);
-        loadTriggerDistance=dipToPx(context, loadTriggerDistance);
+        refreshTriggerDistance = dipToPx(context, refreshTriggerDistance);
+        loadTriggerDistance = dipToPx(context, loadTriggerDistance);
         if (typedArray.hasValue(R.styleable.PullRefreshLayout_prl_refreshTriggerDistance)) {
             isHeaderHeightSet = true;
             refreshTriggerDistance = typedArray.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_refreshTriggerDistance, refreshTriggerDistance);

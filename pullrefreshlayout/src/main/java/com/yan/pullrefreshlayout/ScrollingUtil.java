@@ -109,7 +109,7 @@ class ScrollingUtil {
      * @return Whether it is possible for the child view of this layout to
      * scroll up. Override this if the child view is a custom view.
      */
-     static boolean canChildScrollUp(View targetView) {
+    static boolean canChildScrollUp(View targetView) {
         if (android.os.Build.VERSION.SDK_INT < 14) {
             if (targetView instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) targetView;
