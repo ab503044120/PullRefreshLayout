@@ -1051,7 +1051,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             if (ev.getActionMasked() == MotionEvent.ACTION_UP
                     || ev.getActionMasked() == MotionEvent.ACTION_CANCEL) {
                 onStopNestedScroll(pullContentView);
-                super.dispatchTouchEvent(finalMotionEvent[0]);
+                return super.dispatchTouchEvent(ev);
             }
         }
         return !generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent)
