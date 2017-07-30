@@ -978,6 +978,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return true;
         }
         if ((pullTwinkEnable || autoLoadingEnable)) {
+            readyScroller();
             abortScroller();
             scroller.fling(0, 0, 0, (int) velocityY, 0, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
             finalScrollDistance = getScrollerAbleDistance();
