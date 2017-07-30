@@ -437,9 +437,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private void startOverScrollAnimation(final int distanceMove) {
         final int finalDistance = getFinalOverScrollDistance();
         overScrollState = 0;
-        if (cancelAllAnimation(scrollAnimation)) {
-            return;
-        }
+        cancelAllAnimation();
         abortScroller();
         if (scrollAnimation == null) {
             scrollAnimation = ValueAnimator.ofInt(distanceMove, 0);
@@ -970,7 +968,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        return  dispatchNestedPreFling(velocityX, velocityY);
+        return dispatchNestedPreFling(velocityX, velocityY);
     }
 
     @Override
