@@ -393,8 +393,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 abortScroller();
                 return;
             }
+
+            invalidate();
+
             if (targetView instanceof RecyclerView) {
-                invalidate();
                 return;
             }
 
@@ -404,8 +406,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 onOverScrollDown();
             }
             overScrollLogic(scrollTempOffset);
-
-            invalidate();
         }
     }
 
@@ -416,7 +416,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private int getScrollerAbleDistance() {
         return scroller.getFinalY() - scroller.getCurrY();
     }
-
 
     /**
      * scroll over logic
