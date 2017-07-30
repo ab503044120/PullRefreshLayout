@@ -2,6 +2,7 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -19,7 +20,7 @@ public class CommonActivity2 extends CommonActivity1 {
 
     protected void initRefreshLayout() {
         super.initRefreshLayout();
-        refreshLayout.setTwinkEnable(true);
+        refreshLayout.setTwinkEnable(false);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "BallScaleRippleMultipleIndicator"));
         refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER_FOLLOW, RefreshShowHelper.STATE_CENTER);
@@ -28,6 +29,7 @@ public class CommonActivity2 extends CommonActivity1 {
         horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Log.e("onTouch", "onTouch: " + event.getActionMasked()+"    "+MotionEvent.ACTION_DOWN);
                 isTouch[0] = true;
 
                 if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {

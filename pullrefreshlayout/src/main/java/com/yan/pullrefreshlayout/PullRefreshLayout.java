@@ -65,7 +65,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * last Scroll Y
      */
     private int lastScrollY = 0;
-
+    private int scrollTempOffset = 0;
 
     /**
      * over scroll state
@@ -284,6 +284,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     protected void onFinishInflate() {
         super.onFinishInflate();
         targetView = getPullContentView();
+        if ((pullTwinkEnable || autoLoadingEnable)) {
+            readyScroller();
+        }
     }
 
     private View getPullContentView() {
@@ -303,6 +306,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if ((pullTwinkEnable || autoLoadingEnable) && scroller == null) {
             if (targetView instanceof RecyclerView) {
                 scroller = ScrollerCompat.create(getContext(), getRecyclerDefaultInterpolator());
+                ((RecyclerView) targetView).addOnScrollListener(getRecyclerScrollListener());
                 return;
             }
             scroller = ScrollerCompat.create(getContext());
@@ -359,28 +363,47 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return true;
     }
 
+    private RecyclerView.OnScrollListener getRecyclerScrollListener() {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (RecyclerScrollUtil.isRecyclerViewToTop(recyclerView) && generalPullHelper.isMovingDirectDown) {
+                    onOverScrollUp();
+                    overScrollLogic(scrollTempOffset);
+                } else if (RecyclerScrollUtil.isRecyclerViewToBottom(recyclerView) && !generalPullHelper.isMovingDirectDown) {
+                    onOverScrollDown();
+                    overScrollLogic(scrollTempOffset);
+                }
+            }
+        };
+    }
+
     @Override
     public void computeScroll() {
         if (scroller != null && scroller.computeScrollOffset()) {
             int currY = scroller.getCurrY();
-            int tempDistance = currY - lastScrollY;
+            scrollTempOffset = currY - lastScrollY;
             lastScrollY = currY;
-            if ((tempDistance > 0 && moveDistance > 0 && overScrollBackDell(1, tempDistance))
-                    || (tempDistance < 0 && moveDistance < 0 && overScrollBackDell(2, tempDistance))) {
+            if ((scrollTempOffset > 0 && moveDistance > 0 && overScrollBackDell(1, scrollTempOffset))
+                    || (scrollTempOffset < 0 && moveDistance < 0 && overScrollBackDell(2, scrollTempOffset))) {
                 return;
-            } else if ((tempDistance < 0 && moveDistance > 0) || (tempDistance > 0 && moveDistance < 0)) {
+            } else if ((scrollTempOffset < 0 && moveDistance > 0) || (scrollTempOffset > 0 && moveDistance < 0)) {
                 cancelAllAnimation();
                 handleAction();
                 abortScroller();
                 return;
             }
+            if (targetView instanceof RecyclerView) {
+                invalidate();
+                return;
+            }
 
-            if (!isOverScrollTrigger && !canChildScrollUp() && tempDistance < 0 && moveDistance >= 0) {
+            if (!isOverScrollTrigger && !canChildScrollUp() && scrollTempOffset < 0 && moveDistance >= 0) {
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && tempDistance > 0 && moveDistance <= 0) {
+            } else if (!isOverScrollTrigger && !canChildScrollDown() && scrollTempOffset > 0 && moveDistance <= 0) {
                 onOverScrollDown();
             }
-            overScrollLogic(tempDistance);
+            overScrollLogic(scrollTempOffset);
 
             invalidate();
         }
@@ -768,9 +791,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (pullContentView == null || !pullRefreshEnable) {
             return;
         }
-        if (!(pullContentView instanceof NestedScrollingChild)) {
-            generalPullHelper.autoRefreshDell();
-        }
+
         isAutoRefreshTrigger = true;
         refreshState = 1;
         startRefresh(moveDistance, withAction);
@@ -999,7 +1020,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return true;
         }
         if ((pullTwinkEnable || autoLoadingEnable)) {
-            readyScroller();
             abortScroller();
             scroller.fling(0, 0, 0, (int) velocityY, 0, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
             finalScrollDistance = getScrollerAbleDistance();
@@ -1075,12 +1095,14 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (pullContentView instanceof NestedScrollingChild) {
             return super.onTouchEvent(event);
         }
+        super.onTouchEvent(event);
         return generalPullHelper.onTouchEvent(event);
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         generalPullHelper.dellDirection(ev);
+
         if (pullContentView instanceof NestedScrollingChild) {
             if (ev.getActionMasked() == MotionEvent.ACTION_UP
                     || ev.getActionMasked() == MotionEvent.ACTION_CANCEL) {

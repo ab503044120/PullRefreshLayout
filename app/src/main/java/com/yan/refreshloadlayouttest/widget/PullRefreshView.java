@@ -1,4 +1,4 @@
-package com.yan.pullrefreshlayout;
+package com.yan.refreshloadlayouttest.widget;
 
 import android.content.Context;
 import android.support.annotation.AttrRes;
@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+
+import com.yan.pullrefreshlayout.PullRefreshLayout;
 
 /**
  * Created by yan on 2017/4/11.

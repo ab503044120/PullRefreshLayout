@@ -4,16 +4,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wang.avi.AVLoadingIndicatorView;
-import com.yan.pullrefreshlayout.PullRefreshView;
+import com.yan.refreshloadlayouttest.widget.PullRefreshView;
 
 /**
  * Created by yan on 2017/7/4.

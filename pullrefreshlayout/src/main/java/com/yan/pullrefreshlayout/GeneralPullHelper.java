@@ -2,6 +2,7 @@ package com.yan.pullrefreshlayout;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
@@ -43,16 +44,6 @@ class GeneralPullHelper {
     private float actionDownPointY;
 
     /**
-     * first touch moving point x
-     */
-    private float movingPointX;
-
-    /**
-     * first touch moving point y
-     */
-    private float movingPointY;
-
-    /**
      * is touch direct down
      */
     int dragState;
@@ -84,26 +75,17 @@ class GeneralPullHelper {
     private float lastTouchY;
 
     /**
-     * minimumFlingVelocity
+     * default values
      */
     private final int minimumFlingVelocity;
-
-    /**
-     * mMaximumVelocity
-     */
     private final int maximumVelocity;
+    private final float touchSlop;
 
     /**
      * scroll consumed offset
      */
     private int[] scrollConsumed = new int[2];
     private int[] scrollOffset = new int[2];
-
-    /**
-     * dell the intercept touch event
-     */
-    private int interceptTouchCount = 0;
-    private int interceptTouchLastCount = -1;
 
     /**
      * touchEvent velocityTracker
@@ -118,8 +100,10 @@ class GeneralPullHelper {
     GeneralPullHelper(PullRefreshLayout pullRefreshLayout, Context context) {
         this.context = context;
         this.pullRefreshLayout = pullRefreshLayout;
-        minimumFlingVelocity = ViewConfiguration.get(this.context).getScaledMinimumFlingVelocity();
-        maximumVelocity = ViewConfiguration.get(this.context).getScaledMaximumFlingVelocity();
+        ViewConfiguration configuration = ViewConfiguration.get(this.context);
+        minimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
+        maximumVelocity = configuration.getScaledMaximumFlingVelocity();
+        touchSlop = configuration.getScaledTouchSlop();
     }
 
     void dellDirection(MotionEvent event) {
@@ -148,13 +132,16 @@ class GeneralPullHelper {
             case MotionEvent.ACTION_DOWN:
                 onTouchEvent(ev);
                 initVelocityTracker(ev);
+                actionDownPointX = ev.getX();
+                actionDownPointY = ev.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
                 velocityTrackerCompute(ev);
-                if (interceptTouchLastCount != interceptTouchCount) {
-                    interceptTouchLastCount = interceptTouchCount;
-                } else if (Math.abs(movingPointY - actionDownPointY) > Math.abs(movingPointX - actionDownPointX)
-                        || (pullRefreshLayout.moveDistance != 0)) {
+                float movingX = ev.getX() - actionDownPointX;
+                float movingY = ev.getY() - actionDownPointY;
+                if ((Math.sqrt(movingY * movingY + movingX * movingX) > touchSlop
+                        && Math.abs(movingY) > Math.abs(movingX))
+                        || pullRefreshLayout.moveDistance != 0) {
                     if (!isLastMotionYSet) {
                         isLastMotionYSet = true;
                         lastMotionY = (int) ev.getY();
@@ -167,8 +154,6 @@ class GeneralPullHelper {
                 onTouchEvent(ev);
                 cancelVelocityTracker();
                 velocityY = 0;
-                interceptTouchLastCount = -1;
-                interceptTouchCount = 0;
                 isLastMotionYSet = false;
                 break;
         }
@@ -176,25 +161,7 @@ class GeneralPullHelper {
     }
 
     boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (pullRefreshLayout.moveDistance != 0) {
-            return true;
-        }
-        switch (ev.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                actionDownPointX = ev.getX();
-                actionDownPointY = ev.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                interceptTouchCount++;
-                movingPointX = ev.getX();
-                movingPointY = ev.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                break;
-        }
-
-        return false;
+        return pullRefreshLayout.moveDistance != 0;
     }
 
     boolean onTouchEvent(MotionEvent ev) {
@@ -308,13 +275,6 @@ class GeneralPullHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    void autoRefreshDell() {
-        movingPointY = 100;
-        actionDownPointY = 0;
-        movingPointX = 0;
-        actionDownPointX = 0;
     }
 
     private void flingWithNestedDispatch(int velocityY) {
