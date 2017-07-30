@@ -127,7 +127,7 @@ class GeneralPullHelper {
         finalMotionEvent[0] = ev;
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                onTouchEvent(ev);
+                dellTouchEvent(ev);
                 initVelocityTracker(ev);
                 actionDownPointX = ev.getX();
                 actionDownPointY = ev.getY();
@@ -143,12 +143,12 @@ class GeneralPullHelper {
                         isLastMotionYSet = true;
                         lastMotionY = (int) ev.getY();
                     }
-                    onTouchEvent(ev);
+                    dellTouchEvent(ev);
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                onTouchEvent(ev);
+                dellTouchEvent(ev);
                 cancelVelocityTracker();
                 velocityY = 0;
                 isLastMotionYSet = false;
@@ -161,7 +161,7 @@ class GeneralPullHelper {
         return pullRefreshLayout.moveDistance != 0;
     }
 
-    boolean onTouchEvent(MotionEvent ev) {
+    private void dellTouchEvent(MotionEvent ev){
         MotionEvent vtev = MotionEvent.obtain(ev);
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
         if (actionMasked == MotionEvent.ACTION_DOWN) {
@@ -202,7 +202,6 @@ class GeneralPullHelper {
                     pullRefreshLayout.onNestedPreScroll(null, 0, deltaY, childConsumed);
                     vtev.offsetLocation(0, childConsumed[1] - lastChildConsumedY);
                     lastChildConsumedY = childConsumed[1];
-                    return true;
                 }
 
                 final int scrolledDeltaY = pullRefreshLayout.targetView.getScrollY() - oldY;
@@ -242,6 +241,9 @@ class GeneralPullHelper {
         }
 
         vtev.recycle();
+    }
+
+    boolean onTouchEvent(MotionEvent ev) {
         return true;
     }
 
@@ -281,7 +283,7 @@ class GeneralPullHelper {
         if (!pullRefreshLayout.dispatchNestedPreFling(0, velocityY)) {
             pullRefreshLayout.dispatchNestedFling(0, velocityY, true);
             if ((Math.abs(velocityY) > minimumFlingVelocity)) {
-                pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, velocityY);
+                pullRefreshLayout.onNestedFling(pullRefreshLayout.targetView, 0, velocityY,true);
             }
         }
     }

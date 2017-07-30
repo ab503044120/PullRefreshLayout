@@ -11,7 +11,9 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.ScrollerCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -864,7 +866,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 }
                 refreshState = 2;
                 onRefreshListener.onLoading();
-
             }
         }
     };
@@ -972,10 +973,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        boolean nestedPreFling = dispatchNestedPreFling(velocityX, velocityY);
-        if (nestedPreFling) {
-            return true;
-        }
+        return  dispatchNestedPreFling(velocityX, velocityY);
+    }
+
+    @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         if ((pullTwinkEnable || autoLoadingEnable)) {
             readyScroller();
             abortScroller();
@@ -984,11 +986,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             lastScrollY = 0;
             invalidate();
         }
-        return false;
-    }
-
-    @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         return dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
@@ -1042,17 +1039,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (pullContentView instanceof NestedScrollingChild) {
-            return !(!pullRefreshEnable && !pullLoadMoreEnable) && super.onInterceptTouchEvent(ev);
-        }
         return !generalPullHelper.onInterceptTouchEvent(ev) && super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (pullContentView instanceof NestedScrollingChild) {
-            return super.onTouchEvent(event);
-        }
         super.onTouchEvent(event);
         return generalPullHelper.onTouchEvent(event);
     }
@@ -1068,6 +1059,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             }
             return super.dispatchTouchEvent(ev);
         }
+
         return !generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent)
                 && super.dispatchTouchEvent(finalMotionEvent[0]);
     }
