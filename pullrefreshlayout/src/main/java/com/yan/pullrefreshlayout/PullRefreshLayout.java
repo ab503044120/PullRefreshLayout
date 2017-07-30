@@ -16,7 +16,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,7 +24,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.AbsListView;
 
 import java.lang.reflect.Constructor;
 
@@ -218,13 +216,15 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         pullTwinkEnable = typedArray.getBoolean(R.styleable.PullRefreshLayout_prl_twinkEnable, pullTwinkEnable);
         autoLoadingEnable = typedArray.getBoolean(R.styleable.PullRefreshLayout_prl_autoLoadingEnable, autoLoadingEnable);
 
+        refreshTriggerDistance=dipToPx(context, refreshTriggerDistance);
+        loadTriggerDistance=dipToPx(context, loadTriggerDistance);
         if (typedArray.hasValue(R.styleable.PullRefreshLayout_prl_refreshTriggerDistance)) {
             isHeaderHeightSet = true;
-            refreshTriggerDistance = typedArray.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_refreshTriggerDistance, dipToPx(context, refreshTriggerDistance));
+            refreshTriggerDistance = typedArray.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_refreshTriggerDistance, refreshTriggerDistance);
         }
         if (typedArray.hasValue(R.styleable.PullRefreshLayout_prl_loadTriggerDistance)) {
             isFooterHeightSet = true;
-            loadTriggerDistance = typedArray.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_loadTriggerDistance, dipToPx(context, loadTriggerDistance));
+            loadTriggerDistance = typedArray.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_loadTriggerDistance, loadTriggerDistance);
         }
         pullLimitDistance = typedArray.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_pullLimitDistance, pullLimitDistance);
         overScrollMaxTriggerOffset = typedArray.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_overScrollMaxTriggerOffset, dipToPx(context, overScrollMaxTriggerOffset));
@@ -367,10 +367,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (RecyclerScrollUtil.isRecyclerViewToTop(recyclerView) && generalPullHelper.isMovingDirectDown) {
+                if (ScrollingUtil.isRecyclerViewToTop(recyclerView) && generalPullHelper.isMovingDirectDown) {
                     onOverScrollUp();
                     overScrollLogic(scrollTempOffset);
-                } else if (RecyclerScrollUtil.isRecyclerViewToBottom(recyclerView) && !generalPullHelper.isMovingDirectDown) {
+                } else if (ScrollingUtil.isRecyclerViewToBottom(recyclerView) && !generalPullHelper.isMovingDirectDown) {
                     onOverScrollDown();
                     overScrollLogic(scrollTempOffset);
                 }
@@ -398,9 +398,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 return;
             }
 
-            if (!isOverScrollTrigger && !canChildScrollUp() && scrollTempOffset < 0 && moveDistance >= 0) {
+            if (!isOverScrollTrigger && !ScrollingUtil.canChildScrollUp(targetView) && scrollTempOffset < 0 && moveDistance >= 0) {
                 onOverScrollUp();
-            } else if (!isOverScrollTrigger && !canChildScrollDown() && scrollTempOffset > 0 && moveDistance <= 0) {
+            } else if (!isOverScrollTrigger && !ScrollingUtil.canChildScrollDown(targetView) && scrollTempOffset > 0 && moveDistance <= 0) {
                 onOverScrollDown();
             }
             overScrollLogic(scrollTempOffset);
@@ -468,48 +468,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         scrollAnimation.setDuration(getAnimationTime(finalDistance));
         scrollAnimation.start();
-    }
-
-    /**
-     * @return Whether it is possible for the child view of this layout to
-     * scroll up. Override this if the child view is a custom view.
-     */
-    public boolean canChildScrollUp() {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (targetView instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) targetView;
-                return absListView.getChildCount() > 0
-                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
-                        .getTop() < absListView.getPaddingTop());
-            } else {
-                return ViewCompat.canScrollVertically(targetView, -1) || targetView.getScrollY() > 0;
-            }
-        } else {
-            return ViewCompat.canScrollVertically(targetView, -1);
-        }
-    }
-
-    /**
-     * @return Whether it is possible for the child view of this layout to
-     * scroll down. Override this if the child view is a custom view.
-     */
-    public boolean canChildScrollDown() {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (targetView instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) targetView;
-                if (absListView.getChildCount() > 0) {
-                    int lastChildBottom = absListView.getChildAt(absListView.getChildCount() - 1).getBottom();
-                    return absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1
-                            && lastChildBottom <= absListView.getMeasuredHeight();
-                } else {
-                    return false;
-                }
-            } else {
-                return ViewCompat.canScrollVertically(targetView, 1) || targetView.getScrollY() > 0;
-            }
-        } else {
-            return ViewCompat.canScrollVertically(targetView, 1);
-        }
     }
 
     @Override
@@ -633,7 +591,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private void dellAutoLoading() {
         if (moveDistance <= 0 && autoLoadingEnable && refreshState == 0
-                && onRefreshListener != null && !canChildScrollDown() && !isAutoLoadTrigger) {
+                && onRefreshListener != null && !ScrollingUtil.canChildScrollDown(targetView) && !isAutoLoadTrigger) {
             isAutoLoadTrigger = true;
             onRefreshListener.onLoading();
         }
@@ -1121,7 +1079,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (headerView != null && headerView != header) {
             removeView(headerView);
         }
-        ViewGroup.LayoutParams lp = header.getLayoutParams();
+        LayoutParams lp = header.getLayoutParams();
         if (lp == null) {
             lp = new LayoutParams(-1, -2);
             header.setLayoutParams(lp);
@@ -1141,7 +1099,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (footerView != null && footerView != footer) {
             removeView(footerView);
         }
-        ViewGroup.LayoutParams lp = footer.getLayoutParams();
+        LayoutParams lp = footer.getLayoutParams();
         if (lp == null) {
             lp = new LayoutParams(-1, -2);
             footer.setLayoutParams(lp);

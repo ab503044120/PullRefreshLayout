@@ -14,9 +14,7 @@ import android.view.ViewConfiguration;
 
 class GeneralPullHelper {
     private static final String TAG = "GeneralPullHelper";
-    private PullRefreshLayout pullRefreshLayout;
-
-    private final Context context;
+    private final PullRefreshLayout pullRefreshLayout;
 
     /**
      * is moving direct down
@@ -98,9 +96,8 @@ class GeneralPullHelper {
     private float velocityY;
 
     GeneralPullHelper(PullRefreshLayout pullRefreshLayout, Context context) {
-        this.context = context;
         this.pullRefreshLayout = pullRefreshLayout;
-        ViewConfiguration configuration = ViewConfiguration.get(this.context);
+        ViewConfiguration configuration = ViewConfiguration.get(context);
         minimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
         maximumVelocity = configuration.getScaledMaximumFlingVelocity();
         touchSlop = configuration.getScaledTouchSlop();
@@ -212,17 +209,20 @@ class GeneralPullHelper {
                 final int unconsumedY = deltaY - scrolledDeltaY;
 
                 if (pullRefreshLayout.dispatchNestedScroll(0, 0
-                        , (pullRefreshLayout.canChildScrollUp() && pullRefreshLayout.canChildScrollDown() && pullRefreshLayout.moveDistance == 0 ? deltaY : 0)
-                        , ((isConsumedDragDown && !pullRefreshLayout.canChildScrollUp())
-                                || (!isConsumedDragDown && !pullRefreshLayout.canChildScrollDown())) ? unconsumedY : 0
+                        , (ScrollingUtil.canChildScrollUp(pullRefreshLayout.targetView)
+                                && ScrollingUtil.canChildScrollDown(pullRefreshLayout.targetView)
+                                && pullRefreshLayout.moveDistance == 0 ? deltaY : 0)
+                        , ((isConsumedDragDown && !ScrollingUtil.canChildScrollUp(pullRefreshLayout.targetView))
+                                || (!isConsumedDragDown && !ScrollingUtil.canChildScrollDown(pullRefreshLayout.targetView)))
+                                ? unconsumedY : 0
                         , scrollOffset)) {
                     lastMotionY -= scrollOffset[1];
                     vtev.offsetLocation(0, scrollOffset[1]);
                     nestedYOffset += scrollOffset[1];
 
                 }
-                if ((isConsumedDragDown && !pullRefreshLayout.canChildScrollUp())
-                        || (!isConsumedDragDown && !pullRefreshLayout.canChildScrollDown())) {
+                if ((isConsumedDragDown && !ScrollingUtil.canChildScrollUp(pullRefreshLayout.targetView))
+                        || (!isConsumedDragDown && !ScrollingUtil.canChildScrollDown(pullRefreshLayout.targetView))) {
                     pullRefreshLayout.onNestedScroll(null, 0, 0, 0, scrollOffset[1] == 0 ? deltaY : 0);
                 }
 
