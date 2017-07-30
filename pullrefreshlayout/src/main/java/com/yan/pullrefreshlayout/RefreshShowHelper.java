@@ -32,7 +32,7 @@ public class RefreshShowHelper {
     public static final int STATE_CENTER_FOLLOW = 3;
     public static final int STATE_FOLLOW_CENTER = 4;
     public static final int STATE_PLACEHOLDER = 5;
-    public static final int STATE_CENTER = Gravity.CENTER_VERTICAL;
+    public static final int STATE_CENTER = 6;
 
     private int headerShowState = STATE_FOLLOW;
     private int footerShowState = STATE_FOLLOW;
@@ -81,7 +81,7 @@ public class RefreshShowHelper {
                     break;
             }
         }
-        
+
         if (pullRefreshLayout.footerView != null && moveDistance <= 0) {
             switch (footerShowState) {
                 case STATE_FOLLOW:
