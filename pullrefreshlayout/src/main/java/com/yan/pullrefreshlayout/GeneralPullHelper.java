@@ -125,6 +125,7 @@ class GeneralPullHelper {
 
     boolean dispatchTouchEvent(MotionEvent ev, MotionEvent[] finalMotionEvent) {
         finalMotionEvent[0] = ev;
+
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 dellTouchEvent(ev);
@@ -161,7 +162,8 @@ class GeneralPullHelper {
         return pullRefreshLayout.moveDistance != 0;
     }
 
-    private void dellTouchEvent(MotionEvent ev){
+
+    private void dellTouchEvent(MotionEvent ev) {
         MotionEvent vtev = MotionEvent.obtain(ev);
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
         if (actionMasked == MotionEvent.ACTION_DOWN) {
@@ -281,9 +283,10 @@ class GeneralPullHelper {
 
     private void flingWithNestedDispatch(int velocityY) {
         if (!pullRefreshLayout.dispatchNestedPreFling(0, velocityY)) {
-            pullRefreshLayout.dispatchNestedFling(0, velocityY, true);
             if ((Math.abs(velocityY) > minimumFlingVelocity)) {
-                pullRefreshLayout.onNestedFling(pullRefreshLayout.targetView, 0, velocityY,true);
+                pullRefreshLayout.onNestedFling(pullRefreshLayout.targetView, 0, velocityY,
+                        !ScrollingUtil.canChildScrollDown(pullRefreshLayout.targetView)
+                                && !ScrollingUtil.canChildScrollUp(pullRefreshLayout.targetView));
             }
         }
     }
