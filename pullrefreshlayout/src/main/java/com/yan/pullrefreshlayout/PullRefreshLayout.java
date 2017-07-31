@@ -743,7 +743,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void autoRefresh(boolean withAction) {
-        if (pullContentView == null || !pullRefreshEnable) {
+        if (refreshState != 0 || pullContentView == null || !pullRefreshEnable) {
             return;
         }
 
@@ -1051,8 +1051,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             if (ev.getActionMasked() == MotionEvent.ACTION_UP
                     || ev.getActionMasked() == MotionEvent.ACTION_CANCEL) {
                 onStopNestedScroll(pullContentView);
-                return super.dispatchTouchEvent(ev);
             }
+            return super.dispatchTouchEvent(ev);
         }
         return !generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent)
                 && super.dispatchTouchEvent(finalMotionEvent[0]);
