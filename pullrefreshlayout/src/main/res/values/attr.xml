@@ -31,7 +31,7 @@
             <enum name="stateCenterFollow" value="3" />
             <enum name="stateFollowCenter" value="4" />
             <enum name="statePlaceholder" value="5" />
-            <enum name="stateCenter" value="16" />
+            <enum name="stateCenter" value="6" />
         </attr>
         <attr name="prl_footerShowGravity" format="enum">
             <enum name="stateFollow" value="0" />
@@ -40,7 +40,7 @@
             <enum name="stateCenterFollow" value="3" />
             <enum name="stateFollowCenter" value="4" />
             <enum name="statePlaceholder" value="5" />
-            <enum name="stateCenter" value="16" />
+            <enum name="stateCenter" value="6" />
         </attr>
     </declare-styleable>
 
