@@ -913,7 +913,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public void onStopNestedScroll(View child) {
-        if (!pullTwinkEnable || scroller != null && scroller.isFinished()) {
+        if (!generalPullHelper.isTouch && (!pullTwinkEnable || scroller != null && scroller.isFinished())) {
             handleAction();
         }
         parentHelper.onStopNestedScroll(child);
@@ -1039,20 +1039,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return !generalPullHelper.onInterceptTouchEvent(ev) && super.onInterceptTouchEvent(ev);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        return generalPullHelper.onTouchEvent(event);
-    }
-
-    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        return !generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent)
-                && super.dispatchTouchEvent(finalMotionEvent[0]);
+        generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent);
+        super.dispatchTouchEvent(finalMotionEvent[0]);
+        return true;
     }
 
     public void setHeaderView(View header) {

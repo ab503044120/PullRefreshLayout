@@ -173,11 +173,6 @@ class GeneralPullHelper {
         return false;
     }
 
-    boolean onInterceptTouchEvent(MotionEvent ev) {
-        return pullRefreshLayout.moveDistance != 0;
-    }
-
-
     private void dellTouchEvent(MotionEvent ev) {
         MotionEvent vtev = MotionEvent.obtain(ev);
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
@@ -258,10 +253,6 @@ class GeneralPullHelper {
         }
 
         vtev.recycle();
-    }
-
-    boolean onTouchEvent(MotionEvent ev) {
-        return true;
     }
 
     /**
