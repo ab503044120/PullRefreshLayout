@@ -39,6 +39,11 @@ class GeneralPullHelper {
     private boolean isConsumedDragDown;
 
     /**
+     * is Touch
+     */
+    boolean isTouch;
+
+    /**
      * first touch point x
      */
     private float actionDownPointX;
@@ -105,6 +110,7 @@ class GeneralPullHelper {
 
     private void dellDirection(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            isTouch = true;
             lastTouchY = event.getY();
             return;
         }
@@ -120,6 +126,7 @@ class GeneralPullHelper {
             lastTouchY = tempY;
         } else if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
             dragState = 0;
+            isTouch = false;
         }
     }
 
