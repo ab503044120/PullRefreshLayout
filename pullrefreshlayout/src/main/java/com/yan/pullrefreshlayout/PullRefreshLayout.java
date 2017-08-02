@@ -920,14 +920,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         stopNestedScroll();
     }
 
-    /**
-     * with child view to processing move events
-     *
-     * @param target   the child view
-     * @param dx       move x
-     * @param dy       move y
-     * @param consumed parent consumed move distance
-     */
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (Math.abs(dy) > 200) {
