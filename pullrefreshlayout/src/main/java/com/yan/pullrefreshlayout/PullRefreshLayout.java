@@ -363,16 +363,17 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     /**
      * dell the over scroll block
+     *
      * @return
      */
     private RecyclerView.OnScrollListener getRecyclerScrollListener() {
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (!PullRefreshLayoutUtil.canChildScrollUp(recyclerView) && generalPullHelper.isMovingDirectDown) {
+                if (PullRefreshLayoutUtil.isRecyclerViewToTop(recyclerView) && generalPullHelper.isMovingDirectDown) {
                     onOverScrollUp();
                     overScrollLogic(scrollTempOffset);
-                } else if (!PullRefreshLayoutUtil.canChildScrollDown(recyclerView) && !generalPullHelper.isMovingDirectDown) {
+                } else if (PullRefreshLayoutUtil.isRecyclerViewToBottom(recyclerView) && !generalPullHelper.isMovingDirectDown) {
                     onOverScrollDown();
                     overScrollLogic(scrollTempOffset);
                 }

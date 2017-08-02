@@ -126,7 +126,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.4.7 ： 单独对recyclerView overscroll 做判断，解决快速滑动响应过慢的问题，代码小调整
  <br/>
- version:1.5.2 ： 增加ListView和ScrollerView overscroll 状态下 ，fling 返回的处理
+ version:1.5.3 ： 增加ListView和ScrollerView overscroll 状态下 ，fling 返回的处理
 
 
 ## 4.demo用到的库
