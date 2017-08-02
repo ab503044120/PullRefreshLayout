@@ -125,6 +125,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:1.4.1 ： 增加overScroll距离限制的控制setOverScrollMaxTriggerOffset(offset)
  <br/>
  version:1.4.7 ： 单独对recyclerView overscroll 做判断，解决快速滑动响应过慢的问题，代码小调整
+ <br/>
+ version:1.5.0 ： 增加ListView和ScrollerView overscroll 状态下 ，fling 回去的处理
 
 
 ## 4.demo用到的库
