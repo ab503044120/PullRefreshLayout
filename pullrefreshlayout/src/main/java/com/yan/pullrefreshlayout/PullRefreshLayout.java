@@ -625,20 +625,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             if (startRefreshAnimator == null) {
                 startRefreshAnimator = ValueAnimator.ofInt(headerViewHeight, refreshTriggerDistance);
                 startRefreshAnimator.addUpdateListener(headerAnimationUpdate);
-                startRefreshAnimator.addListener(new AnimatorListenerAdapter() {
-                    public void onAnimationEnd(Animator animation) {
-                        if (refreshState == 0 || isAutoRefreshTrigger) {
-                            isAutoRefreshTrigger = false;
-                            refreshState = 1;
-                            if (footerView != null) {
-                                footerView.setVisibility(GONE);
-                            }
-                            if (onRefreshListener != null && refreshWithAction) {
-                                onRefreshListener.onRefresh();
-                            }
-                        }
-                    }
-                });
+                startRefreshAnimator.addListener(refreshStartAnimation);
                 if (headerViewHeight == 0) {
                     startRefreshAnimator.setDuration(refreshBackTime);
                 } else {
@@ -851,6 +838,21 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 resetLoadMoreState();
             }
             isCancel = false;
+        }
+    };
+
+    private final AnimatorListenerAdapter refreshStartAnimation = new AnimatorListenerAdapter() {
+        public void onAnimationEnd(Animator animation) {
+            if (refreshState == 0 || isAutoRefreshTrigger) {
+                isAutoRefreshTrigger = false;
+                refreshState = 1;
+                if (footerView != null) {
+                    footerView.setVisibility(GONE);
+                }
+                if (onRefreshListener != null && refreshWithAction) {
+                    onRefreshListener.onRefresh();
+                }
+            }
         }
     };
 
