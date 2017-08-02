@@ -24,11 +24,6 @@ class GeneralPullHelper {
     private final float touchSlop;
 
     /**
-     * is moving direct down
-     */
-    boolean isMovingDirectDown;
-
-    /**
      * is last motion point y set
      */
     private boolean isLastMotionYSet;
@@ -39,9 +34,19 @@ class GeneralPullHelper {
     private boolean isConsumedDragDown;
 
     /**
+     * is moving direct down
+     */
+    boolean isMovingDirectDown;
+
+    /**
      * is Touch
      */
     boolean isTouch;
+
+    /**
+     * is touch direct down
+     */
+    int dragState;
 
     /**
      * first touch point x
@@ -52,11 +57,6 @@ class GeneralPullHelper {
      * first touch point y
      */
     private float actionDownPointY;
-
-    /**
-     * is touch direct down
-     */
-    int dragState;
 
     /**
      * motion event child consumed
