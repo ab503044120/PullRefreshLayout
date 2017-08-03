@@ -887,8 +887,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        cancelAllAnimation();
         abortScroller();
+        cancelAllAnimation();
         overScrollState = 0;
         finalScrollDistance = -1;
         isOverScrollTrigger = false;
