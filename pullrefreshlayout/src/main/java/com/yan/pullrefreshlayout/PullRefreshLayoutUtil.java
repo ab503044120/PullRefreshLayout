@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
@@ -17,13 +18,6 @@ import java.lang.reflect.Field;
 class PullRefreshLayoutUtil {
 
     private PullRefreshLayoutUtil() {
-    }
-
-    static int getWindowHeight(Context context) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
-        return displayMetrics.heightPixels;
     }
 
     /**
@@ -70,6 +64,7 @@ class PullRefreshLayoutUtil {
 
     /**
      * ---------------------- recyclerView can scroll -----------------------
+     *
      * @param recyclerView
      * @return
      */
@@ -162,4 +157,20 @@ class PullRefreshLayoutUtil {
         return 0;
     }
 
+    /**
+     * common utils
+     * @param context
+     * @return
+     */
+    static int getWindowHeight(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.heightPixels;
+    }
+
+    static int dipToPx(Context context, float value) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
+    }
 }
