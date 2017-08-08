@@ -7,12 +7,14 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 class PullRefreshLayoutUtil {
@@ -159,6 +161,7 @@ class PullRefreshLayoutUtil {
 
     /**
      * common utils
+     *
      * @param context
      * @return
      */
@@ -172,5 +175,27 @@ class PullRefreshLayoutUtil {
     static int dipToPx(Context context, float value) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
+    }
+
+    /**
+     * parseClassName
+     *
+     * @param context   context
+     * @param className className
+     * @return
+     */
+    static View parseClassName(Context context, String className) {
+        if (!TextUtils.isEmpty(className)) {
+            try {
+                final Class<?>[] CONSTRUCTOR_PARAMS = new Class<?>[]{Context.class};
+                final Class<View> clazz = (Class<View>) Class.forName(className, true, context.getClassLoader());
+                Constructor<View> constructor = clazz.getConstructor(CONSTRUCTOR_PARAMS);
+                constructor.setAccessible(true);
+                return constructor.newInstance(context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.yan.pullrefreshlayout;
 
 import android.support.annotation.IntDef;
+import android.view.ViewGroup;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -113,38 +114,60 @@ public class RefreshShowHelper {
 
     void layout(int left, int top, int right, int bottom) {
         if (pullRefreshLayout.headerView != null) {
-            int headerHeight = pullRefreshLayout.headerView.getMeasuredHeight();
+            int paddingLeft = pullRefreshLayout.getPaddingLeft();
+            int paddingTop = pullRefreshLayout.getPaddingTop();
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) pullRefreshLayout.headerView.getLayoutParams();
             switch (headerShowState) {
                 case STATE_FOLLOW:
                 case STATE_FOLLOW_CENTER:
-                    pullRefreshLayout.headerView.layout(left, top - headerHeight, right, 0);
+                    pullRefreshLayout.headerView.layout(paddingLeft + lp.leftMargin
+                            , top + lp.topMargin + paddingTop - pullRefreshLayout.headerView.getMeasuredHeight()
+                            , paddingLeft + lp.leftMargin + pullRefreshLayout.headerView.getMeasuredWidth()
+                            , top + lp.topMargin + paddingTop);
                     break;
                 case STATE_PLACEHOLDER:
                 case STATE_PLACEHOLDER_CENTER:
                 case STATE_PLACEHOLDER_FOLLOW:
-                    pullRefreshLayout.headerView.layout(left, top, right, top + headerHeight);
+                    pullRefreshLayout.headerView.layout(paddingLeft + lp.leftMargin
+                            , top + paddingTop + lp.topMargin
+                            , paddingLeft + lp.leftMargin + pullRefreshLayout.headerView.getMeasuredWidth()
+                            , top + paddingTop + lp.topMargin + pullRefreshLayout.headerView.getMeasuredHeight());
                     break;
                 case STATE_CENTER:
                 case STATE_CENTER_FOLLOW:
-                    pullRefreshLayout.headerView.layout(left, -headerHeight / 2, right, headerHeight / 2);
+                    pullRefreshLayout.headerView.layout(paddingLeft + lp.leftMargin
+                            , -pullRefreshLayout.headerView.getMeasuredHeight() / 2
+                            , paddingLeft + lp.leftMargin + pullRefreshLayout.headerView.getMeasuredWidth()
+                            , pullRefreshLayout.headerView.getMeasuredHeight() / 2);
                     break;
             }
         }
         if (pullRefreshLayout.footerView != null) {
-            int footerHeight = pullRefreshLayout.footerView.getMeasuredHeight();
+            int paddingLeft = pullRefreshLayout.getPaddingLeft();
+            int paddingTop = pullRefreshLayout.getPaddingTop();
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) pullRefreshLayout.footerView.getLayoutParams();
             switch (footerShowState) {
                 case STATE_FOLLOW:
                 case STATE_FOLLOW_CENTER:
-                    pullRefreshLayout.footerView.layout(left, bottom, right, bottom + footerHeight);
+                    pullRefreshLayout.footerView.layout(left + lp.leftMargin + paddingLeft
+                            , bottom + lp.topMargin + paddingTop
+                            , left + lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
+                            , bottom + lp.topMargin + paddingTop + pullRefreshLayout.footerView.getMeasuredHeight());
                     break;
                 case STATE_PLACEHOLDER:
                 case STATE_PLACEHOLDER_CENTER:
                 case STATE_PLACEHOLDER_FOLLOW:
-                    pullRefreshLayout.footerView.layout(left, bottom - footerHeight, right, bottom);
+                    pullRefreshLayout.footerView.layout(left + lp.leftMargin + paddingLeft
+                            , bottom + lp.topMargin + paddingTop - pullRefreshLayout.footerView.getMeasuredHeight()
+                            , left + lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
+                            , bottom + lp.topMargin + paddingTop);
                     break;
                 case STATE_CENTER:
                 case STATE_CENTER_FOLLOW:
-                    pullRefreshLayout.footerView.layout(left, bottom - footerHeight / 2, right, bottom + footerHeight / 2);
+                    pullRefreshLayout.footerView.layout(left + lp.leftMargin + paddingLeft
+                            , bottom - pullRefreshLayout.footerView.getMeasuredHeight() / 2
+                            , left + lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
+                            , bottom + pullRefreshLayout.footerView.getMeasuredHeight() / 2);
                     break;
             }
         }

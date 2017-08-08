@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.Nullable;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
@@ -14,9 +13,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,13 +23,10 @@ import android.view.animation.Interpolator;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
-import java.lang.reflect.Constructor;
-
 /**
  * Created by yan on 2017/4/11.
  */
-public class PullRefreshLayout extends ViewGroup implements NestedScrollingParent,
-        NestedScrollingChild {
+public class PullRefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild {
     private final NestedScrollingParentHelper parentHelper;
     private final NestedScrollingChildHelper childHelper;
     private final int[] parentScrollConsumed = new int[2];
@@ -232,31 +226,15 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         typedArray.recycle();
     }
 
-    @Nullable
-    private View parseClassName(Context context, String className) {
-        if (!TextUtils.isEmpty(className)) {
-            try {
-                final Class<?>[] CONSTRUCTOR_PARAMS = new Class<?>[]{Context.class};
-                final Class<View> clazz = (Class<View>) Class.forName(className, true, context.getClassLoader());
-                Constructor<View> constructor = clazz.getConstructor(CONSTRUCTOR_PARAMS);
-                constructor.setAccessible(true);
-                return constructor.newInstance(context);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
     private void initHeaderOrFooter(Context context, TypedArray typedArray) {
-        headerView = parseClassName(context, typedArray.getString(R.styleable.PullRefreshLayout_prl_headerClass));
+        headerView = PullRefreshLayoutUtil.parseClassName(context, typedArray.getString(R.styleable.PullRefreshLayout_prl_headerClass));
         if (headerView == null) {
             int headerViewId = typedArray.getResourceId(R.styleable.PullRefreshLayout_prl_headerViewId, View.NO_ID);
             if (headerViewId != View.NO_ID) {
                 headerView = LayoutInflater.from(context).inflate(headerViewId, null, false);
             }
         }
-        footerView = parseClassName(context, typedArray.getString(R.styleable.PullRefreshLayout_prl_footerClass));
+        footerView = PullRefreshLayoutUtil.parseClassName(context, typedArray.getString(R.styleable.PullRefreshLayout_prl_footerClass));
         if (footerView == null) {
             int footerViewId = typedArray.getResourceId(R.styleable.PullRefreshLayout_prl_footerViewId, View.NO_ID);
             if (footerViewId != View.NO_ID) {
@@ -334,7 +312,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (pullContentView != null) {
             return pullContentView;
         }
-
         for (int i = 0; i < getChildCount(); i++) {
             if (getChildAt(i) != footerView && getChildAt(i) != headerView) {
                 return pullContentView = getChildAt(i);
@@ -452,13 +429,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        measureChildren(widthMeasureSpec, heightMeasureSpec);
+        for (int i = 0; i < getChildCount(); i++) {
+            measureChildWithMargins(getChildAt(i), widthMeasureSpec, 0, heightMeasureSpec, 0);
+        }
         if (headerView != null && !isHeaderHeightSet) {
-            headerView.measure(widthMeasureSpec, 0);
             refreshTriggerDistance = headerView.getMeasuredHeight();
         }
         if (footerView != null && !isFooterHeightSet) {
-            footerView.measure(widthMeasureSpec, 0);
             loadTriggerDistance = footerView.getMeasuredHeight();
         }
     }
@@ -466,7 +443,35 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         refreshShowHelper.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
-        pullContentView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        layoutContentView();
+    }
+
+    private void layoutContentView() {
+        MarginLayoutParams lp = (MarginLayoutParams) pullContentView.getLayoutParams();
+        pullContentView.layout(getPaddingLeft() + lp.leftMargin
+                , getPaddingTop() + lp.topMargin
+                , getPaddingLeft() + lp.leftMargin + pullContentView.getMeasuredWidth()
+                , getPaddingTop() + lp.topMargin + pullContentView.getMeasuredHeight());
+    }
+
+    @Override
+    public MarginLayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(), attrs);
+    }
+
+    @Override
+    protected MarginLayoutParams generateDefaultLayoutParams() {
+        return new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    }
+
+    @Override
+    protected boolean checkLayoutParams(LayoutParams p) {
+        return p instanceof MarginLayoutParams;
+    }
+
+    @Override
+    protected LayoutParams generateLayoutParams(LayoutParams lp) {
+        return new MarginLayoutParams(lp);
     }
 
     @Override
@@ -1011,29 +1016,32 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void setHeaderView(View header) {
-        setRefreshView(1, footerView, header);
+        setRefreshView(1, header);
     }
 
     public void setFooterView(View footer) {
-        setRefreshView(2, footerView, footer);
+        setRefreshView(2, footer);
     }
 
-    private void setRefreshView(int type, View originalView, View inView) {
+    private void setRefreshView(int type, View inView) {
         if (inView == null) {
             return;
         }
-        if (originalView != null && originalView != inView) {
-            removeView(originalView);
+        if (type == 1) {
+            if (headerView != null && headerView != inView) {
+                removeView(headerView);
+            }
+            headerView = inView;
+        } else if (type == 2) {
+            if (footerView != null && footerView != inView) {
+                removeView(footerView);
+            }
+            footerView = inView;
         }
         LayoutParams lp = inView.getLayoutParams();
         if (lp == null) {
             lp = new LayoutParams(-1, -2);
             inView.setLayoutParams(lp);
-        }
-        if (type == 1) {
-            headerView = inView;
-        } else {
-            footerView = inView;
         }
         addView(inView);
 
