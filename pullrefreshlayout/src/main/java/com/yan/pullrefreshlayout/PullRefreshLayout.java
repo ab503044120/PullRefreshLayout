@@ -455,22 +455,22 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
-    public MarginLayoutParams generateLayoutParams(AttributeSet attrs) {
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
     }
 
     @Override
-    protected MarginLayoutParams generateDefaultLayoutParams() {
-        return new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    protected LayoutParams generateDefaultLayoutParams() {
+        return new MarginLayoutParams(-1, -1);
     }
 
     @Override
-    protected boolean checkLayoutParams(LayoutParams p) {
-        return p instanceof MarginLayoutParams;
+    protected boolean checkLayoutParams(ViewGroup.LayoutParams lp) {
+        return lp instanceof MarginLayoutParams;
     }
 
     @Override
-    protected LayoutParams generateLayoutParams(LayoutParams lp) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
         return new MarginLayoutParams(lp);
     }
 
@@ -1040,7 +1040,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         LayoutParams lp = inView.getLayoutParams();
         if (lp == null) {
-            lp = new LayoutParams(-1, -2);
+            lp = new  LayoutParams(-1, -2);
             inView.setLayoutParams(lp);
         }
         addView(inView);

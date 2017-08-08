@@ -149,24 +149,24 @@ public class RefreshShowHelper {
             switch (footerShowState) {
                 case STATE_FOLLOW:
                 case STATE_FOLLOW_CENTER:
-                    pullRefreshLayout.footerView.layout(left + lp.leftMargin + paddingLeft
+                    pullRefreshLayout.footerView.layout(lp.leftMargin + paddingLeft
                             , bottom + lp.topMargin + paddingTop
-                            , left + lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
+                            , lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
                             , bottom + lp.topMargin + paddingTop + pullRefreshLayout.footerView.getMeasuredHeight());
                     break;
                 case STATE_PLACEHOLDER:
                 case STATE_PLACEHOLDER_CENTER:
                 case STATE_PLACEHOLDER_FOLLOW:
-                    pullRefreshLayout.footerView.layout(left + lp.leftMargin + paddingLeft
+                    pullRefreshLayout.footerView.layout(lp.leftMargin + paddingLeft
                             , bottom + lp.topMargin + paddingTop - pullRefreshLayout.footerView.getMeasuredHeight()
-                            , left + lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
+                            , lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
                             , bottom + lp.topMargin + paddingTop);
                     break;
                 case STATE_CENTER:
                 case STATE_CENTER_FOLLOW:
-                    pullRefreshLayout.footerView.layout(left + lp.leftMargin + paddingLeft
+                    pullRefreshLayout.footerView.layout(lp.leftMargin + paddingLeft
                             , bottom - pullRefreshLayout.footerView.getMeasuredHeight() / 2
-                            , left + lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
+                            , lp.leftMargin + paddingLeft + pullRefreshLayout.footerView.getMeasuredWidth()
                             , bottom + pullRefreshLayout.footerView.getMeasuredHeight() / 2);
                     break;
             }
