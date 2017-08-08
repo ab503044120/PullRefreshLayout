@@ -129,6 +129,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:1.5.4 ： 增加ListView和ScrollerView overscroll 状态下 ，fling 返回的处理
  <br/>
  version:1.5.6 ： ScrollerView overscroll 状态下 ，fling 返回的处理 bug 处理
+ <br/>
+ version:1.5.7 ： 调整界面稳定后再触发刷新，除去卡顿隐患
 
 
 ## 4.demo用到的库

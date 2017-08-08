@@ -16,6 +16,7 @@ import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -418,7 +419,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private void startOverScrollAnimation(final int distanceMove) {
         final int finalDistance = getFinalOverScrollDistance();
-        overScrollState = 0;
         cancelAllAnimation();
         abortScroller();
         if (overScrollAnimation == null) {
@@ -786,57 +786,39 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * state animation
      */
-    private final AnimatorListenerAdapter resetHeaderAnimation = new AnimatorListenerAdapter() {
-        private boolean isCancel;
-
-        @Override
-        public void onAnimationStart(Animator animation) {
+    private final AnimatorListenerAdapter resetHeaderAnimation = new PullAnimatorListenerAdapter() {
+        protected void animationStart() {
             if (headerView != null && refreshState == 1 && !isHoldingFinishTrigger && headerView instanceof OnPullListener) {
                 ((OnPullListener) headerView).onPullFinish();
                 isHoldingFinishTrigger = true;
             }
         }
 
-        public void onAnimationCancel(Animator animation) {
-            isCancel = true;
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            if (refreshState == 1 && !isCancel) {
+        protected void animationEnd() {
+            if (refreshState == 1) {
                 resetRefreshState();
             }
-            isCancel = false;
         }
     };
 
-    private final AnimatorListenerAdapter resetFooterAnimation = new AnimatorListenerAdapter() {
-        private boolean isCancel;
-
-        @Override
-        public void onAnimationStart(Animator animation) {
+    private final AnimatorListenerAdapter resetFooterAnimation = new PullAnimatorListenerAdapter() {
+        protected void animationStart() {
             if (footerView != null && refreshState == 2 && !isHoldingFinishTrigger && footerView instanceof OnPullListener) {
                 ((OnPullListener) footerView).onPullFinish();
                 isHoldingFinishTrigger = true;
             }
         }
 
-        public void onAnimationCancel(Animator animation) {
-            isCancel = true;
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            if (refreshState == 2 && !isCancel) {
+        protected void animationEnd() {
+            if (refreshState == 2) {
                 resetLoadMoreState();
             }
-            isCancel = false;
         }
     };
 
-    private final AnimatorListenerAdapter refreshStartAnimation = new AnimatorListenerAdapter() {
-        public void onAnimationEnd(Animator animation) {
-            if (refreshState == 0 || isAutoRefreshTrigger) {
+    private final AnimatorListenerAdapter refreshStartAnimation = new PullAnimatorListenerAdapter() {
+        protected void animationEnd() {
+            if ((refreshState == 0 || isAutoRefreshTrigger)) {
                 isAutoRefreshTrigger = false;
                 refreshState = 1;
                 if (footerView != null) {
@@ -849,10 +831,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     };
 
-    private final AnimatorListenerAdapter loadingStartAnimation = new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            if (onRefreshListener != null && refreshState == 0) {
+    private final AnimatorListenerAdapter loadingStartAnimation = new PullAnimatorListenerAdapter() {
+        protected void animationEnd() {
+            if ((onRefreshListener != null && refreshState == 0)) {
                 if (headerView != null) {
                     headerView.setVisibility(GONE);
                 }
@@ -1156,6 +1137,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return refreshState;
     }
 
+    public int getOverScrollState() {
+        return overScrollState;
+    }
+
     public boolean isLoadMoreEnable() {
         return pullLoadMoreEnable;
     }
@@ -1230,6 +1215,31 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
 
         public void onLoading() {
+        }
+    }
+
+    private abstract class PullAnimatorListenerAdapter extends AnimatorListenerAdapter {
+        private boolean isCancel;
+
+        public void onAnimationStart(Animator animation) {
+            animationStart();
+        }
+
+        public void onAnimationCancel(Animator animation) {
+            isCancel = true;
+        }
+
+        public void onAnimationEnd(Animator animation) {
+            if (!isCancel) {
+                animationEnd();
+            }
+            isCancel = false;
+        }
+
+        protected void animationStart() {
+        }
+
+        protected void animationEnd() {
         }
     }
 }
