@@ -1,4 +1,5 @@
 # PullRefreshLayout[ ![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion)
+[![API](https://img.shields.io/badge/API-11%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=11)
 #
 ![演示gif](gif/demo_gif.gif)
 ![演示gif](gif/demo_gif2.gif)
