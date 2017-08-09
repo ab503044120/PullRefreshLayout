@@ -135,7 +135,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.5.7 ： 调整界面稳定后再触发刷新，除去卡顿隐患
  <br/>
- version:1.5.8 ： 打开margin设置 ，调整内容头部设置，可见demo中的NestedActivity和CommonActivity
+ version:1.5.9 ： 打开margin设置 ，调整内容头部设置，可见demo中的NestedActivity和CommonActivity
  
 ## 4.demo用到的库
  loading 动画

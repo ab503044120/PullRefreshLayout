@@ -91,6 +91,7 @@ public class ScrollingActivity2 extends AppCompatActivity {
 
                     @Override
                     public boolean onFooterUpIntercept() {
+                        Log.e(TAG, "onFooterUpIntercept: " +refreshLayout.isMovingDirectDown()+"   "+verticalOffset+"   "+ appBarLayout.getTotalScrollRange());
                         return refreshLayout.isMovingDirectDown() || verticalOffset == -appBarLayout.getTotalScrollRange();
                     }
                 }
