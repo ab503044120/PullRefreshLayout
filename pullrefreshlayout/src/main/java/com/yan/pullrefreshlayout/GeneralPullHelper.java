@@ -5,6 +5,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.View;
 import android.view.ViewConfiguration;
 
 /**
@@ -130,11 +131,25 @@ class GeneralPullHelper {
         }
     }
 
+    private boolean nestedScrollAble() {
+        if (pullRefreshLayout.targetView == pullRefreshLayout.pullContentView) {
+            return (pullRefreshLayout.pullContentView instanceof NestedScrollingChild);
+        }
+        View target = pullRefreshLayout.targetView;
+        while (target != pullRefreshLayout.pullContentView) {
+            if (!(target instanceof NestedScrollingChild)) {
+                return false;
+            }
+            target = (View) target.getParent();
+        }
+        return true;
+    }
+
     boolean dispatchTouchEvent(MotionEvent ev, MotionEvent[] finalMotionEvent) {
         dellDirection(ev);
         finalMotionEvent[0] = ev;
 
-        if (pullRefreshLayout.pullContentView instanceof NestedScrollingChild) {
+        if (nestedScrollAble()) {
             if ((ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL)) {
                 pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.pullContentView);
             }
@@ -290,9 +305,7 @@ class GeneralPullHelper {
     private void flingWithNestedDispatch(int velocityY) {
         if (!pullRefreshLayout.dispatchNestedPreFling(0, velocityY)) {
             if ((Math.abs(velocityY) > minimumFlingVelocity)) {
-                pullRefreshLayout.onNestedFling(pullRefreshLayout.targetView, 0, velocityY,
-                        !PullRefreshLayoutUtil.canChildScrollDown(pullRefreshLayout.targetView)
-                                && !PullRefreshLayoutUtil.canChildScrollUp(pullRefreshLayout.targetView));
+                pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, velocityY);
             }
         }
     }

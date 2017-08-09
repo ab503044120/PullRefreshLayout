@@ -2,6 +2,7 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
@@ -21,6 +22,7 @@ public class PlaceHolderHeader extends FrameLayout implements PullRefreshLayout.
 
     @Override
     public void onPullChange(float percent) {
+        Log.e("onPullChange", "onPullChange: "+percent);
         if (percent > 1.2) {
             findViewById(R.id.iv_bg).setScaleY(1 + (percent - 1.2f) * 0.2f);
         } else {

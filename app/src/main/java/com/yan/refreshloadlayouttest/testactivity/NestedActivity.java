@@ -30,27 +30,21 @@ public class NestedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nested);
 
         initData();
-        initRecyclerView();
         initRefreshLayout();
+        initRecyclerView();
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 refreshLayout.autoRefresh();
             }
         }, 150);
-        findViewById(R.id.bt_test).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshLayout.autoRefresh();
-            }
-        });
     }
 
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SimpleAdapter(this, datas);
-
+        refreshLayout.setTargetView(recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }

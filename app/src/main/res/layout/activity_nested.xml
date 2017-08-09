@@ -27,19 +27,26 @@
         app:prl_twinkDuringAdjustValue="3"
         app:prl_twinkEnable="true">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <com.yan.refreshloadlayouttest.widget.NestedFrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#fefefe"
-            android:overScrollMode="never" />
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#fefefe"
+                android:overScrollMode="never" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:text="header"
+                android:textSize="18sp" />
+        </com.yan.refreshloadlayouttest.widget.NestedFrameLayout>
 
     </com.yan.pullrefreshlayout.PullRefreshLayout>
 
-    <Button
-        android:id="@+id/bt_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="test" />
 </FrameLayout>
