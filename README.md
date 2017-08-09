@@ -1,5 +1,4 @@
-# PullRefreshLayout[ ![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion)
-[![API](https://img.shields.io/badge/API-11%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=11)
+# PullRefreshLayout[ ![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion)[![MinSdk](https://img.shields.io/badge/API-11%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=11)[![Methods](https://img.shields.io/badge/Methods and size-337 | 34 KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.5.8)
 #
 ![演示gif](gif/demo_gif.gif)
 ![演示gif](gif/demo_gif2.gif)
