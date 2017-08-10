@@ -1252,7 +1252,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    private abstract class PullAnimatorListenerAdapter extends AnimatorListenerAdapter {
+    private class PullAnimatorListenerAdapter extends AnimatorListenerAdapter {
         boolean isCancel;
 
         public void onAnimationStart(Animator animation) {
