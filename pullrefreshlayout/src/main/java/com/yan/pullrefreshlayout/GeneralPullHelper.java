@@ -212,7 +212,7 @@ class GeneralPullHelper {
                 }
                 if ((pullRefreshLayout.moveDistance < 0 && isConsumedDragDown)
                         || (pullRefreshLayout.moveDistance > 0 && !isConsumedDragDown)) {
-                    pullRefreshLayout.onNestedPreScroll(null, 0, deltaY, childConsumed);
+                    pullRefreshLayout.onNestedPreScroll(pullRefreshLayout.pullContentView, 0, deltaY, childConsumed);
                     vtev.offsetLocation(0, childConsumed[1] - lastChildConsumedY);
                     lastChildConsumedY = childConsumed[1];
                 }
@@ -231,7 +231,6 @@ class GeneralPullHelper {
                     lastMotionY -= scrollOffset[1];
                     vtev.offsetLocation(0, scrollOffset[1]);
                     nestedYOffset += scrollOffset[1];
-
                 }
                 if ((isConsumedDragDown && !PullRefreshLayoutUtil.canChildScrollUp(pullRefreshLayout.targetView))
                         || (!isConsumedDragDown && !PullRefreshLayoutUtil.canChildScrollDown(pullRefreshLayout.targetView))) {
@@ -252,7 +251,6 @@ class GeneralPullHelper {
                 scrollOffset[1] = 0;
                 break;
         }
-
         vtev.recycle();
     }
 
