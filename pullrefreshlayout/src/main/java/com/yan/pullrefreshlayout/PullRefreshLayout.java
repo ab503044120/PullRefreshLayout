@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
@@ -27,7 +28,7 @@ import android.widget.ScrollView;
 /**
  * Created by yan on 2017/4/11.
  */
-public class PullRefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild {
+public class PullRefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild, Runnable {
     private final NestedScrollingParentHelper parentHelper;
     private final NestedScrollingChildHelper childHelper;
     private final int[] parentScrollConsumed = new int[2];
@@ -283,8 +284,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
-    public void computeScroll() {
-        if (scroller != null && scroller.computeScrollOffset()) {
+    public void run() {
+        boolean isFinish = scroller == null || !scroller.computeScrollOffset() || scroller.isFinished();
+
+        if (!isFinish) {
             int currY = scroller.getCurrY();
             scrollTempOffset = currY - lastScrollY;
             lastScrollY = currY;
@@ -297,9 +300,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 ListViewCompat.scrollListBy((ListView) pullContentView, scrollTempOffset);
             }
 
-            invalidate();
-
             if (targetView instanceof RecyclerView) {
+                postDelayed(this, 15);
                 return;
             }
             if (!isOverScrollTrigger && !PullRefreshLayoutUtil.canChildScrollUp(targetView) && scrollTempOffset < 0 && moveDistance >= 0) {
@@ -307,6 +309,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             } else if (!isOverScrollTrigger && !PullRefreshLayoutUtil.canChildScrollDown(targetView) && scrollTempOffset > 0 && moveDistance <= 0) {
                 overScroll(2, scrollTempOffset);
             }
+            postDelayed(this, 15);
+        } else {
+            removeCallbacks(this);
         }
     }
 
@@ -327,6 +332,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             if (targetView instanceof RecyclerView) {
                 scroller = ScrollerCompat.create(getContext(), scrollInterpolator = getRecyclerDefaultInterpolator());
                 addRecyclerScrollListener();
+                return;
             }
             scroller = ScrollerCompat.create(getContext());
         }
@@ -405,8 +411,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private void startOverScrollAnimation(final int distanceMove) {
         final int finalDistance = getFinalOverScrollDistance();
-        cancelAllAnimation();
         abortScroller();
+        cancelAllAnimation();
         if (overScrollAnimation == null) {
             overScrollAnimation = ValueAnimator.ofInt(distanceMove, 0);
             overScrollAnimation.addUpdateListener(overScrollAnimationUpdate);
@@ -744,6 +750,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private void abortScroller() {
         if (scroller != null && !scroller.isFinished()) {
             scroller.abortAnimation();
+            removeCallbacks(this);
         }
     }
 
@@ -971,6 +978,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return parentHelper.getNestedScrollAxes();
     }
 
+
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
         if ((pullTwinkEnable || autoLoadingEnable) && (nestedScrollAble || !(target instanceof NestedScrollingChild))) {
@@ -979,7 +987,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             scroller.fling(0, 0, 0, (int) velocityY, 0, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
             finalScrollDistance = getFinalOverScrollDistance();
             lastScrollY = 0;
-            invalidate();
+            postDelayed(this, 15);
         }
         return dispatchNestedPreFling(velocityX, velocityY);
     }
