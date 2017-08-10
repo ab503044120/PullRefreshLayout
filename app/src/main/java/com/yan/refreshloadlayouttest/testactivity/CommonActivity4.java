@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommonActivity4 extends Activity {
-    private List<String> datas;
+    private List<SimpleItem> datas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,21 +29,18 @@ public class CommonActivity4 extends Activity {
 
     private void initListView() {
         ListView listView = (ListView) findViewById(R.id.lv_data);
-        listView.setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, android.R.id.text1
-                , datas.toArray(new String[datas.size()])));
+        listView.setAdapter(new SimpleListAdapter(getBaseContext(), datas));
     }
 
     private void initRefreshLayout() {
         ((PullRefreshLayout) findViewById(R.id.refreshLayout1)).setRefreshEnable(false);
         ((PullRefreshLayout) findViewById(R.id.refreshLayout2)).setRefreshEnable(false);
-        ((PullRefreshLayout) findViewById(R.id.refreshLayout1)).setOverScrollDampingRatio(0.08f);
-        ((PullRefreshLayout) findViewById(R.id.refreshLayout2)).setOverScrollDampingRatio(0.1f);
     }
 
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_data);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        NestedActivity.SimpleAdapter adapter = new NestedActivity.SimpleAdapter(this, datas);
+        SimpleAdapter adapter = new SimpleAdapter(this, datas);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -52,8 +48,11 @@ public class CommonActivity4 extends Activity {
 
     protected void initData() {
         datas = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            datas.add("test" + i);
-        }
+        datas.add(new SimpleItem(R.drawable.img1, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img2, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img3, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img4, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img5, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img6, "夏目友人帐"));
     }
 }

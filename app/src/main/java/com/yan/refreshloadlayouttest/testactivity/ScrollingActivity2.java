@@ -10,7 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
@@ -39,12 +41,37 @@ public class ScrollingActivity2 extends AppCompatActivity {
             }
         });
         initRefreshLayout();
+        setImages();
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 refreshLayout.autoRefresh();
             }
         }, 150);
+    }
+
+    private void setImages() {
+        Glide.with(this)
+                .load(R.drawable.img1)
+                .into((ImageView) findViewById(R.id.iv1));
+        Glide.with(this)
+                .load(R.drawable.img2)
+                .into((ImageView) findViewById(R.id.iv2));
+        Glide.with(this)
+                .load(R.drawable.img3)
+                .into((ImageView) findViewById(R.id.iv3));
+        Glide.with(this)
+                .load(R.drawable.img4)
+                .into((ImageView) findViewById(R.id.iv4));
+        Glide.with(this)
+                .load(R.drawable.img5)
+                .into((ImageView) findViewById(R.id.iv5));
+        Glide.with(this)
+                .load(R.drawable.img6)
+                .into((ImageView) findViewById(R.id.iv6));
+        Glide.with(this)
+                .load(R.drawable.loading_bg)
+                .into((ImageView) findViewById(R.id.iv7));
     }
 
     private void initRefreshLayout() {
@@ -91,7 +118,7 @@ public class ScrollingActivity2 extends AppCompatActivity {
 
                     @Override
                     public boolean onFooterUpIntercept() {
-                        Log.e(TAG, "onFooterUpIntercept: " +refreshLayout.isMovingDirectDown()+"   "+verticalOffset+"   "+ appBarLayout.getTotalScrollRange());
+                        Log.e(TAG, "onFooterUpIntercept: " + refreshLayout.isMovingDirectDown() + "   " + verticalOffset + "   " + appBarLayout.getTotalScrollRange());
                         return refreshLayout.isMovingDirectDown() || verticalOffset == -appBarLayout.getTotalScrollRange();
                     }
                 }

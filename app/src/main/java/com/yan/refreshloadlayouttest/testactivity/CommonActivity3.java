@@ -13,16 +13,20 @@ import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommonActivity3 extends Activity {
     private static final String TAG = "CommonActivity3";
 
     protected PullRefreshLayout refreshLayout;
-
+    private List<SimpleItem> datas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.common_activity3);
+        initData();
         initListView();
         initRefreshLayout();
         refreshLayout.postDelayed(new Runnable() {
@@ -35,37 +39,17 @@ public class CommonActivity3 extends Activity {
 
     private void initListView() {
         ListView listView = (ListView) findViewById(R.id.lv_data);
-        listView.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{
-                "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-                , "test"
-        }));
+        listView.setAdapter(new SimpleListAdapter(getApplicationContext(), datas));
+    }
+
+    protected void initData() {
+        datas = new ArrayList<>();
+        datas.add(new SimpleItem(R.drawable.img1, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img2, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img3, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img4, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img5, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img6, "夏目友人帐"));
     }
 
     private void initRefreshLayout() {

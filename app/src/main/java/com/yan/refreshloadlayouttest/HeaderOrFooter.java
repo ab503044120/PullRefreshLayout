@@ -45,12 +45,18 @@ public class HeaderOrFooter extends PullRefreshView {
     }
 
     public HeaderOrFooter(Context context, String animationName, int color) {
+        this(context, animationName, color, true);
+    }
+
+    public HeaderOrFooter(Context context, String animationName, int color, boolean withBg) {
         super(context);
         this.color = color;
         loadingView.setIndicator(animationName);
         loadingView.setIndicatorColor(color);
         tv.setTextColor(color);
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        if (withBg) {
+            setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        }
     }
 
     @Override

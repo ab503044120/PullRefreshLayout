@@ -1,9 +1,12 @@
 package com.yan.refreshloadlayouttest.testactivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
@@ -30,6 +33,11 @@ public class CommonActivity1 extends AppCompatActivity {
                 refreshLayout.autoRefresh();
             }
         }, 150);
+        if (findViewById(R.id.iv)!=null) {
+            Glide.with(this)
+                    .load(R.drawable.loading_bg)
+                    .into((ImageView) findViewById(R.id.iv));
+        }
     }
 
     protected void initRefreshLayout() {
@@ -38,7 +46,7 @@ public class CommonActivity1 extends AppCompatActivity {
 //        refreshLayout.setAdjustTwinkDuring(2);
 //        refreshLayout.setTwinkEnable(false);
         refreshLayout.setLoadMoreEnable(true);
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_PLACEHOLDER_FOLLOW,RefreshShowHelper.STATE_FOLLOW);
+        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_FOLLOW, RefreshShowHelper.STATE_FOLLOW);
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAutoLoadingEnable(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢
@@ -48,9 +56,9 @@ public class CommonActivity1 extends AppCompatActivity {
 //        refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数
 //        refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制
 //        refreshLayout.setRefreshEnable(false);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(),"LineSpinFadeLoaderIndicator"));
+        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator", Color.WHITE, false));
 
-        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(),"PacmanIndicator"));
+        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "PacmanIndicator", Color.WHITE, false));
 
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override

@@ -29,15 +29,17 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setOverScrollDampingRatio(0.2f);//  值越大overscroll越短 default 0.2
     refreshLayout.setAdjustTwinkDuring(3);// 值越大overscroll越慢 default 3
     refreshLayout.setScrollInterpolator(interpolator);// 设置scroller的插值器
-    refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢 default 10f
-    // 刷新或加载完成后回复动画执行时间，为-1时，根据setDuringAdjustValue（）方法实现 default 300
-    refreshLayout.setRefreshBackTime(300);
+    
+    refreshLayout.setAnimationDuring(300);// 动画总时长，不包括overScroll动画 default 300
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
+    
+    refreshLayout.setOverScrollAdjustValue(1f);// 用于控制overscroll时间 default 1f ,越大overscroll的时间越长
+    refreshLayout.setOverScrollMaxTriggerOffset(300);// 用于控制overscroll的距离 default 80dp
+
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default true
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
     refreshLayout.setTwinkEnable(true);// 回弹是否可用 default true 
     refreshLayout.setAutoLoadingEnable(true);// 自动加载是否可用 default false
-    refreshLayout.setOverScrollMaxTriggerOffset(300);// 用于控制overscroll的距离 default 80dp
     
     // headerView和footerView需实现PullRefreshLayout.OnPullListener接口调整状态
     refreshLayout.setHeaderView(headerView);// 设置headerView
@@ -55,6 +57,9 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.isDragUp();// 是否正在向上拖拽
     refreshLayout.isDragDown();// 是否正在向下拖拽
     
+     refreshLayout.getRefreshState();// 得到当前的刷新状态 刷新中:1 加载中:2 无状态:0
+     refreshLayout.getOverScrollState();// 得到当前overScroll状态 头部下拉:1 尾部上拉:2 无状态:0
+     
     refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度 default 60dp
     refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度 default 60dp
     refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
@@ -93,28 +98,23 @@ compile 'com.yan:pullrefreshlayout:(↖)'
          
     <!-- xml setting -->     
     <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/refreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         app:prl_autoLoadingEnable="false"
         app:prl_dragDampingRatio="0.6"
-        app:prl_duringAdjustValue="10"
+        app:prl_animationDuring="300"
         app:prl_footerShowGravity="stateFollow"
-        app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
-        app:prl_headerViewId="@layout/header_or_footer"
-        app:prl_footerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
         app:prl_footerViewId="@layout/header_or_footer"
+        app:prl_headerViewId="@layout/header_or_footer"
+        app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
+        app:prl_footerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
         app:prl_headerShowGravity="statePlaceholder"
         app:prl_loadMoreEnable="true"
         app:prl_loadTriggerDistance="70dp"
         app:prl_overScrollDampingRatio="0.2"
+        app:prl_overScrollMaxTriggerOffset="80dp"
         app:prl_pullLimitDistance="150dp"
-        app:prl_refreshBackTime="300"
         app:prl_refreshEnable="true"
         app:prl_refreshTriggerDistance="90dp"
-        app:prl_overScrollMaxTriggerOffset="80dp"
-        app:prl_twinkDuringAdjustValue="3"
+        app:prl_overScrollAdjustValue="1"
         app:prl_twinkEnable="true">     
 ```
 
@@ -136,6 +136,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:1.5.7 ： 调整界面稳定后再触发刷新，除去卡顿隐患
  <br/>
  version:1.5.9 ： 打开margin设置 ，调整内容头部设置，可见demo中的NestedActivity和CommonActivity
+ <br/>
+ version:1.6.0 ： 平滑处理，方法调整
  
 ## 4.demo用到的库
  loading 动画

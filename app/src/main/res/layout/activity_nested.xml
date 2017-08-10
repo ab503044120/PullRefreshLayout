@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         app:prl_autoLoadingEnable="false"
         app:prl_dragDampingRatio="0.6"
-        app:prl_duringAdjustValue="10"
+        app:prl_animationDuring="300"
         app:prl_footerShowGravity="stateFollow"
         app:prl_footerViewId="@layout/header_or_footer"
         app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
@@ -21,10 +21,9 @@
         app:prl_overScrollDampingRatio="0.2"
         app:prl_overScrollMaxTriggerOffset="80dp"
         app:prl_pullLimitDistance="150dp"
-        app:prl_refreshBackTime="300"
         app:prl_refreshEnable="true"
         app:prl_refreshTriggerDistance="90dp"
-        app:prl_twinkDuringAdjustValue="3"
+        app:prl_overScrollAdjustValue="1"
         app:prl_twinkEnable="true">
 
         <com.yan.refreshloadlayouttest.widget.NestedFrameLayout
@@ -35,16 +34,22 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#fefefe"
+                android:background="#f1f1f1"
                 android:overScrollMode="never" />
 
-            <TextView
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:background="#ffffff"
-                android:gravity="center"
-                android:text="header"
-                android:textSize="18sp" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="#ffffff"
+                    android:gravity="center"
+                    android:text="header"
+                    android:textSize="18sp" />
+            </android.support.v7.widget.CardView>
+
         </com.yan.refreshloadlayouttest.widget.NestedFrameLayout>
 
     </com.yan.pullrefreshlayout.PullRefreshLayout>

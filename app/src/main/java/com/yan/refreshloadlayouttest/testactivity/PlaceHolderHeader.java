@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.refreshloadlayouttest.R;
@@ -18,11 +20,15 @@ public class PlaceHolderHeader extends FrameLayout implements PullRefreshLayout.
     public PlaceHolderHeader(@NonNull Context context) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.refresh_view_big, this, true);
+        Glide.with(context)
+                .load(R.drawable.loading_bg)
+                .into((ImageView) findViewById(R.id.iv_bg));
+
     }
 
     @Override
     public void onPullChange(float percent) {
-        Log.e("onPullChange", "onPullChange: "+percent);
+        Log.e("onPullChange", "onPullChange: " + percent);
         if (percent > 1.2) {
             findViewById(R.id.iv_bg).setScaleY(1 + (percent - 1.2f) * 0.2f);
         } else {
@@ -54,7 +60,7 @@ public class PlaceHolderHeader extends FrameLayout implements PullRefreshLayout.
     @Override
     public void onPullReset() {
         AVLoadingIndicatorView avLoadingIndicatorView = ((AVLoadingIndicatorView) findViewById(R.id.loading_view));
-        if (avLoadingIndicatorView.getVisibility()==VISIBLE){
+        if (avLoadingIndicatorView.getVisibility() == VISIBLE) {
             avLoadingIndicatorView.smoothToHide();
         }
     }

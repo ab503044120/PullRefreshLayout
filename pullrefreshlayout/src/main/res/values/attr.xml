@@ -12,11 +12,9 @@
         <attr name="prl_overScrollMaxTriggerOffset" format="dimension" />
 
         <attr name="prl_dragDampingRatio" format="float" />
-        <attr name="prl_duringAdjustValue" format="float" />
+        <attr name="prl_animationDuring" format="integer" />
         <attr name="prl_overScrollDampingRatio" format="float" />
-        <attr name="prl_twinkDuringAdjustValue" format="float" />
-
-        <attr name="prl_refreshBackTime" format="integer" />
+        <attr name="prl_overScrollAdjustValue" format="float" />
 
         <attr name="prl_headerViewId" format="reference" />
         <attr name="prl_footerViewId" format="reference" />

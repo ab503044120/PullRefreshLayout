@@ -38,12 +38,6 @@ class GeneralPullHelper {
     boolean isMovingDirectDown;
 
     /**
-     * is Touch
-     */
-    boolean isTouch;
-
-
-    /**
      * is touch direct down
      */
     int dragState;
@@ -110,7 +104,6 @@ class GeneralPullHelper {
 
     private void dellDirection(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            isTouch = true;
             lastTouchY = event.getY();
             return;
         }
@@ -126,7 +119,6 @@ class GeneralPullHelper {
             lastTouchY = tempY;
         } else if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
             dragState = 0;
-            isTouch = false;
         }
     }
 
@@ -240,7 +232,8 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isLastMotionYSet) {
+                if (isLastMotionYSet && (isMovingDirectDown && pullRefreshLayout.moveDistance <= 0
+                        || !isMovingDirectDown && pullRefreshLayout.moveDistance >= 0)) {
                     flingWithNestedDispatch(-(int) velocityY);
                 }
                 pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.pullContentView);

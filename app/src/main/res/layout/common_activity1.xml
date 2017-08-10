@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/refreshLayout"
+    android:background="@drawable/bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:background="#fefefe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/tv_data"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:lineSpacingExtra="50dp"
-            android:padding="20dp"
-            android:scrollbars="vertical"
-            android:text="testtesttesttessttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"
-            android:textSize="24sp" />
+        android:layout_height="match_parent"
+        android:gravity="center">
+        <include layout="@layout/simple_item" />
     </LinearLayout>
 </com.yan.pullrefreshlayout.PullRefreshLayout>
