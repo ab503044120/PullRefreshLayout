@@ -2,6 +2,8 @@
 <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:prl_headerShowGravity="center_follow"
     android:layout_height="match_parent">
 
     <FrameLayout

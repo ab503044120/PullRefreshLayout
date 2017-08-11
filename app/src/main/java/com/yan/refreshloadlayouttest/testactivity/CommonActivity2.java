@@ -20,13 +20,12 @@ public class CommonActivity2 extends CommonActivity1 {
     }
 
     protected void initRefreshLayout() {
-        super.initRefreshLayout();
+        refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
         setImages();
         refreshLayout.setTwinkEnable(true);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "BallScaleRippleMultipleIndicator"));
         refreshLayout.setTargetView(findViewById(R.id.sv));
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER_FOLLOW, RefreshShowHelper.STATE_CENTER);
         HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.hsv);
         final boolean[] isTouch = {false};
         horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
@@ -48,6 +47,28 @@ public class CommonActivity2 extends CommonActivity1 {
 
             }
 
+        });
+
+        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.refreshComplete();
+                    }
+                }, 3000);
+            }
+
+            @Override
+            public void onLoading() {
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.loadMoreComplete();
+                    }
+                }, 3000);
+            }
         });
     }
 
