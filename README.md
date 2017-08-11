@@ -138,6 +138,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:1.5.9 ： 打开margin设置 ，调整内容头部设置，可见demo中的NestedActivity和CommonActivity
  <br/>
  version:1.6.0 ： 平滑处理，方法调整
+ <br/>
+ version:1.6.1 ： 由于invalidate()有时候不生效 所以用 ViewCompat.postInvalidateOnAnimation(this) 代替 invalidate()
  
 ## 4.demo用到的库
  loading 动画

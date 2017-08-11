@@ -28,7 +28,6 @@ public class PlaceHolderHeader extends FrameLayout implements PullRefreshLayout.
 
     @Override
     public void onPullChange(float percent) {
-        Log.e("onPullChange", "onPullChange: " + percent);
         if (percent > 1.2) {
             findViewById(R.id.iv_bg).setScaleY(1 + (percent - 1.2f) * 0.2f);
         } else {
