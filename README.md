@@ -1,10 +1,9 @@
 # PullRefreshLayout
-[![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg) ](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
+[![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/API-11%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=11) 
-[![Methods](https://img.shields.io/badge/Methods%20and%20size-338%20%7C%2034%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.5.9)
+[![Methods](https://img.shields.io/badge/Methods%20and%20size-342%20%7C%2034%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.6.4)
 #
-![演示gif](gif/demo_gif.gif)
-![演示gif](gif/demo_gif2.gif)
+![演示gif](gif/demo.gif) 
 
 ###### 首先吐槽一下现在流行的刷新库，一个字大，包涵个人很多集成到项目中不需要的类，也很难找到很满意的效果(个人目标效果：各个刷新状态各种手势操作无限，真实的回弹效果，无痕过度)。
 ## 1.概述
@@ -140,6 +139,9 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:1.6.0 ： 平滑处理，方法调整 attr 调整
  <br/>
  version:1.6.2 ： 由于invalidate()有时候不生效 所以用 ViewCompat.postInvalidateOnAnimation(this) 代替 invalidate()
+ 
+ <br/>
+ version:1.6.4 ： 稳定版(Stable version)
  
 ## 4.demo用到的库
  loading 动画

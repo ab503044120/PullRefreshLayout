@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:prl_headerShowGravity="placeholder_follow"
+    android:layout_height="match_parent"
     app:prl_footerShowGravity="placeholder_follow"
-    android:layout_height="match_parent">
+    app:prl_headerShowGravity="placeholder_follow"
+    app:prl_loadMoreEnable="true">
 
     <FrameLayout
         android:layout_width="match_parent"
