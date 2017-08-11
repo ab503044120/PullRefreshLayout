@@ -61,7 +61,8 @@ public class RefreshShowHelper {
                     break;
                 case STATE_FOLLOW_CENTER:
                     pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
-                            .refreshTriggerDistance ? moveDistance : moveDistance / 2);
+                            .refreshTriggerDistance ? moveDistance : pullRefreshLayout.refreshTriggerDistance
+                            + (moveDistance - pullRefreshLayout.refreshTriggerDistance) / 2);
                     break;
                 case STATE_CENTER_FOLLOW:
                     pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
@@ -91,7 +92,8 @@ public class RefreshShowHelper {
                     break;
                 case STATE_FOLLOW_CENTER:
                     pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
-                            .loadTriggerDistance ? moveDistance : moveDistance / 2);
+                            .loadTriggerDistance ? -pullRefreshLayout.loadTriggerDistance
+                            + (pullRefreshLayout.loadTriggerDistance + moveDistance) / 2 : moveDistance);
                     break;
                 case STATE_CENTER_FOLLOW:
                     pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout

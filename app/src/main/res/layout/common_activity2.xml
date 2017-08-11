@@ -3,7 +3,8 @@
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:prl_headerShowGravity="center_follow"
+    app:prl_headerShowGravity="placeholder_follow"
+    app:prl_footerShowGravity="placeholder_follow"
     android:layout_height="match_parent">
 
     <FrameLayout

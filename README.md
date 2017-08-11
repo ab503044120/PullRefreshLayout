@@ -19,9 +19,9 @@ compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 <br/>
 #### loading 出现效果默认(STATE_PLACEHOLDER、STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER、STATE_FOLLOW_CENTER、STATE_CENTER_FOLLOW)
-![STATE_PLACEHOLDER](gif/show_demo_7.gif)![STATE_FOLLOW](gif/show_demo_1.gif)![STATE_PLACEHOLDER_FOLLOW](gif/show_demo_2.gif)
-![STATE_PLACEHOLDER_CENTER](gif/show_demo_3.gif)![STATE_CENTER](gif/show_demo_4.gif)
-![STATE_FOLLOW_CENTER](gif/show_demo_5.gif)![STATE_CENTER_FOLLOW](gif/show_demo_6.gif)
+![STATE_PLACEHOLDER](gif/placeholder.gif)![STATE_FOLLOW](gif/follow.gif)![STATE_PLACEHOLDER_FOLLOW](gif/placeholder_follow.gif)
+![STATE_PLACEHOLDER_CENTER](gif/placeholder_center.gif)![STATE_CENTER](gif/center.gif)
+![STATE_FOLLOW_CENTER](gif/follow_center.gif)![STATE_CENTER_FOLLOW](gif/center_follow.gif)
 
 ```
 //-控件设置-
