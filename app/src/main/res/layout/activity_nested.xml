@@ -1,57 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:prl_animationDuring="300"
+    app:prl_autoLoadingEnable="true"
+    app:prl_dragDampingRatio="0.6"
+    app:prl_footerShowGravity="follow"
+    app:prl_footerViewId="@layout/header_or_footer"
+    app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
+    app:prl_headerShowGravity="placeholder"
+    app:prl_loadMoreEnable="true"
+    app:prl_loadTriggerDistance="70dp"
+    app:prl_overScrollAdjustValue="1"
+    app:prl_overScrollDampingRatio="0.2"
+    app:prl_overScrollMaxTriggerOffset="80dp"
+    app:prl_pullLimitDistance="150dp"
+    app:prl_refreshEnable="true"
+    app:prl_refreshTriggerDistance="90dp"
+    app:prl_targetId="@+id/recyclerView"
+    app:prl_twinkEnable="true">
 
-    <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/refreshLayout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:prl_autoLoadingEnable="false"
-        app:prl_dragDampingRatio="0.6"
-        app:prl_animationDuring="300"
-        app:prl_footerShowGravity="follow"
-        app:prl_footerViewId="@layout/header_or_footer"
-        app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"
-        app:prl_headerShowGravity="placeholder"
-        app:prl_loadMoreEnable="true"
-        app:prl_loadTriggerDistance="70dp"
-        app:prl_overScrollDampingRatio="0.2"
-        app:prl_overScrollMaxTriggerOffset="80dp"
-        app:prl_pullLimitDistance="150dp"
-        app:prl_refreshEnable="true"
-        app:prl_refreshTriggerDistance="90dp"
-        app:prl_overScrollAdjustValue="1"
-        app:prl_twinkEnable="true">
+        android:layout_height="match_parent">
 
-        <com.yan.refreshloadlayouttest.widget.NestedFrameLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#f1f1f1"
+            android:overScrollMode="never" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#f1f1f1"
-                android:overScrollMode="never" />
+                android:layout_height="46dp"
+                android:gravity="center"
+                android:text="header"
+                android:textSize="18sp" />
+        </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/no_data"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="#212121"
+            android:textSize="20sp"
+            android:text="no data click to try again"  />
+    </FrameLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="#ffffff"
-                    android:gravity="center"
-                    android:text="header"
-                    android:textSize="18sp" />
-            </android.support.v7.widget.CardView>
-
-        </com.yan.refreshloadlayouttest.widget.NestedFrameLayout>
-
-    </com.yan.pullrefreshlayout.PullRefreshLayout>
-
-</FrameLayout>
+</com.yan.pullrefreshlayout.PullRefreshLayout>

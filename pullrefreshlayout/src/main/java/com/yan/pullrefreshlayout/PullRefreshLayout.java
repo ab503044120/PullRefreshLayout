@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.IdRes;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
@@ -88,6 +89,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean autoLoadingEnable = false;
 
     //--------------------START|| values can modify in the lib only ||START------------------
+
+    private int targetViewId = -1;
 
     /**
      * current refreshing state 1:refresh 2:loadMore
@@ -229,6 +232,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (typedArray.hasValue(R.styleable.PullRefreshLayout_prl_footerShowGravity)) {
             refreshShowHelper.setFooterShowGravity(typedArray.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, RefreshShowHelper.STATE_FOLLOW));
         }
+
+        targetViewId = typedArray.getResourceId(R.styleable.PullRefreshLayout_prl_targetId, targetViewId);
+
         initHeaderOrFooter(context, typedArray);
 
         typedArray.recycle();
@@ -255,10 +261,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     protected void onFinishInflate() {
         super.onFinishInflate();
         getPullContentView();
+        if (targetViewId != -1) {
+            targetView = findViewById(targetViewId);
+        }
         if (targetView == null) {
             targetView = pullContentView;
         }
+
+        // make sure that targetView able to scroll after targetView has set
         checkNestedScrollAble();
+
         if ((pullTwinkEnable || autoLoadingEnable)) {
             readyScroller();
         }

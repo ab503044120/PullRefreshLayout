@@ -16,6 +16,8 @@
         <attr name="prl_overScrollDampingRatio" format="float" />
         <attr name="prl_overScrollAdjustValue" format="float" />
 
+        <attr name="prl_targetId" format="reference" />
+
         <attr name="prl_headerViewId" format="reference" />
         <attr name="prl_footerViewId" format="reference" />
 

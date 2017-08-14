@@ -4,6 +4,7 @@
 [![Methods](https://img.shields.io/badge/Methods%20and%20size-342%20%7C%2034%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.6.4)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
 <br/>
+![header和状态切换演示gif](gif/new_demo.gif) 
 ![演示gif](gif/demo.gif) 
 
 ###### 首先吐槽一下现在流行的刷新库，一个字大，包涵个人很多集成到项目中不需要的类，也很难找到很满意的效果(个人目标效果：各个刷新状态各种手势操作无限，真实的回弹效果，无痕过度)。
@@ -112,10 +113,61 @@ compile 'com.yan:pullrefreshlayout:(↖)'
         app:prl_overScrollDampingRatio="0.2"
         app:prl_overScrollMaxTriggerOffset="80dp"
         app:prl_pullLimitDistance="150dp"
+        app:prl_targetId="@+id/recyclerView"
         app:prl_refreshEnable="true"
         app:prl_refreshTriggerDistance="90dp"
         app:prl_overScrollAdjustValue="1"
         app:prl_twinkEnable="true">     
+        
+        
+        <!-- 通过以下例子，你可以轻易实现recyclerView的header，和数据错误、网络错误等的状态切换--> 
+        <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:prl_targetId="@+id/recyclerView">
+        
+            <!-- 包装层，实现了嵌套滑动的功能，也可以是普通的FrameLayout(实现机制不同) -->
+            <com.yan.refreshloadlayouttest.widget.NestedFrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        
+                <!-- 数据添装 -->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#f1f1f1"
+                    android:overScrollMode="never" />
+         
+                <!-- header -->
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+        
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="46dp"
+                        android:gravity="center"
+                        android:text="header"
+                        android:textSize="18sp" />
+                </android.support.v7.widget.CardView>
+        
+                <!-- 状态显示界面 -->
+                <TextView
+                    android:id="@+id/no_data"
+                    android:background="#ffffff"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="#212121"
+                    android:textSize="20sp"
+                    android:text="no data click to try again"  />
+            </com.yan.refreshloadlayouttest.widget.NestedFrameLayout>
+        
+        </com.yan.pullrefreshlayout.PullRefreshLayout>
+
 ```
 
 ## 3.版本说明
@@ -143,6 +195,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  
  <br/>
  version:1.6.4 ： 稳定版(Stable version)
+ <br/>
+ version:1.6.6 ： 处理处于触摸状态的，刷新完成动画抖动，添加xml attr prl_targetId 用于在xml 中设置目标view
  
 ## 4.demo用到的库
  loading 动画
