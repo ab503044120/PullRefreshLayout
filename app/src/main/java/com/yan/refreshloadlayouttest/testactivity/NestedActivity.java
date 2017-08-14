@@ -6,8 +6,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 
+import com.yan.refreshloadlayouttest.widget.ClassicLoadView;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.refreshloadlayouttest.R;
 
@@ -20,6 +23,9 @@ public class NestedActivity extends AppCompatActivity {
     private PullRefreshLayout refreshLayout;
     private SimpleAdapter adapter;
     private View vState;
+    private RecyclerView recyclerView;
+
+    private ClassicLoadView classicLoadView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +35,6 @@ public class NestedActivity extends AppCompatActivity {
         initRefreshLayout();
         initRecyclerView();
         vState = findViewById(R.id.no_data);
-        vState.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshLayout.autoRefresh();
-            }
-        });
 
         refreshLayout.postDelayed(new Runnable() {
             @Override
@@ -45,15 +45,18 @@ public class NestedActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SimpleAdapter(this, datas);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
+
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
+        refreshLayout.setFooterView(classicLoadView = new ClassicLoadView(getApplicationContext(), refreshLayout));
+        refreshLayout.setLoadTriggerDistance((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -63,7 +66,10 @@ public class NestedActivity extends AppCompatActivity {
                     public void run() {
                         if (vState.getVisibility() == View.VISIBLE) {
                             vState.setVisibility(View.GONE);
+                            refreshLayout.setTargetView(recyclerView);
                         } else {
+                            refreshLayout.setTargetView(vState);
+                            vState.bringToFront();
                             vState.setVisibility(View.VISIBLE);
                         }
                         refreshLayout.refreshComplete();
@@ -76,9 +82,17 @@ public class NestedActivity extends AppCompatActivity {
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        refreshLayout.loadMoreComplete();
                         datas.add(new SimpleItem(R.drawable.img4, "夏目友人帐"));
                         adapter.notifyItemInserted(datas.size());
+
+                        refreshLayout.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e(TAG, "run: " + refreshLayout.getMoveDistance());
+                                recyclerView.scrollBy(0, refreshLayout.getMoveDistance());
+                                classicLoadView.startBackAnimation();
+                            }
+                        }, 150);
                     }
                 }, 3000);
             }

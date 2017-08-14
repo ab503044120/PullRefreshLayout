@@ -34,7 +34,7 @@ public class RefreshShowHelper {
     public static final int STATE_CENTER = 6;
 
     private int headerShowState = STATE_FOLLOW;
-    private int footerShowState = STATE_FOLLOW;
+    int footerShowState = STATE_FOLLOW;
 
     private PullRefreshLayout pullRefreshLayout;
 
@@ -50,7 +50,7 @@ public class RefreshShowHelper {
         this.footerShowState = footerShowGravity;
     }
 
-    void dellHeaderFooterMoving(int moveDistance) {
+    void dellHeaderMoving(int moveDistance) {
         if (pullRefreshLayout.headerView != null && moveDistance >= 0) {
             switch (headerShowState) {
                 case STATE_FOLLOW:
@@ -81,7 +81,9 @@ public class RefreshShowHelper {
                     break;
             }
         }
+    }
 
+    void dellFooterMoving(int moveDistance) {
         if (pullRefreshLayout.footerView != null && moveDistance <= 0) {
             switch (footerShowState) {
                 case STATE_FOLLOW:

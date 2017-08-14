@@ -22,7 +22,7 @@
     app:prl_targetId="@+id/recyclerView"
     app:prl_twinkEnable="true">
 
-    <FrameLayout
+    <com.yan.refreshloadlayouttest.widget.NestedFrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -53,7 +53,7 @@
             android:layout_height="match_parent"
             android:textColor="#212121"
             android:textSize="20sp"
-            android:text="no data click to try again"  />
-    </FrameLayout>
+            android:text="no data"  />
+    </com.yan.refreshloadlayouttest.widget.NestedFrameLayout>
 
 </com.yan.pullrefreshlayout.PullRefreshLayout>

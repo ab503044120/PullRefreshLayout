@@ -128,7 +128,7 @@ class GeneralPullHelper {
 
         if (pullRefreshLayout.nestedScrollAble) {
             if ((ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL)) {
-                pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.pullContentView);
+                pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
             } else if (ev.getActionMasked() == MotionEvent.ACTION_MOVE && pullRefreshLayout.isHoldingFinishTrigger) {
                 return true;
             }
@@ -182,8 +182,8 @@ class GeneralPullHelper {
 
                 lastMotionY = (int) ev.getY();
                 activePointerId = ev.getPointerId(0);
-                pullRefreshLayout.onNestedScrollAccepted(pullRefreshLayout.pullContentView, pullRefreshLayout.pullContentView, 2);
-                pullRefreshLayout.onStartNestedScroll(pullRefreshLayout.pullContentView, pullRefreshLayout.pullContentView, 2);
+                pullRefreshLayout.onNestedScrollAccepted(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
+                pullRefreshLayout.onStartNestedScroll(pullRefreshLayout.targetView, pullRefreshLayout.targetView, 2);
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -209,7 +209,7 @@ class GeneralPullHelper {
                 }
                 if ((pullRefreshLayout.moveDistance < 0 && isConsumedDragDown)
                         || (pullRefreshLayout.moveDistance > 0 && !isConsumedDragDown)) {
-                    pullRefreshLayout.onNestedPreScroll(pullRefreshLayout.pullContentView, 0, deltaY, childConsumed);
+                    pullRefreshLayout.onNestedPreScroll(pullRefreshLayout.targetView, 0, deltaY, childConsumed);
                     vtev.offsetLocation(0, childConsumed[1] - lastChildConsumedY);
                     lastChildConsumedY = childConsumed[1];
                 }
@@ -218,20 +218,19 @@ class GeneralPullHelper {
                 final int unconsumedY = deltaY - scrolledDeltaY;
 
                 if (pullRefreshLayout.dispatchNestedScroll(0, 0
-                        , (PullRefreshLayoutUtil.canChildScrollUp(pullRefreshLayout.targetView)
-                                && PullRefreshLayoutUtil.canChildScrollDown(pullRefreshLayout.targetView)
+                        , (pullRefreshLayout.isTargetAbleScrollUp() && pullRefreshLayout.isTargetAbleScrollDown()
                                 && pullRefreshLayout.moveDistance == 0 ? deltaY : 0)
-                        , ((isConsumedDragDown && !PullRefreshLayoutUtil.canChildScrollUp(pullRefreshLayout.targetView))
-                                || (!isConsumedDragDown && !PullRefreshLayoutUtil.canChildScrollDown(pullRefreshLayout.targetView)))
+                        , ((isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollUp())
+                                || (!isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollDown()))
                                 ? unconsumedY : 0
                         , scrollOffset)) {
                     lastMotionY -= scrollOffset[1];
                     vtev.offsetLocation(0, scrollOffset[1]);
                     nestedYOffset += scrollOffset[1];
                 }
-                if ((isConsumedDragDown && !PullRefreshLayoutUtil.canChildScrollUp(pullRefreshLayout.targetView))
-                        || (!isConsumedDragDown && !PullRefreshLayoutUtil.canChildScrollDown(pullRefreshLayout.targetView))) {
-                    pullRefreshLayout.onNestedScroll(pullRefreshLayout.pullContentView, 0, 0, 0, scrollOffset[1] == 0 ? deltaY : 0);
+                if ((isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollUp()
+                        || (!isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollDown()))) {
+                    pullRefreshLayout.onNestedScroll(pullRefreshLayout.targetView, 0, 0, 0, scrollOffset[1] == 0 ? deltaY : 0);
                 }
 
                 break;
@@ -241,7 +240,7 @@ class GeneralPullHelper {
                         || !isMovingDirectDown && pullRefreshLayout.moveDistance >= 0)) {
                     flingWithNestedDispatch(-(int) velocityY);
                 }
-                pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.pullContentView);
+                pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
                 activePointerId = -1;
                 childConsumed[0] = 0;
                 childConsumed[1] = 0;
@@ -287,7 +286,7 @@ class GeneralPullHelper {
     private void flingWithNestedDispatch(int velocityY) {
         if (!pullRefreshLayout.dispatchNestedPreFling(0, velocityY)) {
             if ((Math.abs(velocityY) > minimumFlingVelocity)) {
-                pullRefreshLayout.onNestedPreFling(pullRefreshLayout.pullContentView, 0, velocityY);
+                pullRefreshLayout.onNestedPreFling(pullRefreshLayout.targetView, 0, velocityY);
             }
         }
     }
