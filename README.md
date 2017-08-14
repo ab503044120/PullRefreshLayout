@@ -4,6 +4,7 @@
 [![Methods](https://img.shields.io/badge/Size-34%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.6.6)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
 <br/>
+
 ![header和状态切换演示gif](gif/new_demo.gif) 
 ![演示gif](gif/demo.gif) 
 
