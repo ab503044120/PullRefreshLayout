@@ -7,9 +7,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -28,7 +26,6 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
     private TextView tv;
     private AVLoadingIndicatorView loadingView;
 
-    private boolean isStateFinish;
     private PullRefreshLayout refreshLayout;
 
     private ObjectAnimator objectAnimator;
@@ -37,6 +34,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
         super(context);
         this.refreshLayout = refreshLayout;
 
+        // 设置 布局 为 match_parent
         setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
 
         LayoutInflater.from(getContext()).inflate(R.layout.refresh_view, this, true);
@@ -61,22 +59,26 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
                 ClassicLoadView.this.refreshLayout.loadMoreComplete();
                 ClassicLoadView.this.refreshLayout.setMoveWithFooter(true);
                 refreshLayout.setDispatchPullTouchAble(true);
+                onPullFinish();
             }
         });
         setBackgroundColor(Color.WHITE);
-
     }
 
+    // 自定义回复动画
     public void startBackAnimation() {
-        refreshLayout.setDispatchPullTouchAble(false);
         refreshLayout.setMoveWithFooter(false);
         refreshLayout.moveChildren(0);
+        refreshLayout.setDispatchPullTouchAble(false);
         objectAnimator.setFloatValues(getY(), getY() + getMeasuredHeight());
         objectAnimator.start();
     }
 
     @Override
     public void onPullChange(float percent) {
+        onPullHolding();
+
+       // 判断是否处在 拖拽的状态
         if (refreshLayout.isDragDown() || refreshLayout.isDragUp()) {
             return;
         }
@@ -87,30 +89,28 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     @Override
     public void onPullHoldTrigger() {
-        tv.setText("release loading");
     }
 
     @Override
     public void onPullHoldUnTrigger() {
-        tv.setText("drag");
     }
 
     @Override
     public void onPullHolding() {
-        loadingView.smoothToShow();
-        tv.setText("loading...");
+        if (loadingView.getVisibility() != VISIBLE) {
+            loadingView.smoothToShow();
+            tv.setText("loading...");
+        }
     }
 
     @Override
     public void onPullFinish() {
         tv.setText("loading finish");
-        isStateFinish = true;
         loadingView.smoothToHide();
     }
 
     @Override
     public void onPullReset() {
         tv.setText("drag");
-        isStateFinish = false;
     }
 }

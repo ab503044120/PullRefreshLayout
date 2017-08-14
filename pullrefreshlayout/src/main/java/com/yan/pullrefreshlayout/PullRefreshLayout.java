@@ -135,6 +135,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean isOverScrollTrigger = false;
 
     /**
+     * is start to auto loading
+     */
+    private boolean isAutoLoading = false;
+
+    /**
      * is header or footer height set
      */
     private boolean isHeaderHeightSet = false;
@@ -150,6 +155,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private boolean isScrollAbleViewBackScroll = false;
 
+    /**
+     * is footer moving with contentView
+     */
     private boolean moveWithFooter = true;
 
     /**
@@ -363,7 +371,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-
     private void addRecyclerScrollListener() {
         RecyclerView targetRecycler = ((RecyclerView) targetView);
         if (defaultScrollListener != null) {
@@ -434,9 +441,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private void autoLoadingTrigger() {
-        if (!pullTwinkEnable && autoLoadingEnable && refreshState == 0 && !isAutoLoadTrigger && onRefreshListener != null) {
-            isAutoLoadTrigger = true;
-            refreshState = 2;
+        if (!isAutoLoading && autoLoadingEnable && refreshState == 0 && onRefreshListener != null) {
+            isAutoLoading = true;
             onRefreshListener.onLoading();
         }
     }
@@ -641,7 +647,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             resetHeaderView(moveDistance);
         }
 
-        if (pullLoadMoreEnable && refreshState != 1 && !isAutoLoadTrigger && !isResetTrigger && moveDistance <= -loadTriggerDistance) {
+        if (pullLoadMoreEnable && refreshState != 1  && !isResetTrigger && moveDistance <= -loadTriggerDistance) {
             startLoadMore(moveDistance, true);
         } else if ((moveDistance < 0 && refreshState != 2) || (isResetTrigger && refreshState == 2)) {
             resetFootView(moveDistance);
@@ -758,10 +764,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
-        if (isAutoLoadTrigger) {
-            isAutoRefreshTrigger = false;
-            refreshState = 0;
-        }
+        isAutoRefreshTrigger = false;
+        isAutoLoading = false;
     }
 
     public void autoLoading() {
@@ -823,7 +827,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return false;
     }
 
-    private boolean cancelAllAnimation() {
+    public final boolean cancelAllAnimation() {
         return cancelAllAnimation(null);
     }
 
@@ -908,7 +912,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 if (headerView != null) {
                     headerView.setVisibility(GONE);
                 }
-                if (onRefreshListener != null && refreshWithAction) {
+                if (onRefreshListener != null && refreshWithAction && !isAutoLoading) {
                     onRefreshListener.onLoading();
                 }
             }
@@ -1234,7 +1238,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         refreshShowHelper.setFooterShowGravity(footerShowGravity);
     }
 
-    public void setMoveWithFooter(boolean moveWithFooter) {
+    public final void setMoveWithFooter(boolean moveWithFooter) {
         this.moveWithFooter = moveWithFooter;
     }
 

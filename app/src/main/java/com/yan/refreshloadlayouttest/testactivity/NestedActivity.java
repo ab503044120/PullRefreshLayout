@@ -66,11 +66,17 @@ public class NestedActivity extends AppCompatActivity {
                     public void run() {
                         if (vState.getVisibility() == View.VISIBLE) {
                             vState.setVisibility(View.GONE);
+                            refreshLayout.setAutoLoadingEnable(true);
+                            refreshLayout.setLoadMoreEnable(true);
                             refreshLayout.setTargetView(recyclerView);
+                            classicLoadView.setAlpha(1f);
                         } else {
+                            refreshLayout.setAutoLoadingEnable(false);
+                            refreshLayout.setLoadMoreEnable(false);
                             refreshLayout.setTargetView(vState);
                             vState.bringToFront();
                             vState.setVisibility(View.VISIBLE);
+                            classicLoadView.setAlpha(0f);
                         }
                         refreshLayout.refreshComplete();
                     }
@@ -89,7 +95,7 @@ public class NestedActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 Log.e(TAG, "run: " + refreshLayout.getMoveDistance());
-                                recyclerView.scrollBy(0, refreshLayout.getMoveDistance());
+                                recyclerView.scrollBy(0, -refreshLayout.getMoveDistance());
                                 classicLoadView.startBackAnimation();
                             }
                         }, 150);
