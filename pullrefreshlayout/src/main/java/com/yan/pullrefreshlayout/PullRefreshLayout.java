@@ -14,7 +14,6 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -126,7 +125,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private boolean isAutoRefreshTrigger = false;
     private boolean isHoldingTrigger = false;
-    private boolean isHoldingFinishTrigger = false;
+    boolean isHoldingFinishTrigger = false;
     private boolean isResetTrigger = false;
     private boolean isAutoLoadTrigger = false;
     private boolean isOverScrollTrigger = false;
@@ -362,7 +361,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             cancelAllAnimation();
             if ((type == 1 && moveDistance < tempDistance) || (type == 2 && moveDistance > tempDistance)) {
                 onScroll(-moveDistance);
-                return kindsOfViewToNormalDell(type, tempDistance);
+                return kindsOfViewsToNormalDell(type, tempDistance);
             }
             onScroll(-tempDistance);
             return false;
@@ -376,7 +375,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * kinds of view dell back scroll to normal state
      */
-    private boolean kindsOfViewToNormalDell(int type, int tempDistance) {
+    private boolean kindsOfViewsToNormalDell(int type, int tempDistance) {
         if (targetView instanceof ListView && !isScrollAbleViewBackScroll) {
         } else if (targetView instanceof ScrollView && !isScrollAbleViewBackScroll) {
             ((ScrollView) targetView).fling((type == 1 ? 1 : -1) * (int) scroller.getCurrVelocity());
@@ -905,6 +904,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             overScrollState = 0;
             finalScrollDistance = -1;
             isOverScrollTrigger = false;
+            isHoldingFinishTrigger = false;
             isScrollAbleViewBackScroll = false;
         }
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;

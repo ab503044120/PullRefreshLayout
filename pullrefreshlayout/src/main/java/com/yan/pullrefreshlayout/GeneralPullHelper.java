@@ -129,6 +129,8 @@ class GeneralPullHelper {
         if (pullRefreshLayout.nestedScrollAble) {
             if ((ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL)) {
                 pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.pullContentView);
+            } else if (ev.getActionMasked() == MotionEvent.ACTION_MOVE && pullRefreshLayout.isHoldingFinishTrigger) {
+                return true;
             }
             return false;
         }
@@ -141,6 +143,9 @@ class GeneralPullHelper {
                 actionDownPointY = ev.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (pullRefreshLayout.isHoldingFinishTrigger) {
+                    return true;
+                }
                 velocityTrackerCompute(ev);
                 float movingX = ev.getX() - actionDownPointX;
                 float movingY = ev.getY() - actionDownPointY;
