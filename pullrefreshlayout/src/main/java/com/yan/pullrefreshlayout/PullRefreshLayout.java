@@ -647,7 +647,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             resetHeaderView(moveDistance);
         }
 
-        if (pullLoadMoreEnable && refreshState != 1  && !isResetTrigger && moveDistance <= -loadTriggerDistance) {
+        if (pullLoadMoreEnable && refreshState != 1 && !isResetTrigger && moveDistance <= -loadTriggerDistance) {
             startLoadMore(moveDistance, true);
         } else if ((moveDistance < 0 && refreshState != 2) || (isResetTrigger && refreshState == 2)) {
             resetFootView(moveDistance);
@@ -1035,7 +1035,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return parentHelper.getNestedScrollAxes();
     }
 
-
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
         if ((pullTwinkEnable || autoLoadingEnable) && (nestedScrollAble || !(target instanceof NestedScrollingChild))) {
@@ -1088,8 +1087,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
-        return childHelper.dispatchNestedPreScroll(
-                dx, dy, consumed, offsetInWindow);
+        return childHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
     }
 
     @Override
