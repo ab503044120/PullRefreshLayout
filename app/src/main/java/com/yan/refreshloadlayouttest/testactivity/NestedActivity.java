@@ -57,16 +57,15 @@ public class NestedActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
-                if (vState.getVisibility() == View.VISIBLE) {
-                    vState.setVisibility(View.GONE);
-                } else {
-                    vState.setVisibility(View.VISIBLE);
-                }
                 Log.e(TAG, "refreshLayout onRefresh: ");
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        if (vState.getVisibility() == View.VISIBLE) {
+                            vState.setVisibility(View.GONE);
+                        } else {
+                            vState.setVisibility(View.VISIBLE);
+                        }
                         refreshLayout.refreshComplete();
                     }
                 }, 3000);
