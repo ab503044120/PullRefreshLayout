@@ -3,9 +3,13 @@
 [![MinSdk](https://img.shields.io/badge/API-11%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=11) 
 [![Methods](https://img.shields.io/badge/Size-34%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.6.6)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
+header和状态切换演示gif
 <br/>
 
 ![header和状态切换演示gif](gif/new_demo.gif) 
+
+<br/>
+
 ![演示gif](gif/demo.gif) 
 
 ###### 首先吐槽一下现在流行的刷新库，一个字大，包涵个人很多集成到项目中不需要的类，也很难找到很满意的效果(个人目标效果：各个刷新状态各种手势操作无限，真实的回弹效果，无痕过度)。
