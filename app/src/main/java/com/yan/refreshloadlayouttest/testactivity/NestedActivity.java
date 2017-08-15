@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.yan.refreshloadlayouttest.widget.ClassicLoadView;
@@ -60,7 +59,6 @@ public class NestedActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.e(TAG, "refreshLayout onRefresh: ");
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -69,14 +67,13 @@ public class NestedActivity extends AppCompatActivity {
                             refreshLayout.setAutoLoadingEnable(true);
                             refreshLayout.setLoadMoreEnable(true);
                             refreshLayout.setTargetView(recyclerView);
-                            classicLoadView.setAlpha(1f);
+                            refreshLayout.setFooterView(classicLoadView);
                         } else {
                             refreshLayout.setAutoLoadingEnable(false);
                             refreshLayout.setLoadMoreEnable(false);
                             refreshLayout.setTargetView(vState);
-                            vState.bringToFront();
                             vState.setVisibility(View.VISIBLE);
-                            classicLoadView.setAlpha(0f);
+                            refreshLayout.setFooterView(null);
                         }
                         refreshLayout.refreshComplete();
                     }
@@ -88,19 +85,23 @@ public class NestedActivity extends AppCompatActivity {
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        if (datas.size() > 10) {
+                            classicLoadView.loadFinish();
+                            return;
+                        }
                         datas.add(new SimpleItem(R.drawable.img4, "夏目友人帐"));
                         adapter.notifyItemInserted(datas.size());
 
                         refreshLayout.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Log.e(TAG, "run: " + refreshLayout.getMoveDistance());
+                                //recyclerView 在footer动画执行之前先移动
                                 recyclerView.scrollBy(0, -refreshLayout.getMoveDistance());
                                 classicLoadView.startBackAnimation();
                             }
-                        }, 150);
+                        }, 250);
                     }
-                }, 3000);
+                }, 1000);
             }
         });
     }

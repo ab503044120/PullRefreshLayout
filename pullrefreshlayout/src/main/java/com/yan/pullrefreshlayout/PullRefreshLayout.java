@@ -39,7 +39,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     View footerView;
     View targetView;
 
-    private View pullContentView;
+    View pullContentView;
 
     //-------------------------START| values part |START-----------------------------
 
@@ -87,6 +87,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean pullLoadMoreEnable = false;
     private boolean autoLoadingEnable = false;
 
+    /**
+     * dispatch Pull Touch Able
+     */
     private boolean dispatchPullTouchAble = true;
 
     //--------------------START|| values can modify in the lib only ||START------------------
@@ -131,13 +134,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean isHoldingTrigger = false;
     boolean isHoldingFinishTrigger = false;
     private boolean isResetTrigger = false;
-    private boolean isAutoLoadTrigger = false;
     private boolean isOverScrollTrigger = false;
-
-    /**
-     * is start to auto loading
-     */
-    private boolean isAutoLoading = false;
+    private boolean isAutoLoadingTrigger = false;
 
     /**
      * is header or footer height set
@@ -164,9 +162,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * is nestedScrollAble
      */
     boolean nestedScrollAble = false;
-    /**
-     * is nestedScrollAble
-     */
 
     /**
      * final motion event
@@ -363,7 +358,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private void readyScroller() {
         if (scroller == null && (pullTwinkEnable || autoLoadingEnable)) {
             if (targetView instanceof RecyclerView) {
-                scroller = ScrollerCompat.create(getContext(), scrollInterpolator = getRecyclerDefaultInterpolator());
+                scroller = ScrollerCompat.create(getContext(), scrollInterpolator == null
+                        ? scrollInterpolator = getRecyclerDefaultInterpolator()
+                        : scrollInterpolator);
                 addRecyclerScrollListener();
                 return;
             }
@@ -375,6 +372,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         RecyclerView targetRecycler = ((RecyclerView) targetView);
         if (defaultScrollListener != null) {
             targetRecycler.removeOnScrollListener(defaultScrollListener);
+            targetRecycler.addOnScrollListener(defaultScrollListener);
+            return;
         }
         targetRecycler.addOnScrollListener(defaultScrollListener = getRecyclerScrollListener());
     }
@@ -441,8 +440,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private void autoLoadingTrigger() {
-        if (!isAutoLoading && autoLoadingEnable && refreshState == 0 && onRefreshListener != null) {
-            isAutoLoading = true;
+        if (!isAutoLoadingTrigger && autoLoadingEnable && refreshState == 0 && onRefreshListener != null) {
+            isAutoLoadingTrigger = true;
             onRefreshListener.onLoading();
         }
     }
@@ -495,30 +494,31 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
-    public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new MarginLayoutParams(getContext(), attrs);
+    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
+        return p instanceof LayoutParams;
     }
 
     @Override
-    protected LayoutParams generateDefaultLayoutParams() {
-        return new MarginLayoutParams(-1, -1);
+    protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
+        return new LayoutParams(-1, -1);
     }
 
     @Override
-    protected boolean checkLayoutParams(LayoutParams lp) {
-        return lp instanceof MarginLayoutParams;
+    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+        return new LayoutParams(p);
     }
 
     @Override
-    protected LayoutParams generateLayoutParams(LayoutParams lp) {
-        return new MarginLayoutParams(lp);
+    public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new LayoutParams(getContext(), attrs);
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
+        onRefreshListener = null;
         abortScroller();
         cancelAllAnimation();
+        super.onDetachedFromWindow();
     }
 
     /**
@@ -645,11 +645,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             startRefresh(moveDistance, true);
         } else if ((moveDistance > 0 && refreshState != 1) || (isResetTrigger && refreshState == 1)) {
             resetHeaderView(moveDistance);
+            return;
         }
 
         if (pullLoadMoreEnable && refreshState != 1 && !isResetTrigger && moveDistance <= -loadTriggerDistance) {
             startLoadMore(moveDistance, true);
-        } else if ((moveDistance < 0 && refreshState != 2) || (isResetTrigger && refreshState == 2)) {
+        } else if ((moveDistance < 0 && refreshState != 2) || (isResetTrigger && (refreshState == 2 || isAutoLoadingTrigger))) {
             resetFootView(moveDistance);
         }
     }
@@ -760,12 +761,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void loadMoreComplete() {
-        if (refreshState == 2) {
+        if (refreshState == 2 || isAutoLoadingTrigger) {
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
-        isAutoRefreshTrigger = false;
-        isAutoLoading = false;
     }
 
     public void autoLoading() {
@@ -797,6 +796,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private void resetState() {
         isHoldingFinishTrigger = false;
         isAutoRefreshTrigger = false;
+        isAutoLoadingTrigger = false;
         isHoldingTrigger = false;
         pullStateControl = true;
         isResetTrigger = false;
@@ -872,14 +872,15 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final AnimatorListenerAdapter resetFooterAnimation = new PullAnimatorListenerAdapter() {
         protected void animationStart() {
-            if (footerView != null && refreshState == 2 && !isHoldingFinishTrigger && footerView instanceof OnPullListener) {
+            if (((refreshState == 2 && !isHoldingFinishTrigger)
+                    || isAutoLoadingTrigger) && footerView != null && footerView instanceof OnPullListener) {
                 ((OnPullListener) footerView).onPullFinish();
                 isHoldingFinishTrigger = true;
             }
         }
 
         protected void animationEnd() {
-            if (refreshState == 2) {
+            if (refreshState == 2 || isAutoLoadingTrigger) {
                 resetLoadMoreState();
             }
         }
@@ -891,6 +892,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
         protected void animationEnd() {
             if (refreshState == 0 || isAutoRefreshTrigger) {
+                isAutoRefreshTrigger = false;
                 refreshState = 1;
                 if (footerView != null) {
                     footerView.setVisibility(GONE);
@@ -909,10 +911,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         protected void animationEnd() {
             if (refreshState == 0 || isAutoRefreshTrigger) {
                 refreshState = 2;
+                isAutoRefreshTrigger = false;
                 if (headerView != null) {
                     headerView.setVisibility(GONE);
                 }
-                if (onRefreshListener != null && refreshWithAction && !isAutoLoading) {
+                if (onRefreshListener != null && refreshWithAction && !isAutoLoadingTrigger) {
                     onRefreshListener.onLoading();
                 }
             }
@@ -1111,41 +1114,43 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void setHeaderView(View header) {
-        setRefreshView(1, header);
+        if (headerView != null && headerView != header) {
+            removeView(headerView);
+        }
+        headerView = header;
+        if (header == null) {
+            return;
+        }
+        if (header.getParent() != null) {
+            ((ViewGroup) header.getParent()).removeView(header);
+        }
+        ViewGroup.LayoutParams lp = header.getLayoutParams();
+        if (lp == null) {
+            lp = new LayoutParams(-1, -2);
+            header.setLayoutParams(lp);
+        }
+        addView(header);
+        refreshShowHelper.setHeaderShowGravity(-1);
     }
 
     public void setFooterView(View footer) {
-        setRefreshView(2, footer);
-        if (refreshShowHelper.footerShowState == RefreshShowHelper.STATE_FOLLOW && footerView != null) {
-            footerView.bringToFront();
+        if (footerView != null && footerView != footer) {
+            removeView(footerView);
         }
-    }
-
-    private void setRefreshView(int type, View inView) {
-        if (inView == null) {
+        footerView = footer;
+        if (footer == null) {
             return;
         }
-        if (type == 1) {
-            if (headerView != null && headerView != inView) {
-                removeView(headerView);
-            }
-            headerView = inView;
-        } else {
-            if (footerView != null && footerView != inView) {
-                removeView(footerView);
-            }
-            footerView = inView;
+        ViewGroup.LayoutParams lp = footer.getLayoutParams();
+        if (footer.getParent() != null) {
+            ((ViewGroup) footer.getParent()).removeView(footer);
         }
-        LayoutParams lp = inView.getLayoutParams();
         if (lp == null) {
             lp = new LayoutParams(-1, -2);
-            inView.setLayoutParams(lp);
+            footer.setLayoutParams(lp);
         }
-        addView(inView);
-
-        if (targetView != null) {
-            targetView.bringToFront();
-        }
+        addView(footer);
+        refreshShowHelper.setFooterShowGravity(-1);
     }
 
     public void setTargetView(View targetView) {
@@ -1236,13 +1241,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         refreshShowHelper.setFooterShowGravity(footerShowGravity);
     }
 
-    public final void setMoveWithFooter(boolean moveWithFooter) {
+    public void setMoveWithFooter(boolean moveWithFooter) {
         this.moveWithFooter = moveWithFooter;
     }
 
-    public void setDispatchPullTouchAble(boolean dispatchPullTouchAble) {
+    public final void cancelTouchEvent() {
         dispatchTouchEvent(MotionEvent.obtain(System.currentTimeMillis()
                 , System.currentTimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+    }
+
+    public void setDispatchPullTouchAble(boolean dispatchPullTouchAble) {
         this.dispatchPullTouchAble = dispatchPullTouchAble;
     }
 
@@ -1278,30 +1286,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return moveDistance != 0;
     }
 
-    public boolean isHoldingFinishTrigger() {
-        return isHoldingFinishTrigger;
-    }
-
-    public boolean isAutoRefreshTrigger() {
-        return isAutoRefreshTrigger;
-    }
-
-    public boolean isHoldingTrigger() {
-        return isHoldingTrigger;
-    }
-
-    public boolean isResetTrigger() {
-        return isResetTrigger;
-    }
-
-    public boolean isAutoLoadTrigger() {
-        return isAutoLoadTrigger;
-    }
-
-    public boolean isOverScrollTrigger() {
-        return isOverScrollTrigger;
-    }
-
     public boolean isDragDown() {
         return generalPullHelper.dragState == 1;
     }
@@ -1312,6 +1296,26 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     public boolean isMovingDirectDown() {
         return generalPullHelper.isMovingDirectDown;
+    }
+
+    public static class LayoutParams extends MarginLayoutParams {
+
+        public LayoutParams(Context c, AttributeSet attrs) {
+            super(c, attrs);
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        @SuppressWarnings({"unused"})
+        public LayoutParams(MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
+        }
     }
 
     public interface OnPullListener {

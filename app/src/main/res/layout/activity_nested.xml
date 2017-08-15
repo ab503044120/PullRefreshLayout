@@ -47,13 +47,14 @@
 
         <TextView
             android:id="@+id/no_data"
-            android:background="#ffffff"
-            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:text="no data"
             android:textColor="#212121"
             android:textSize="20sp"
-            android:text="no data"  />
+            android:visibility="gone" />
     </com.yan.refreshloadlayouttest.widget.NestedFrameLayout>
 
 </com.yan.pullrefreshlayout.PullRefreshLayout>

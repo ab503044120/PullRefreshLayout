@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +21,16 @@ import com.yan.refreshloadlayouttest.R;
 
 /**
  * Created by yan on 2017/8/14.
+ * <p>
+ * 使用这个footer却确认调用以下两个方法
+ * refreshLayout.setLoadTriggerDistance(120); 主动设置加载更多的触发距离
+ * 设置 footerShowState（默认 为STATE_FOLLOW） 为 STATE_FOLLOW
  */
 
 public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.OnPullListener {
     private TextView tv;
     private AVLoadingIndicatorView loadingView;
-
     private PullRefreshLayout refreshLayout;
-
     private ObjectAnimator objectAnimator;
 
     public ClassicLoadView(@NonNull Context context, final PullRefreshLayout refreshLayout) {
@@ -36,7 +39,55 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
         // 设置 布局 为 match_parent
         setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
+        setBackgroundColor(Color.WHITE);
+        initView();
+        animationInit();
+    }
 
+    // 动画初始化
+    private void animationInit() {
+        objectAnimator = ObjectAnimator.ofFloat(this, "y", 0, 0);
+        objectAnimator.setDuration(300);
+        objectAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                ClassicLoadView.this.refreshLayout.loadMoreComplete();
+                ClassicLoadView.this.refreshLayout.setMoveWithFooter(true);
+                refreshLayout.cancelTouchEvent();
+                refreshLayout.setDispatchPullTouchAble(true);
+                onPullFinish();
+            }
+        });
+    }
+
+    // 自定义回复动画
+    public void startBackAnimation() {
+        // 阻止refreshLayout的默认事件分发
+        refreshLayout.setDispatchPullTouchAble(false);
+        // 记录refreshLayout移动距离
+        int moveDistance = refreshLayout.getMoveDistance();
+        // 先设置footer不跟随移动
+        refreshLayout.setMoveWithFooter(false);
+        // 再设置内容移动到0的位置
+        refreshLayout.moveChildren(0);
+        // 设置事件为ACTION_CANCEL
+        refreshLayout.cancelTouchEvent();
+        // 调用自定义footer动画
+        objectAnimator.setFloatValues(getY(), getY() - moveDistance);
+        objectAnimator.start();
+    }
+
+    public void loadFinish() {
+        if (refreshLayout.isLoadMoreEnable()) {
+            refreshLayout.setLoadMoreEnable(false);
+            refreshLayout.setAutoLoadingEnable(false);
+            refreshLayout.loadMoreComplete();
+            tv.setText("no more data");
+            loadingView.smoothToHide();
+        }
+    }
+
+    private void initView() {
         LayoutInflater.from(getContext()).inflate(R.layout.refresh_view, this, true);
         tv = (TextView) findViewById(R.id.title);
         tv.setOnClickListener(new OnClickListener() {
@@ -48,38 +99,15 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
         loadingView = (AVLoadingIndicatorView) findViewById(R.id.loading_view);
 
         loadingView.setIndicator("LineScaleIndicator");
-        loadingView.setIndicatorColor(ContextCompat.getColor(context, R.color.colorPrimary));
-
-        objectAnimator = ObjectAnimator.ofFloat(this, "y", 0, 0);
-        objectAnimator.setDuration(300);
-        objectAnimator.addListener(new AnimatorListenerAdapter() {
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                ClassicLoadView.this.refreshLayout.loadMoreComplete();
-                ClassicLoadView.this.refreshLayout.setMoveWithFooter(true);
-                refreshLayout.setDispatchPullTouchAble(true);
-                onPullFinish();
-            }
-        });
-        setBackgroundColor(Color.WHITE);
-    }
-
-    // 自定义回复动画
-    public void startBackAnimation() {
-        refreshLayout.setMoveWithFooter(false);
-        refreshLayout.moveChildren(0);
-        refreshLayout.setDispatchPullTouchAble(false);
-        objectAnimator.setFloatValues(getY(), getY() + getMeasuredHeight());
-        objectAnimator.start();
+        loadingView.setIndicatorColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
     }
 
     @Override
     public void onPullChange(float percent) {
         onPullHolding();
 
-       // 判断是否处在 拖拽的状态
-        if (refreshLayout.isDragDown() || refreshLayout.isDragUp()) {
+        // 判断是否处在 拖拽的状态
+        if (refreshLayout.isDragDown() || refreshLayout.isDragUp() || !refreshLayout.isLoadMoreEnable()) {
             return;
         }
         if (!refreshLayout.isTargetAbleScrollDown()) {
@@ -97,7 +125,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     @Override
     public void onPullHolding() {
-        if (loadingView.getVisibility() != VISIBLE) {
+        if (loadingView.getVisibility() != VISIBLE && refreshLayout.isLoadMoreEnable()) {
             loadingView.smoothToShow();
             tv.setText("loading...");
         }
@@ -105,12 +133,13 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     @Override
     public void onPullFinish() {
-        tv.setText("loading finish");
-        loadingView.smoothToHide();
+        if (refreshLayout.isLoadMoreEnable()) {
+            tv.setText("loading finish");
+            loadingView.smoothToHide();
+        }
     }
 
     @Override
     public void onPullReset() {
-        tv.setText("drag");
     }
 }

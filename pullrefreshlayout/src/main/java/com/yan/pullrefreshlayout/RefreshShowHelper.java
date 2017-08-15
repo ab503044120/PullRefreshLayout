@@ -1,7 +1,7 @@
 package com.yan.pullrefreshlayout;
 
 import android.support.annotation.IntDef;
-import android.view.ViewGroup;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,11 +43,25 @@ public class RefreshShowHelper {
     }
 
     void setHeaderShowGravity(int headerShowGravity) {
-        this.headerShowState = headerShowGravity;
+        if (headerShowGravity != -1) {
+            this.headerShowState = headerShowGravity;
+        }
+        if (pullRefreshLayout.targetView != null
+                && pullRefreshLayout.targetView == pullRefreshLayout.pullContentView
+                && headerShowState != RefreshShowHelper.STATE_FOLLOW) {
+            pullRefreshLayout.targetView.bringToFront();
+        }
     }
 
     void setFooterShowGravity(int footerShowGravity) {
-        this.footerShowState = footerShowGravity;
+        if (footerShowGravity != -1) {
+            this.footerShowState = footerShowGravity;
+        }
+        if (pullRefreshLayout.targetView != null
+                && pullRefreshLayout.targetView == pullRefreshLayout.pullContentView
+                && headerShowState != RefreshShowHelper.STATE_FOLLOW) {
+            pullRefreshLayout.targetView.bringToFront();
+        }
     }
 
     void dellHeaderMoving(int moveDistance) {
@@ -120,7 +134,8 @@ public class RefreshShowHelper {
         if (pullRefreshLayout.headerView != null) {
             int paddingLeft = pullRefreshLayout.getPaddingLeft();
             int paddingTop = pullRefreshLayout.getPaddingTop();
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) pullRefreshLayout.headerView.getLayoutParams();
+            Log.e("sdf", "layout: " + pullRefreshLayout.headerView.getLayoutParams());
+            PullRefreshLayout.LayoutParams lp = (PullRefreshLayout.LayoutParams) pullRefreshLayout.headerView.getLayoutParams();
             switch (headerShowState) {
                 case STATE_FOLLOW:
                 case STATE_FOLLOW_CENTER:
@@ -149,7 +164,7 @@ public class RefreshShowHelper {
         if (pullRefreshLayout.footerView != null) {
             int paddingLeft = pullRefreshLayout.getPaddingLeft();
             int paddingTop = pullRefreshLayout.getPaddingTop();
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) pullRefreshLayout.footerView.getLayoutParams();
+            PullRefreshLayout.LayoutParams lp = (PullRefreshLayout.LayoutParams) pullRefreshLayout.footerView.getLayoutParams();
             switch (footerShowState) {
                 case STATE_FOLLOW:
                 case STATE_FOLLOW_CENTER:

@@ -3,29 +3,45 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
+import com.yan.refreshloadlayouttest.widget.ClassicLoadView;
 
 public class CommonActivity2 extends CommonActivity1 {
     protected int getViewId() {
         return R.layout.common_activity2;
     }
 
+    ClassicLoadView classicLoadView;
+
+    ScrollView scrollView;
+
+    LinearLayout linearLayout;
+
     protected void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
+        scrollView = (ScrollView) findViewById(R.id.sv);
+        linearLayout = (LinearLayout) findViewById(R.id.ll);
         setImages();
         refreshLayout.setTwinkEnable(true);
+        refreshLayout.setAutoLoadingEnable(true);
+        refreshLayout.setLoadMoreEnable(true);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
-        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "BallScaleRippleMultipleIndicator"));
-        refreshLayout.setTargetView(findViewById(R.id.sv));
+        refreshLayout.setFooterView(classicLoadView = new ClassicLoadView(getApplicationContext(), refreshLayout));
+        refreshLayout.setLoadTriggerDistance((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
+        refreshLayout.setTargetView(scrollView);
+
         HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.hsv);
         final boolean[] isTouch = {false};
         horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
@@ -65,7 +81,14 @@ public class CommonActivity2 extends CommonActivity1 {
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        refreshLayout.loadMoreComplete();
+                        linearLayout.addView(LayoutInflater.from(getApplicationContext()).inflate(R.layout.simple_item, null));
+                        refreshLayout.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollView.scrollBy(0, -refreshLayout.getMoveDistance());
+                                classicLoadView.startBackAnimation();
+                            }
+                        }, 150);
                     }
                 }, 3000);
             }
