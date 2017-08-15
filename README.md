@@ -72,6 +72,12 @@ compile 'com.yan:pullrefreshlayout:(↖)'
 
     refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断效果 见 BEHAIVOR2
    
+    refreshLayout.setDispatchPullTouchAble(false);// 是否阻止pullrefreshLayout的默认事件分发(下拉滑动的逻辑)
+    refreshLayout.setMoveWithFooter(false); // footer 是否跟随滑动
+    refreshLayout.moveChildren(0);// 移动子view
+    refreshLayout.cancelTouchEvent();// 主动触发ACTION_CANCEL
+    refreshLayout.getMoveDistance();// 得到refreshlayout的移动距离
+   
     refreshLayout.setOnDragIntercept(PullRefreshLayout.OnDragIntercept);// 设置滑动判定 见 BEHAIVOR2
     public static class OnDragIntercept {
         public boolean onHeaderDownIntercept() {// header下拉之前的拦截事件
