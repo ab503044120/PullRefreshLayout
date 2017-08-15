@@ -48,6 +48,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
     private void animationInit() {
         objectAnimator = ObjectAnimator.ofFloat(this, "y", 0, 0);
         objectAnimator.setDuration(300);
+
         objectAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -69,7 +70,6 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
         }
         // 阻止refreshLayout的默认事件分发
         refreshLayout.setDispatchPullTouchAble(false);
-
         // 先设置footer不跟随移动
         refreshLayout.setMoveWithFooter(false);
         // 再设置内容移动到0的位置

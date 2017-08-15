@@ -156,7 +156,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * is footer moving with contentView
      */
-    private boolean moveWithFooter = true;
+    private volatile boolean moveWithFooter = true;
 
     /**
      * is nestedScrollAble

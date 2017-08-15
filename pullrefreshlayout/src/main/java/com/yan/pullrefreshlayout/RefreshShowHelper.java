@@ -58,7 +58,7 @@ public class RefreshShowHelper {
         }
         if (pullRefreshLayout.targetView != null
                 && pullRefreshLayout.targetView == pullRefreshLayout.pullContentView
-                && headerShowState != RefreshShowHelper.STATE_FOLLOW) {
+                && footerShowState != RefreshShowHelper.STATE_FOLLOW) {
             pullRefreshLayout.targetView.bringToFront();
         }
     }
