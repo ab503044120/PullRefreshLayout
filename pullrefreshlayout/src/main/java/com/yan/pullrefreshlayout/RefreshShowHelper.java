@@ -1,7 +1,6 @@
 package com.yan.pullrefreshlayout;
 
 import android.support.annotation.IntDef;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -134,7 +133,6 @@ public class RefreshShowHelper {
         if (pullRefreshLayout.headerView != null) {
             int paddingLeft = pullRefreshLayout.getPaddingLeft();
             int paddingTop = pullRefreshLayout.getPaddingTop();
-            Log.e("sdf", "layout: " + pullRefreshLayout.headerView.getLayoutParams());
             PullRefreshLayout.LayoutParams lp = (PullRefreshLayout.LayoutParams) pullRefreshLayout.headerView.getLayoutParams();
             switch (headerShowState) {
                 case STATE_FOLLOW:

@@ -55,7 +55,6 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
                 refreshLayout.setMoveWithFooter(true);
                 refreshLayout.cancelTouchEvent();
                 refreshLayout.setDispatchPullTouchAble(true);
-                onPullFinish();
             }
         });
     }
@@ -64,9 +63,8 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
     public void startBackAnimation() {
         // 记录refreshLayout移动距离
         int moveDistance = refreshLayout.getMoveDistance();
-        if (moveDistance >= 0) {// moveDistance大于0是不主动处理
+        if (moveDistance >= 0) {// moveDistance大于等于0时不主动处理
             refreshLayout.loadMoreComplete();
-            onPullFinish();
             return;
         }
         // 阻止refreshLayout的默认事件分发
@@ -81,6 +79,8 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
         // 调用自定义footer动画
         objectAnimator.setFloatValues(getY(), getY() - moveDistance);
         objectAnimator.start();
+
+        onPullFinish();
     }
 
     public void loadFinish() {
