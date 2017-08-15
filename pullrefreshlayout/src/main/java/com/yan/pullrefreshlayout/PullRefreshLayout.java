@@ -725,7 +725,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private void resetFootView(int loadMoreViewHeight) {
-        if (loadMoreViewHeight >= 0 && refreshState == 2) {
+        if (loadMoreViewHeight >= 0 && (refreshState == 2 || isAutoLoadingTrigger)) {
             resetFooterAnimation.onAnimationStart(null);
             resetFooterAnimation.onAnimationEnd(null);
             return;

@@ -95,7 +95,6 @@ public class NestedActivity extends AppCompatActivity {
                         refreshLayout.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                //recyclerView 在footer动画执行之前先移动
                                 recyclerView.scrollBy(0, -refreshLayout.getMoveDistance());
                                 classicLoadView.startBackAnimation();
                             }

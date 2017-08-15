@@ -51,8 +51,8 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
         objectAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                ClassicLoadView.this.refreshLayout.loadMoreComplete();
-                ClassicLoadView.this.refreshLayout.setMoveWithFooter(true);
+                refreshLayout.loadMoreComplete();
+                refreshLayout.setMoveWithFooter(true);
                 refreshLayout.cancelTouchEvent();
                 refreshLayout.setDispatchPullTouchAble(true);
                 onPullFinish();
@@ -62,10 +62,16 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     // 自定义回复动画
     public void startBackAnimation() {
-        // 阻止refreshLayout的默认事件分发
-        refreshLayout.setDispatchPullTouchAble(false);
         // 记录refreshLayout移动距离
         int moveDistance = refreshLayout.getMoveDistance();
+        if (moveDistance >= 0) {// moveDistance大于0是不主动处理
+            refreshLayout.loadMoreComplete();
+            onPullFinish();
+            return;
+        }
+        // 阻止refreshLayout的默认事件分发
+        refreshLayout.setDispatchPullTouchAble(false);
+
         // 先设置footer不跟随移动
         refreshLayout.setMoveWithFooter(false);
         // 再设置内容移动到0的位置
