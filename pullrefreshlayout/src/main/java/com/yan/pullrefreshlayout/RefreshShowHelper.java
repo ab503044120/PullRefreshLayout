@@ -46,7 +46,7 @@ public class RefreshShowHelper {
             this.headerShowState = headerShowGravity;
         }
         if (pullRefreshLayout.targetView != null
-                && pullRefreshLayout.targetView == pullRefreshLayout.pullContentView
+                && pullRefreshLayout.targetView == pullRefreshLayout.pullContentLayout
                 && headerShowState != RefreshShowHelper.STATE_FOLLOW) {
             pullRefreshLayout.targetView.bringToFront();
         }
@@ -57,7 +57,7 @@ public class RefreshShowHelper {
             this.footerShowState = footerShowGravity;
         }
         if (pullRefreshLayout.targetView != null
-                && pullRefreshLayout.targetView == pullRefreshLayout.pullContentView
+                && pullRefreshLayout.targetView == pullRefreshLayout.pullContentLayout
                 && footerShowState != RefreshShowHelper.STATE_FOLLOW) {
             pullRefreshLayout.targetView.bringToFront();
         }
