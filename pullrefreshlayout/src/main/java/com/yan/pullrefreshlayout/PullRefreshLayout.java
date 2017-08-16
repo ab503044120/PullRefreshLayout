@@ -856,7 +856,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
 
         protected void animationEnd() {
-            resetRefreshState();
+            if (isResetTrigger) {
+                resetRefreshState();
+            }
         }
     };
 
@@ -869,7 +871,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
 
         protected void animationEnd() {
-            resetLoadMoreState();
+            if (isResetTrigger) {
+                resetLoadMoreState();
+            }
         }
     };
 
