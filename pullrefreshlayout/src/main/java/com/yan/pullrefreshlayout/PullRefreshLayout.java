@@ -14,6 +14,7 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -678,7 +679,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private void resetRefreshState() {
-        if (headerView != null && headerView instanceof OnPullListener) {
+        if (isHoldingFinishTrigger && headerView != null && headerView instanceof OnPullListener) {
             ((OnPullListener) headerView).onPullReset();
         }
         if (footerView != null) {
@@ -727,7 +728,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private void resetLoadMoreState() {
-        if (footerView != null && footerView instanceof OnPullListener) {
+        if (isHoldingFinishTrigger && footerView != null && footerView instanceof OnPullListener) {
             ((OnPullListener) footerView).onPullReset();
         }
         if (headerView != null) {
@@ -737,14 +738,14 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void refreshComplete() {
-        if (refreshState == 1) {
+        if (refreshState != 2) {
             isResetTrigger = true;
             resetHeaderView(moveDistance);
         }
     }
 
     public void loadMoreComplete() {
-        if (refreshState == 2 || isAutoLoadingTrigger) {
+        if (refreshState != 1) {
             isResetTrigger = true;
             resetFootView(moveDistance);
         }
@@ -859,7 +860,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private final AnimatorListenerAdapter resetHeaderAnimation = new PullAnimatorListenerAdapter() {
         protected void animationStart() {
-            if (isResetTrigger && !isHoldingFinishTrigger && headerView != null && headerView instanceof OnPullListener) {
+            if (isResetTrigger && refreshState == 1 && !isHoldingFinishTrigger && headerView != null && headerView instanceof OnPullListener) {
                 ((OnPullListener) headerView).onPullFinish();
                 isHoldingFinishTrigger = true;
             }
@@ -874,7 +875,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final AnimatorListenerAdapter resetFooterAnimation = new PullAnimatorListenerAdapter() {
         protected void animationStart() {
-            if (isResetTrigger && !isHoldingFinishTrigger && footerView != null && footerView instanceof OnPullListener) {
+            if (isResetTrigger && refreshState == 2 && !isHoldingFinishTrigger && footerView != null && footerView instanceof OnPullListener) {
                 ((OnPullListener) footerView).onPullFinish();
                 isHoldingFinishTrigger = true;
             }

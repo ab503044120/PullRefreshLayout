@@ -213,6 +213,9 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.6.6 ： 处理处于触摸状态的，刷新完成动画抖动，添加xml attr prl_targetId 用于在xml 中设置目标view
  
+ <br/>
+ version:1.7.0 ： 事件切换优化
+ 
 ## 4.demo用到的库
  loading 动画
  <br/>
