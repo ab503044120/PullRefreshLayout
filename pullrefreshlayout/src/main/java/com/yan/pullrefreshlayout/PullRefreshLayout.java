@@ -14,7 +14,6 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -849,10 +848,19 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return 0;
         }
         if (!generalPullHelper.isMovingDirectDown) {
-            return moveDistance > 0 ? 1 : -1;
+            if (moveDistance > 0) {
+                return 1;
+            } else if (moveDistance < -loadTriggerDistance) {
+                return -1;
+            }
         } else {
-            return moveDistance < 0 ? 1 : -1;
+            if (moveDistance < 0) {
+                return 1;
+            } else if (moveDistance > refreshTriggerDistance) {
+                return -1;
+            }
         }
+        return 0;
     }
 
     /**
