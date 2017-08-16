@@ -236,8 +236,7 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isLastMotionYSet && (isMovingDirectDown && pullRefreshLayout.moveDistance <= 0
-                        || !isMovingDirectDown && pullRefreshLayout.moveDistance >= 0)) {
+                if (isLastMotionYSet) {
                     flingWithNestedDispatch(-(int) velocityY);
                 }
                 pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
