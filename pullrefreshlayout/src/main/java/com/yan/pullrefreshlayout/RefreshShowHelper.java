@@ -33,7 +33,7 @@ public class RefreshShowHelper {
     public static final int STATE_CENTER = 6;
 
     private int headerShowState = STATE_FOLLOW;
-    int footerShowState = STATE_FOLLOW;
+    private int footerShowState = STATE_FOLLOW;
 
     private PullRefreshLayout pullRefreshLayout;
 

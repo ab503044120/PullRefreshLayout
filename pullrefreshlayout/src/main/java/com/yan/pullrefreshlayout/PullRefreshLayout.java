@@ -14,7 +14,6 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -156,7 +155,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * is footer moving with contentView
      */
-    private volatile boolean moveWithFooter = true;
+    private boolean moveWithFooter = true;
 
     /**
      * is nestedScrollAble
@@ -485,6 +484,14 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        resetState();
+        abortScroller();
+        cancelAllAnimation();
+        super.onDetachedFromWindow();
+    }
+
+    @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
         return p instanceof LayoutParams;
     }
@@ -502,14 +509,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        onRefreshListener = null;
-        abortScroller();
-        cancelAllAnimation();
-        super.onDetachedFromWindow();
     }
 
     /**
@@ -605,10 +604,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         refreshShowHelper.dellHeaderMoving(moveDistance);
         ViewCompat.setTranslationY(pullContentLayout, moveDistance);
-    }
-
-    private int getFinalOverScrollDistance() {
-        return scroller.getFinalY() - scroller.getCurrY();
     }
 
     private void overScroll(int type, int offset) {
@@ -824,6 +819,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return (long) ((Math.pow(2000 * ratio, 0.5)) * overScrollAdjustValue);
     }
 
+    private int getFinalOverScrollDistance() {
+        return scroller.getFinalY() - scroller.getCurrY();
+    }
+
     private void checkNestedScrollAble() {
         View target = targetView;
         while (target != pullContentLayout) {
@@ -842,6 +841,17 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private boolean flingAble() {
         return pullTwinkEnable || autoLoadingEnable;
+    }
+
+    private int overScrollFlingState() {
+        if (moveDistance == 0) {
+            return 0;
+        }
+        if (!generalPullHelper.isMovingDirectDown) {
+            return moveDistance > 0 ? 1 : -1;
+        } else {
+            return moveDistance < 0 ? 1 : -1;
+        }
     }
 
     /**
@@ -913,11 +923,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final AnimatorListenerAdapter overScrollAnimationListener = new AnimatorListenerAdapter() {
         public void onAnimationStart(Animator animation) {
-            onNestedScrollAccepted(targetView, targetView, 2);
+            onNestedScrollAccepted(null, null, 2);
         }
 
         public void onAnimationEnd(Animator animation) {
-            onStopNestedScroll(targetView);
+            onStopNestedScroll(null);
         }
     };
 
@@ -944,7 +954,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final ValueAnimator.AnimatorUpdateListener overScrollAnimationUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
-            onNestedScroll(targetView, 0, 0, 0, (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
+            onNestedScroll(null, 0, 0, 0, (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
         }
     };
 
@@ -1019,17 +1029,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             dy = (int) (dy * dragDampingRatio);
 
             onScroll(-dy);
-        }
-    }
-
-    private int overScrollFlingState() {
-        if (moveDistance == 0) {
-            return 0;
-        }
-        if (!generalPullHelper.isMovingDirectDown) {
-            return moveDistance > 0 ? 1 : -1;
-        } else {
-            return moveDistance < 0 ? 1 : -1;
         }
     }
 
