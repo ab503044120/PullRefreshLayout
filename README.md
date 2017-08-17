@@ -18,7 +18,7 @@ header和状态切换演示gif
 对所有基础控件(包括，嵌套滑动例如RecyclerView、NestedScrollView，普通的TextView、ListView、ScrollerView、LinearLayout等)提供下拉刷新、上拉加载的支持
 ，且实现无痕过度，随意定制header和footer，移动的或者不可以动的，完全不受限制（动画可以onPullChange()完全自主设置）。
 
-## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.1-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
+## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.1-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
 compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 ## 2.说明  
