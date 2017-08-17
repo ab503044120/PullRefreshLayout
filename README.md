@@ -1,5 +1,5 @@
 # PullRefreshLayout
-[![Stable Version](https://img.shields.io/badge/Stable%20version-1.7.1-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
+[![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.1-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
 [![Download](https://api.bintray.com/packages/yan157/maven/pullrefreshlayout/images/download.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/MinSdk-11%2B-green.svg)](https://android-arsenal.com/api?level=11) 
 [![Methods](https://img.shields.io/badge/Methods%20and%20size-362%20%7C%2035%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.7.1)
