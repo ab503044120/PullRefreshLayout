@@ -111,7 +111,6 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
     @Override
     public void onPullChange(float percent) {
         onPullHolding();
-
         // 判断是否处在 拖拽的状态
         if (refreshLayout.isDragDown() || refreshLayout.isDragUp() || !refreshLayout.isLoadMoreEnable()) {
             return;

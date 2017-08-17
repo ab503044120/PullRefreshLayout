@@ -341,7 +341,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 return;
             }
         }
-        throw new RuntimeException("PullRefreshLayout should have one child");
+        throw new RuntimeException("PullRefreshLayout should have a child");
     }
 
     private void readyScroller() {
@@ -485,6 +485,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     protected void onDetachedFromWindow() {
+        onRefreshListener = null;
         resetState();
         abortScroller();
         cancelAllAnimation();
@@ -631,9 +632,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             startRefresh(moveDistance, true);
         } else if (pullLoadMoreEnable && refreshState != 1 && !isResetTrigger && moveDistance <= -loadTriggerDistance) {
             startLoadMore(moveDistance, true);
-        } else if ((refreshState != 2 && moveDistance < 0) || (isResetTrigger && refreshState == 1)) {
+        } else if ((refreshState == 0 && moveDistance > 0) || (refreshState == 1 && (moveDistance < 0 || isResetTrigger))) {
             resetHeaderView(moveDistance);
-        } else if ((refreshState != 1 && moveDistance > 0) || (isResetTrigger && (refreshState == 2 || isAutoLoadingTrigger))) {
+        } else if ((refreshState == 0 && moveDistance < 0) || (refreshState == 2 && moveDistance > 0) || isResetTrigger) {
             resetFootView(moveDistance);
         }
     }
@@ -755,7 +756,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void autoLoading(boolean withAction) {
-        if (refreshState != 0 || pullContentLayout == null || !autoLoadingEnable) {
+        if (refreshState != 0 || pullContentLayout == null || !pullLoadMoreEnable) {
             return;
         }
         startLoadMore(moveDistance, withAction);
@@ -1121,6 +1122,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return true;
     }
 
+    private View getRefreshView(View v) {
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (v.getParent() != null) {
+            ((ViewGroup) v.getParent()).removeView(v);
+        }
+        if (lp == null) {
+            lp = new LayoutParams(-1, -2);
+            v.setLayoutParams(lp);
+        }
+        return v;
+    }
+
     public void setHeaderView(View header) {
         if (headerView != null && headerView != header) {
             removeView(headerView);
@@ -1129,15 +1142,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (header == null) {
             return;
         }
-        if (header.getParent() != null) {
-            ((ViewGroup) header.getParent()).removeView(header);
-        }
-        ViewGroup.LayoutParams lp = header.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(-1, -2);
-            header.setLayoutParams(lp);
-        }
-        addView(header);
+        addView(getRefreshView(header));
         refreshShowHelper.setHeaderShowGravity(-1);
     }
 
@@ -1149,15 +1154,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (footer == null) {
             return;
         }
-        ViewGroup.LayoutParams lp = footer.getLayoutParams();
-        if (footer.getParent() != null) {
-            ((ViewGroup) footer.getParent()).removeView(footer);
-        }
-        if (lp == null) {
-            lp = new LayoutParams(-1, -2);
-            footer.setLayoutParams(lp);
-        }
-        addView(footer);
+        addView(getRefreshView(footer));
         refreshShowHelper.setFooterShowGravity(-1);
     }
 

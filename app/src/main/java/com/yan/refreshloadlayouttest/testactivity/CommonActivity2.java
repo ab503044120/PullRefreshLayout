@@ -92,7 +92,7 @@ public class CommonActivity2 extends CommonActivity1 {
                             }
                         }, 150);
                     }
-                }, 3000);
+                }, 2000);
             }
         });
     }
