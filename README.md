@@ -135,7 +135,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
         app:prl_twinkEnable="true">     
         
         
-        <!-- 通过以下例子，你可以轻易实现recyclerView的header，和数据错误、网络错误等的状态切换--> 
+        <!-- 通过以下例子，你可以轻易实现recyclerView(任何View)的header，和数据错误、网络错误等的状态切换--> 
         <com.yan.pullrefreshlayout.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/refreshLayout"
