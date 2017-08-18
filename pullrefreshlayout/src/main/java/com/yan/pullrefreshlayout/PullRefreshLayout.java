@@ -267,7 +267,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     protected void onFinishInflate() {
         super.onFinishInflate();
         initContentView();
-        checkNestedScrollAble(); // make sure that targetView able to scroll after targetView has set
+        dellNestedScrollCheck(); // make sure that targetView able to scroll after targetView has set
         readyScroller();
     }
 
@@ -832,7 +832,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return scroller.getFinalY() - scroller.getCurrY();
     }
 
-    private void checkNestedScrollAble() {
+    private void dellNestedScrollCheck() {
         View target = targetView;
         while (target != pullContentLayout) {
             if (!(target instanceof NestedScrollingChild)) {
@@ -844,7 +844,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         nestedScrollAble = target instanceof NestedScrollingChild;
     }
 
-    private boolean nestedCheck(View target) {
+    private boolean nestedAble(View target) {
         return nestedScrollAble || !(target instanceof NestedScrollingChild);
     }
 
@@ -864,7 +864,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             }
         } else {
             if (moveDistance < 0) {
-                return 1;
+                return 2;
             } else if (moveDistance > refreshTriggerDistance) {
                 return -1;
             }
@@ -972,7 +972,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        if (nestedCheck(target)) {
+        if (nestedAble(target)) {
             abortScroller();
             cancelAllAnimation();
             overScrollState = 0;
@@ -986,7 +986,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public void onNestedScrollAccepted(View child, View target, int axes) {
-        if (nestedCheck(target)) {
+        if (nestedAble(target)) {
             parentHelper.onNestedScrollAccepted(child, target, axes);
             startNestedScroll(axes & ViewCompat.SCROLL_AXIS_VERTICAL);
         }
@@ -994,7 +994,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public void onStopNestedScroll(View child) {
-        if (nestedCheck(child)) {
+        if (nestedAble(child)) {
             if (!pullTwinkEnable || (scroller != null && scroller.isFinished())) {
                 handleAction();
             }
@@ -1005,7 +1005,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        if (nestedCheck(target)) {
+        if (nestedAble(target)) {
             if (dy > 0 && moveDistance > 0) {
                 if (moveDistance - dy < 0) {
                     consumed[1] += moveDistance;
@@ -1034,7 +1034,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        if (nestedCheck(target)) {
+        if (nestedAble(target)) {
             dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                     parentOffsetInWindow);
             int dy = dyUnconsumed + parentOffsetInWindow[1];
@@ -1051,7 +1051,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        if (flingAble() && nestedCheck(target) && overScrollFlingState() != -1) {
+        if (flingAble() && nestedAble(target) && overScrollFlingState() != -1) {
             readyScroller();
             abortScroller();
             lastScrollY = 0;
@@ -1162,7 +1162,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     public void setTargetView(View targetView) {
         this.targetView = targetView;
-        checkNestedScrollAble();
+        dellNestedScrollCheck();
         if ((targetView instanceof RecyclerView) && flingAble()) {
             if (scrollInterpolator == null) {
                 scroller = ScrollerCompat.create(getContext(), scrollInterpolator = getRecyclerDefaultInterpolator());
