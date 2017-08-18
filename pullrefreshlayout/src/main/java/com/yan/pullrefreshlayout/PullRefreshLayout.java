@@ -1162,6 +1162,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     public void setTargetView(View targetView) {
         this.targetView = targetView;
+        cancelTouchEvent();
         dellNestedScrollCheck();
         if ((targetView instanceof RecyclerView) && flingAble()) {
             if (scrollInterpolator == null) {
@@ -1253,8 +1254,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public final void cancelTouchEvent() {
-        dispatchTouchEvent(MotionEvent.obtain(System.currentTimeMillis()
-                , System.currentTimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+        if (generalPullHelper.dragState != 0) {
+            dispatchTouchEvent(MotionEvent.obtain(System.currentTimeMillis()
+                    , System.currentTimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+        }
     }
 
     public void setDispatchPullTouchAble(boolean dispatchPullTouchAble) {
