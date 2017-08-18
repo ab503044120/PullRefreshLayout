@@ -162,6 +162,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     boolean nestedScrollAble = false;
 
+    private boolean isAttachWindow = false;
+
     /**
      * final motion event
      */
@@ -444,7 +446,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         abortScroller();
         cancelAllAnimation();
         if (overScrollAnimation == null) {
-            overScrollAnimation = ValueAnimator.ofInt(distanceMove, 0);
+            overScrollAnimation = new PullValueAnimator(distanceMove, 0);
             overScrollAnimation.addUpdateListener(overScrollAnimationUpdate);
             overScrollAnimation.addListener(overScrollAnimationListener);
 //            overScrollAnimation.setInterpolator(new DecelerateInterpolator(1f));
@@ -484,11 +486,17 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        isAttachWindow = true;
+        handleAction();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
-        onRefreshListener = null;
-        resetState();
-        abortScroller();
+        isAttachWindow = false;
         cancelAllAnimation();
+        abortScroller();
         super.onDetachedFromWindow();
     }
 
@@ -646,7 +654,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         if (!cancelAllAnimation(startRefreshAnimator)) {
             if (startRefreshAnimator == null) {
-                startRefreshAnimator = ValueAnimator.ofInt(headerViewHeight, refreshTriggerDistance);
+                startRefreshAnimator = new PullValueAnimator(headerViewHeight, refreshTriggerDistance);
                 startRefreshAnimator.addUpdateListener(headerAnimationUpdate);
                 startRefreshAnimator.addListener(refreshStartAnimationListener);
                 startRefreshAnimator.setInterpolator(new DecelerateInterpolator(2f));
@@ -667,7 +675,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         if (!cancelAllAnimation(resetHeaderAnimator)) {
             if (resetHeaderAnimator == null) {
-                resetHeaderAnimator = ValueAnimator.ofInt(headerViewHeight, 0);
+                resetHeaderAnimator = new PullValueAnimator(headerViewHeight, 0);
                 resetHeaderAnimator.addUpdateListener(headerAnimationUpdate);
                 resetHeaderAnimator.addListener(resetHeaderAnimation);
             } else {
@@ -695,7 +703,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         if (!cancelAllAnimation(startLoadMoreAnimator)) {
             if (startLoadMoreAnimator == null) {
-                startLoadMoreAnimator = ValueAnimator.ofInt(loadMoreViewHeight, -loadTriggerDistance);
+                startLoadMoreAnimator = new PullValueAnimator(loadMoreViewHeight, -loadTriggerDistance);
                 startLoadMoreAnimator.addUpdateListener(footerAnimationUpdate);
                 startLoadMoreAnimator.addListener(loadingStartAnimationListener);
                 startLoadMoreAnimator.setInterpolator(new DecelerateInterpolator(2f));
@@ -716,7 +724,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         if (!cancelAllAnimation(resetFootAnimator)) {
             if (resetFootAnimator == null) {
-                resetFootAnimator = ValueAnimator.ofInt(loadMoreViewHeight, 0);
+                resetFootAnimator = new PullValueAnimator(loadMoreViewHeight, 0);
                 resetFootAnimator.addUpdateListener(footerAnimationUpdate);
                 resetFootAnimator.addListener(resetFooterAnimation);
             } else {
@@ -898,10 +906,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     };
 
     private final AnimatorListenerAdapter refreshStartAnimationListener = new PullAnimatorListenerAdapter() {
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        protected void animationEnd() {
+        public void onAnimationEnd(Animator animation) {
             if (refreshState == 0) {
                 refreshState = 1;
                 if (footerView != null) {
@@ -915,10 +920,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     };
 
     private final AnimatorListenerAdapter loadingStartAnimationListener = new PullAnimatorListenerAdapter() {
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        protected void animationEnd() {
+        public void onAnimationEnd(Animator animation) {
             if (refreshState == 0) {
                 refreshState = 2;
                 if (headerView != null) {
@@ -931,7 +933,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     };
 
-    private final AnimatorListenerAdapter overScrollAnimationListener = new AnimatorListenerAdapter() {
+    private final AnimatorListenerAdapter overScrollAnimationListener = new PullAnimatorListenerAdapter() {
         public void onAnimationStart(Animator animation) {
             onNestedScrollAccepted(null, null, 2);
         }
@@ -1365,6 +1367,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
 
         public void onLoading() {
+        }
+    }
+
+    private final class PullValueAnimator extends ValueAnimator {
+        PullValueAnimator(int... values) {
+            setIntValues(values);
+        }
+
+        public void start() {
+            if (isAttachWindow) {
+                super.start();
+            }
         }
     }
 
