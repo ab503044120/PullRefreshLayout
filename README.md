@@ -1,6 +1,6 @@
 # PullRefreshLayout
-[![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.3-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
-[![Latest Version](https://img.shields.io/badge/Latest%20Version-1.7.3-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
+[![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.4-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
+[![Latest Version](https://img.shields.io/badge/Latest%20Version-1.7.4-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/MinSdk-11%2B-green.svg)](https://android-arsenal.com/api?level=11) 
 [![Methods](https://img.shields.io/badge/Methods%20and%20size-362%20%7C%2035%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.7.1)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
@@ -17,7 +17,7 @@ header和状态切换演示gif
 对所有基础控件(包括，嵌套滑动例如RecyclerView、NestedScrollView，普通的TextView、ListView、ScrollerView、LinearLayout等)提供下拉刷新、上拉加载的支持
 ，且实现无痕过度，和与其他库相比更真实的回弹效果，随意定制header和footer，移动的或者不可以动的，完全不受限制（动画可以onPullChange()完全自主设置）。
 
-## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.3-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
+## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.4-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
 compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 ## 2.说明  
@@ -186,35 +186,10 @@ compile 'com.yan:pullrefreshlayout:(↖)'
 ```
 
 ## 3.版本说明
- version:1.2.7 ： 滑动顺滑柔和度已达到预期效果，各个刷新状态各种手势操作无限制，强迫症患者最佳体验
+  
+ version:1.7.3 ： 事件切换优化
  <br/>
- version:1.3.0 ： 状态触发调整，之前finish和holding触发次数没有控制,代码微调
- <br/>
- version:1.3.4 ： add xml setting  
- <br/>
- version:1.4.1 ： 增加overScroll距离限制的控制setOverScrollMaxTriggerOffset(offset)
- <br/>
- version:1.4.7 ： 单独对recyclerView overscroll 做判断，解决快速滑动响应过慢的问题，代码小调整
- <br/>
- version:1.5.4 ： 增加ListView和ScrollerView overscroll 状态下 ，fling 返回的处理
- <br/>
- version:1.5.6 ： ScrollerView overscroll 状态下 ，fling 返回的处理 bug 处理
- <br/>
- version:1.5.7 ： 调整界面稳定后再触发刷新，除去卡顿隐患
- <br/>
- version:1.5.9 ： 打开margin设置 ，调整内容头部设置，可见demo中的NestedActivity和CommonActivity
- <br/>
- version:1.6.0 ： 平滑处理，方法调整 attr 调整
- <br/>
- version:1.6.2 ： 由于invalidate()有时候不生效 所以用 ViewCompat.postInvalidateOnAnimation(this) 代替 invalidate()
- 
- <br/>
- version:1.6.4 ： 稳定版(Stable version)
- <br/>
- version:1.6.6 ： 处理处于触摸状态的，刷新完成动画抖动，添加xml attr prl_targetId 用于在xml 中设置目标view
- 
- <br/>
- version:1.7.0 ： 事件切换优化
+ version:1.7.4 ： 一直处于触摸状态下的，执行setTargetView（）方法，增加cancel掉事件
  
 ## 4.demo用到的库
  loading 动画
