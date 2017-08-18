@@ -64,6 +64,7 @@ public class NestedActivity extends AppCompatActivity {
                     public void run() {
                         if (vState.getVisibility() == View.VISIBLE) {
                             vState.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
                             refreshLayout.setAutoLoadingEnable(true);
                             refreshLayout.setLoadMoreEnable(true);
                             refreshLayout.setTargetView(recyclerView);
@@ -73,6 +74,7 @@ public class NestedActivity extends AppCompatActivity {
                             refreshLayout.setLoadMoreEnable(false);
                             refreshLayout.setTargetView(vState);
                             vState.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
                             refreshLayout.setFooterView(null);
                         }
                         refreshLayout.refreshComplete();

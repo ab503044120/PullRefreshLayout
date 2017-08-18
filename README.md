@@ -13,10 +13,9 @@ header和状态切换演示gif
 
 ![演示gif](gif/demo.gif) 
 
-###### 首先吐槽一下现在流行的刷新库，一个字大，包涵个人很多集成到项目中不需要的类，也很难找到很满意的效果(个人目标效果：各个刷新状态各种手势操作无限，真实的回弹效果，无痕过度)。
 ## 1.概述
 对所有基础控件(包括，嵌套滑动例如RecyclerView、NestedScrollView，普通的TextView、ListView、ScrollerView、LinearLayout等)提供下拉刷新、上拉加载的支持
-，且实现无痕过度，随意定制header和footer，移动的或者不可以动的，完全不受限制（动画可以onPullChange()完全自主设置）。
+，且实现无痕过度，和与其他库相比更真实的回弹效果，随意定制header和footer，移动的或者不可以动的，完全不受限制（动画可以onPullChange()完全自主设置）。
 
 ## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.1-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
 compile 'com.yan:pullrefreshlayout:(↖)'
