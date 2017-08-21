@@ -409,7 +409,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * kinds of view dell back scroll to normal state
      */
     private boolean kindsOfViewsToNormalDell(int type, int tempDistance) {
-        int velocity = (int) ((tempDistance > 0 ? 1 : -1) * Math.abs(scroller.getCurrVelocity()));
+        int velocity = (int) ((type == 1 ? 1 : -1) * Math.abs(scroller.getCurrVelocity()));
 
         if (targetView instanceof ListView && !isScrollAbleViewBackScroll) {
         } else if (targetView instanceof ScrollView && !isScrollAbleViewBackScroll) {
@@ -419,7 +419,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         } else if ((!PullRefreshLayoutUtil.canChildScrollDown(targetView) && !PullRefreshLayoutUtil.canChildScrollUp(targetView))
                 || !(targetView instanceof NestedScrollingChild)) {
             cancelAllAnimation();
-            overScroll(tempDistance > 0 ? 1 : 2, tempDistance);
+            overScroll(type, tempDistance);
             return true;
         }
         isScrollAbleViewBackScroll = true;
