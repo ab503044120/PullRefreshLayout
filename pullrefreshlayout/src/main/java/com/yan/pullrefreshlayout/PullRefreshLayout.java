@@ -280,6 +280,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (PullRefreshLayoutUtil.isRecyclerViewToTop(recyclerView) && PullRefreshLayoutUtil.isRecyclerViewToBottom(recyclerView)) {
+                    return;
+                }
+
                 if (PullRefreshLayoutUtil.isRecyclerViewToTop(recyclerView) && generalPullHelper.isMovingDirectDown && generalPullHelper.dragState == 0) {
                     overScroll(1, -Math.abs(currScrollOffset));
                 } else if (PullRefreshLayoutUtil.isRecyclerViewToBottom(recyclerView) && !generalPullHelper.isMovingDirectDown && generalPullHelper.dragState == 0) {
@@ -304,8 +308,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             int currY = scroller.getCurrY();
             currScrollOffset = currY - lastScrollY;
             lastScrollY = currY;
-            if ((overScrollFlingState() == 1 && overScrollBackDell(currScrollOffset))
-                    || (overScrollFlingState() == 2 && overScrollBackDell(currScrollOffset))) {
+            if ((overScrollFlingState() == 1 && overScrollBackDell(1, currScrollOffset))
+                    || (overScrollFlingState() == 2 && overScrollBackDell(2, currScrollOffset))) {
                 return;
 
                 // ListView scroll back scroll to normal
@@ -385,12 +389,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param tempDistance temp move distance
      * @return need continue
      */
-    private boolean overScrollBackDell(int tempDistance) {
-        if (Math.abs(finalScrollDistance) > Math.abs(moveDistance)) {
+    private boolean overScrollBackDell(int type, int tempDistance) {
+        if ((type == 1 && (finalScrollDistance > moveDistance)) || (type == 2 && finalScrollDistance < moveDistance)) {
             cancelAllAnimation();
-            if (Math.abs(moveDistance) < Math.abs(tempDistance)) {
+            if ((type == 1 && moveDistance < tempDistance) || (type == 2 && moveDistance > tempDistance)) {
                 onScroll(-moveDistance);
-                return kindsOfViewsToNormalDell(tempDistance);
+                return kindsOfViewsToNormalDell(type, tempDistance);
             }
             onScroll(-tempDistance);
             return false;
@@ -404,7 +408,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * kinds of view dell back scroll to normal state
      */
-    private boolean kindsOfViewsToNormalDell(int tempDistance) {
+    private boolean kindsOfViewsToNormalDell(int type, int tempDistance) {
         int velocity = (int) ((tempDistance > 0 ? 1 : -1) * Math.abs(scroller.getCurrVelocity()));
 
         if (targetView instanceof ListView && !isScrollAbleViewBackScroll) {
@@ -530,6 +534,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return;
         }
         int tempDistance = (int) (moveDistance + distanceY);
+
         if (pullLimitDistance != -1) {
             tempDistance = Math.min(tempDistance, pullLimitDistance);
             tempDistance = Math.max(tempDistance, -pullLimitDistance);

@@ -1,6 +1,6 @@
 # PullRefreshLayout
-[![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.4-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
-[![Latest Version](https://img.shields.io/badge/Latest%20Version-1.7.4-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
+[![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.5-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
+[![Latest Version](https://img.shields.io/badge/Latest%20Version-1.7.5-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/MinSdk-11%2B-green.svg)](https://android-arsenal.com/api?level=11) 
 [![Methods](https://img.shields.io/badge/Methods%20and%20size-362%20%7C%2035%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.7.1)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
@@ -17,7 +17,7 @@ header和状态切换演示gif
 对所有基础控件(包括，嵌套滑动例如RecyclerView、NestedScrollView，普通的TextView、ListView、ScrollerView、LinearLayout等)提供下拉刷新、上拉加载的支持
 ，且实现无痕过度，和与其他库相比更真实的回弹效果，随意定制header和footer，移动的或者不可以动的，完全不受限制（动画可以onPullChange()完全自主设置）。
 
-## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.4-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
+## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.7.5-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
 compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 ## 2.说明  
@@ -190,6 +190,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:1.7.3 ： 事件切换优化
  <br/>
  version:1.7.4 ： 一直处于触摸状态下的，执行setTargetView（）方法，增加cancel掉事件
+ <br/>
+ version:1.7.5 ： 修复事件状态错误问题
  
 ## 4.demo用到的库
  loading 动画
