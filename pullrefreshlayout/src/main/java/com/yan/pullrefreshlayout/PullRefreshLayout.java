@@ -189,6 +189,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private ValueAnimator resetFootAnimator;
     private ValueAnimator overScrollAnimation;
 
+    private Runnable delayHandleActionRunnable;
+
     public PullRefreshLayout(Context context) {
         this(context, null, 0);
     }
@@ -499,6 +501,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     protected void onDetachedFromWindow() {
         isAttachWindow = false;
+        removeDelayRunnable();
         cancelAllAnimation();
         abortScroller();
         super.onDetachedFromWindow();
@@ -877,6 +880,39 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return 0;
     }
 
+    private void cancelHandleAction() {
+        removeDelayRunnable();
+        if (!pullTwinkEnable) {
+            handleAction();
+        } else if (overScrollFlingState() == 1 || overScrollFlingState() == 2) {
+            if (delayHandleActionRunnable == null) {
+                delayHandleActionRunnable = getDelayHandleActionRunnable();
+            }
+            postDelayed(delayHandleActionRunnable, 20);
+        } else if ((scroller != null && scroller.isFinished())) {
+            handleAction();
+        }
+    }
+
+    private void removeDelayRunnable() {
+        if (delayHandleActionRunnable != null) {
+            removeCallbacks(delayHandleActionRunnable);
+        }
+    }
+
+    /**
+     * the fling may execute after onStopNestedScroll , so while overScrollBack try delay to handle action
+     */
+    private Runnable getDelayHandleActionRunnable() {
+        return new Runnable() {
+            public void run() {
+                if (!pullTwinkEnable || (scroller != null && scroller.isFinished())) {
+                    handleAction();
+                }
+            }
+        };
+    }
+
     /**
      * state animation
      */
@@ -1000,9 +1036,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onStopNestedScroll(View child) {
         if (nestedAble(child)) {
-            if (!pullTwinkEnable || (scroller != null && scroller.isFinished())) {
-                handleAction();
-            }
+            cancelHandleAction();
             parentHelper.onStopNestedScroll(child);
             stopNestedScroll();
         }
@@ -1057,6 +1091,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
         if (flingAble() && nestedAble(target) && overScrollFlingState() != -1) {
+            removeDelayRunnable();
             readyScroller();
             abortScroller();
             lastScrollY = 0;
