@@ -14,6 +14,7 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -418,8 +419,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             ((ScrollView) targetView).fling(velocity);
         } else if (!nestedScrollAble && targetView instanceof RecyclerView && !isScrollAbleViewBackScroll) {
             ((RecyclerView) targetView).fling(0, velocity);
-        } else if ((!PullRefreshLayoutUtil.canChildScrollDown(targetView) && !PullRefreshLayoutUtil.canChildScrollUp(targetView))
-                || !(targetView instanceof NestedScrollingChild)) {
+        } else if (generalPullHelper.isMovingDirectDown && !PullRefreshLayoutUtil.canChildScrollUp(targetView)
+                || !generalPullHelper.isMovingDirectDown && !PullRefreshLayoutUtil.canChildScrollDown(targetView)) {
             cancelAllAnimation();
             overScroll(type, tempDistance);
             return true;
@@ -624,6 +625,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private void overScroll(int type, int offset) {
+        if ((type == 2 && moveDistance > refreshTriggerDistance) || (type == 1 && moveDistance < -loadTriggerDistance)) {
+            return;
+        }
         if (type == 1) {
             onOverScrollUp();
         } else {
