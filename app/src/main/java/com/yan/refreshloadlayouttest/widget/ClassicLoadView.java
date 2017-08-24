@@ -138,6 +138,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     @Override
     public void onPullFinish() {
+        Log.e("onPullFinish", "onPullFinish: "  );
         if (refreshLayout.isLoadMoreEnable()) {
             tv.setText("loading finish");
             loadingView.smoothToHide();

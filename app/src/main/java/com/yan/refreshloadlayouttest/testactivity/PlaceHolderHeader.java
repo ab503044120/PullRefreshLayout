@@ -52,12 +52,15 @@ public class PlaceHolderHeader extends FrameLayout implements PullRefreshLayout.
 
     @Override
     public void onPullFinish() {
+        Log.e("onPullFinish", "onPullFinish: "  );
         ((AVLoadingIndicatorView) findViewById(R.id.loading_view)).smoothToHide();
 
     }
 
     @Override
     public void onPullReset() {
+        Log.e("onPullReset", "onPullFinish: "  );
+
         AVLoadingIndicatorView avLoadingIndicatorView = ((AVLoadingIndicatorView) findViewById(R.id.loading_view));
         if (avLoadingIndicatorView.getVisibility() == VISIBLE) {
             avLoadingIndicatorView.smoothToHide();

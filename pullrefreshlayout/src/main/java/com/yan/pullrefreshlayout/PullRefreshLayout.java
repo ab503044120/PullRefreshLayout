@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
@@ -63,7 +64,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * over scroll start offset
      */
-    private int overScrollMaxTriggerOffset = 80;
+    private int overScrollMaxTriggerOffset = 50;
 
     /**
      * the ratio for final distance for drag
@@ -392,7 +393,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             cancelAllAnimation();
             if ((type == 1 && moveDistance <= tempDistance) || (type == 2 && moveDistance >= tempDistance)) {
                 onScroll(-moveDistance);
-                return kindsOfViewsToNormalDell(type, tempDistance);
+                return kindsOfViewsToNormalDell(type);
             }
             onScroll(-tempDistance);
             return false;
@@ -406,21 +407,19 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * kinds of view dell back scroll to normal state
      */
-    private boolean kindsOfViewsToNormalDell(int type, int tempDistance) {
+    private boolean kindsOfViewsToNormalDell(int type) {
         final int sign = type == 1 ? 1 : -1;
         int velocity = (int) (sign * Math.abs(scroller.getCurrVelocity()));
 
         if (targetView instanceof ListView && !isScrollAbleViewBackScroll) {
         } else if (targetView instanceof ScrollView && !isScrollAbleViewBackScroll) {
             ((ScrollView) targetView).fling(velocity);
+        } else if (targetView instanceof WebView && !isScrollAbleViewBackScroll) {
+            ((WebView) targetView).flingScroll(0, velocity);
         } else if (!nestedScrollAble && targetView instanceof RecyclerView && !isScrollAbleViewBackScroll) {
             ((RecyclerView) targetView).fling(0, velocity);
-        } else if (generalPullHelper.isMovingDirectDown && !PullRefreshLayoutUtil.canChildScrollUp(targetView)
-                || !generalPullHelper.isMovingDirectDown && !PullRefreshLayoutUtil.canChildScrollDown(targetView)) {
-            cancelAllAnimation();
-            overScroll(type, tempDistance);
-            return true;
         }
+
         isScrollAbleViewBackScroll = true;
         return false;
     }

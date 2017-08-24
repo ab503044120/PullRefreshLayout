@@ -44,7 +44,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setDragDampingRatio(0.6f);// 阻尼系数 default 0.6
     
     refreshLayout.setOverScrollAdjustValue(1f);// 用于控制overscroll时间 default 1f ,越大overscroll的时间越长
-    refreshLayout.setOverScrollMaxTriggerOffset(300);// 用于控制overscroll的距离 default 80dp
+    refreshLayout.setOverScrollMaxTriggerOffset(300);// 用于控制overscroll的距离 default 50dp
 
     refreshLayout.setRefreshEnable(false);// 下拉刷新是否可用 default true
     refreshLayout.setLoadMoreEnable(true);// 上拉加载是否可用 default false
