@@ -884,7 +884,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return 0;
     }
 
-    private void cancelHandleAction() {
+    private void handleCancelAction() {
         removeDelayRunnable();
         if (!pullTwinkEnable) {
             handleAction();
@@ -1040,7 +1040,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onStopNestedScroll(View child) {
         if (nestedAble(child)) {
-            cancelHandleAction();
+            handleCancelAction();
             parentHelper.onStopNestedScroll(child);
             stopNestedScroll();
         }
