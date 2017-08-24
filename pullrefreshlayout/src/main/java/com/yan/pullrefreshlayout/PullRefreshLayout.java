@@ -14,7 +14,6 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -395,7 +394,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean overScrollBackDell(int type, int tempDistance) {
         if ((type == 1 && (finalScrollDistance > moveDistance)) || (type == 2 && finalScrollDistance < moveDistance)) {
             cancelAllAnimation();
-            if ((type == 1 && moveDistance < tempDistance) || (type == 2 && moveDistance > tempDistance)) {
+            if ((type == 1 && moveDistance <= tempDistance) || (type == 2 && moveDistance >= tempDistance)) {
                 onScroll(-moveDistance);
                 return kindsOfViewsToNormalDell(type, tempDistance);
             }
@@ -412,7 +411,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * kinds of view dell back scroll to normal state
      */
     private boolean kindsOfViewsToNormalDell(int type, int tempDistance) {
-        int velocity = (int) ((type == 1 ? 1 : -1) * Math.abs(scroller.getCurrVelocity()));
+        final int sign = type == 1 ? 1 : -1;
+        int velocity = (int) (sign * Math.abs(scroller.getCurrVelocity()));
 
         if (targetView instanceof ListView && !isScrollAbleViewBackScroll) {
         } else if (targetView instanceof ScrollView && !isScrollAbleViewBackScroll) {
@@ -892,7 +892,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             if (delayHandleActionRunnable == null) {
                 delayHandleActionRunnable = getDelayHandleActionRunnable();
             }
-            postDelayed(delayHandleActionRunnable, 20);
+            postDelayed(delayHandleActionRunnable, 50);
         } else if ((scroller != null && scroller.isFinished())) {
             handleAction();
         }
@@ -910,7 +910,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private Runnable getDelayHandleActionRunnable() {
         return new Runnable() {
             public void run() {
-                if (!pullTwinkEnable || (scroller != null && scroller.isFinished())) {
+                if (!pullTwinkEnable || (scroller != null && scroller.isFinished() && overScrollState == 0)) {
                     handleAction();
                 }
             }
