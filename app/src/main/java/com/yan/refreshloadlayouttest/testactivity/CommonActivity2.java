@@ -80,6 +80,9 @@ public class CommonActivity2 extends CommonActivity1 {
 
             @Override
             public void onLoading() {
+                if (!refreshLayout.isTwinkEnable()) {
+                    refreshLayout.autoLoading();
+                }
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
