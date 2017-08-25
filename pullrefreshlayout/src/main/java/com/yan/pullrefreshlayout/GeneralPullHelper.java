@@ -10,7 +10,6 @@ import android.view.ViewConfiguration;
  * support general view to pull refresh
  * Created by yan on 2017/6/29.
  */
-
 class GeneralPullHelper {
     private static final String TAG = "GeneralPullHelper";
     private final PullRefreshLayout pullRefreshLayout;
