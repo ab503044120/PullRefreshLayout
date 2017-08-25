@@ -293,10 +293,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public boolean isTargetAbleScrollUp() {
+//        if (targetView instanceof RecyclerView) {
+//            return !PullRefreshLayoutUtil.isRecyclerViewToTop((RecyclerView) targetView);
+//        }
         return PullRefreshLayoutUtil.canChildScrollUp(targetView);
     }
 
     public boolean isTargetAbleScrollDown() {
+//        if (targetView instanceof RecyclerView) {
+//            return !PullRefreshLayoutUtil.isRecyclerViewToBottom((RecyclerView) targetView);
+//        }
         return PullRefreshLayoutUtil.canChildScrollDown(targetView);
     }
 
@@ -393,7 +399,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             cancelAllAnimation();
             if ((type == 1 && moveDistance <= tempDistance) || (type == 2 && moveDistance >= tempDistance)) {
                 onScroll(-moveDistance);
-                return kindsOfViewsToNormalDell(type);
+                return kindsOfViewsToNormalDell(type, tempDistance);
             }
             onScroll(-tempDistance);
             return false;
@@ -407,7 +413,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * kinds of view dell back scroll to normal state
      */
-    private boolean kindsOfViewsToNormalDell(int type) {
+    private boolean kindsOfViewsToNormalDell(int type, int tempDistance) {
         final int sign = type == 1 ? 1 : -1;
         int velocity = (int) (sign * Math.abs(scroller.getCurrVelocity()));
 
@@ -418,8 +424,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             ((WebView) targetView).flingScroll(0, velocity);
         } else if (!nestedScrollAble && targetView instanceof RecyclerView && !isScrollAbleViewBackScroll) {
             ((RecyclerView) targetView).fling(0, velocity);
+        } else if (targetView instanceof RecyclerView && ((type == 2 && !PullRefreshLayoutUtil.canChildScrollUp(targetView))
+                || (type == 1 && !PullRefreshLayoutUtil.canChildScrollDown(targetView)))) {
+            overScrollDell(type, tempDistance);
+            return true;
         }
-
         isScrollAbleViewBackScroll = true;
         return false;
     }
@@ -497,6 +506,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     protected void onDetachedFromWindow() {
         isAttachWindow = false;
+
         removeDelayRunnable();
         cancelAllAnimation();
         abortScroller();
@@ -902,7 +912,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         removeDelayRunnable();
         if (!pullTwinkEnable) {
             handleAction();
-        } else if (overScrollFlingState() == 1 || overScrollFlingState() == 2) {
+        } else if ((overScrollFlingState() == 1 || overScrollFlingState() == 2) && !isOverScrollTrigger) {
             if (delayHandleActionRunnable == null) {
                 delayHandleActionRunnable = getDelayHandleActionRunnable();
             }
@@ -1365,6 +1375,22 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     public boolean isMovingDirectDown() {
         return generalPullHelper.isMovingDirectDown;
+    }
+
+    public boolean isHoldingTrigger() {
+        return isHoldingTrigger;
+    }
+
+    public boolean isHoldingFinishTrigger() {
+        return isHoldingFinishTrigger;
+    }
+
+    public boolean isOverScrollTrigger() {
+        return isOverScrollTrigger;
+    }
+
+    public boolean isAutoLoadingTrigger() {
+        return isAutoLoadingTrigger;
     }
 
     public static class LayoutParams extends MarginLayoutParams {
