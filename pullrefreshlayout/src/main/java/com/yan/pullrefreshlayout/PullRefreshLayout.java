@@ -293,16 +293,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public boolean isTargetAbleScrollUp() {
-//        if (targetView instanceof RecyclerView) {
-//            return !PullRefreshLayoutUtil.isRecyclerViewToTop((RecyclerView) targetView);
-//        }
         return PullRefreshLayoutUtil.canChildScrollUp(targetView);
     }
 
     public boolean isTargetAbleScrollDown() {
-//        if (targetView instanceof RecyclerView) {
-//            return !PullRefreshLayoutUtil.isRecyclerViewToBottom((RecyclerView) targetView);
-//        }
         return PullRefreshLayoutUtil.canChildScrollDown(targetView);
     }
 

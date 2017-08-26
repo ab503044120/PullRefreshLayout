@@ -54,7 +54,6 @@ public class NestedActivity extends AppCompatActivity {
 
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setTwinkEnable(true);
         refreshLayout.setFooterView(classicLoadView = new ClassicLoadView(getApplicationContext(), refreshLayout));
         refreshLayout.setLoadTriggerDistance((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
