@@ -24,6 +24,9 @@
             android:name=".testactivity.NestedActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".testactivity.NestedActivity2"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".testactivity.CommonActivity1"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

@@ -12,6 +12,7 @@ import com.yan.refreshloadlayouttest.testactivity.CommonActivity2;
 import com.yan.refreshloadlayouttest.testactivity.CommonActivity3;
 import com.yan.refreshloadlayouttest.testactivity.CommonActivity4;
 import com.yan.refreshloadlayouttest.testactivity.NestedActivity;
+import com.yan.refreshloadlayouttest.testactivity.NestedActivity2;
 import com.yan.refreshloadlayouttest.testactivity.ScrollingActivity;
 import com.yan.refreshloadlayouttest.testactivity.ScrollingActivity2;
 
@@ -30,21 +31,24 @@ public class OptionActivity extends AppCompatActivity {
                             startActivity(new Intent(getBaseContext(), NestedActivity.class));
                             break;
                         case 1:
-                            startActivity(new Intent(getBaseContext(), CommonActivity1.class));
+                            startActivity(new Intent(getBaseContext(), NestedActivity2.class));
                             break;
                         case 2:
-                            startActivity(new Intent(getBaseContext(), CommonActivity2.class));
+                            startActivity(new Intent(getBaseContext(), CommonActivity1.class));
                             break;
                         case 3:
-                            startActivity(new Intent(getBaseContext(), CommonActivity3.class));
+                            startActivity(new Intent(getBaseContext(), CommonActivity2.class));
                             break;
                         case 4:
-                            startActivity(new Intent(getBaseContext(), CommonActivity4.class));
+                            startActivity(new Intent(getBaseContext(), CommonActivity3.class));
                             break;
                         case 5:
-                            startActivity(new Intent(getBaseContext(), ScrollingActivity.class));
+                            startActivity(new Intent(getBaseContext(), CommonActivity4.class));
                             break;
                         case 6:
+                            startActivity(new Intent(getBaseContext(), ScrollingActivity.class));
+                            break;
+                        case 7:
                             startActivity(new Intent(getBaseContext(), ScrollingActivity2.class));
                             break;
                     }

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.wang.avi.AVLoadingIndicatorView;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
+import com.yan.pullrefreshlayout.RefreshShowHelper;
 import com.yan.refreshloadlayouttest.R;
 
 /**
@@ -36,7 +37,8 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
     public ClassicLoadView(@NonNull Context context, final PullRefreshLayout refreshLayout) {
         super(context);
         this.refreshLayout = refreshLayout;
-
+        this.refreshLayout.setFooterFront(true);
+        this.refreshLayout.setFooterShowGravity(RefreshShowHelper.STATE_FOLLOW);
         // 设置 布局 为 match_parent
         setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
         setBackgroundColor(Color.WHITE);
@@ -112,7 +114,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
     public void onPullChange(float percent) {
         onPullHolding();
         // 判断是否处在 拖拽的状态
-        Log.e("onPullChange", "onPullChange: "+refreshLayout.isDragDown()+"   "+refreshLayout.isDragUp()+"   "+refreshLayout.isLoadMoreEnable());
+        Log.e("onPullChange", "onPullChange: " + refreshLayout.isDragDown() + "   " + refreshLayout.isDragUp() + "   " + refreshLayout.isLoadMoreEnable());
         if (refreshLayout.isDragDown() || refreshLayout.isDragUp() || !refreshLayout.isLoadMoreEnable()) {
             return;
         }
@@ -139,7 +141,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     @Override
     public void onPullFinish() {
-        Log.e("onPullFinish", "onPullFinish: "  );
+        Log.e("onPullFinish", "onPullFinish: ");
         if (refreshLayout.isLoadMoreEnable()) {
             tv.setText("loading finish");
             loadingView.smoothToHide();

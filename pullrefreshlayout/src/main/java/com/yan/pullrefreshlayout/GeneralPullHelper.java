@@ -233,7 +233,7 @@ class GeneralPullHelper {
                 if (isLastMotionYSet) {
                     flingWithNestedDispatch(-(int) velocityY);
                 }
-                pullRefreshLayout.onStopNestedScroll(null);
+                pullRefreshLayout.cancelHandleAction();
                 activePointerId = -1;
                 childConsumed[0] = 0;
                 childConsumed[1] = 0;
