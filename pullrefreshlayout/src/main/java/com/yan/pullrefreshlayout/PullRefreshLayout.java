@@ -806,7 +806,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     public void autoRefresh(boolean withAction) {
         if (refreshState != 2 && pullContentLayout != null && pullRefreshEnable) {
-            refreshState = 0;
             cancelAllAnimation();
             resetState();
             startRefresh(moveDistance, withAction);
