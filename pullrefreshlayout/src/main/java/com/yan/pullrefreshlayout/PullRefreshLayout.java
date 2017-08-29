@@ -805,10 +805,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void autoRefresh(boolean withAction) {
-        if (refreshState != 0 || pullContentLayout == null || !pullRefreshEnable) {
-            return;
+        if (refreshState != 2 && pullContentLayout != null && pullRefreshEnable) {
+            refreshState = 0;
+            cancelAllAnimation();
+            resetState();
+            startRefresh(moveDistance, withAction);
         }
-        startRefresh(moveDistance, withAction);
     }
 
     private void resetState() {
@@ -1096,12 +1098,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         if (nestedAble(target)) {
-            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
-                    parentOffsetInWindow);
-            int dy = dyUnconsumed + parentOffsetInWindow[1];
-            dy = (int) (dy * dragDampingRatio);
-
-            onScroll(-dy);
+            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
+            if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()
+                    || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown()))) {
+                int dy = dyUnconsumed + parentOffsetInWindow[1];
+                dy = (int) (dy * dragDampingRatio);
+                onScroll(-dy);
+            }
         }
     }
 
@@ -1332,6 +1335,14 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public int getRefreshState() {
+        if (refreshState == 0) {
+            if (startRefreshAnimator != null && startRefreshAnimator.isRunning()) {
+                return 1;
+            }
+            if (startLoadMoreAnimator != null && startLoadMoreAnimator.isRunning()) {
+                return 2;
+            }
+        }
         return refreshState;
     }
 

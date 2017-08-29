@@ -27,11 +27,6 @@ class GeneralPullHelper {
     private boolean isLastMotionYSet;
 
     /**
-     * is touch final direct down
-     */
-    private boolean isConsumedDragDown;
-
-    /**
      * is moving direct down
      */
     boolean isMovingDirectDown;
@@ -76,12 +71,6 @@ class GeneralPullHelper {
      * last touch y
      */
     private float lastTouchY;
-
-    /**
-     * scroll consumed offset
-     */
-    private int[] scrollConsumed = new int[2];
-    private int[] scrollOffset = new int[2];
 
     /**
      * touchEvent velocityTracker
@@ -165,83 +154,51 @@ class GeneralPullHelper {
     }
 
     private void dellTouchEvent(MotionEvent ev) {
-        MotionEvent vtev = MotionEvent.obtain(ev);
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             nestedYOffset = 0;
         }
-        vtev.offsetLocation(0, nestedYOffset);
+        ev.offsetLocation(0, nestedYOffset);
         switch (actionMasked) {
             case MotionEvent.ACTION_DOWN: {
 
                 lastMotionY = (int) ev.getY();
                 activePointerId = ev.getPointerId(0);
-                pullRefreshLayout.onNestedScrollAccepted(null, null, 2);
                 pullRefreshLayout.onStartNestedScroll(null, null, 2);
+                pullRefreshLayout.onNestedScrollAccepted(null, null, 2);
                 break;
             }
             case MotionEvent.ACTION_MOVE:
-                if (activePointerId != vtev.getPointerId(0)) {
-                    lastMotionY = (int) vtev.getY();
-                    activePointerId = vtev.getPointerId(0);
+                if (activePointerId != ev.getPointerId(0)) {
+                    lastMotionY = (int) ev.getY();
+                    activePointerId = ev.getPointerId(0);
                 }
 
                 final int y = (int) ev.getY();
                 int deltaY = lastMotionY - y;
-                if (pullRefreshLayout.dispatchNestedPreScroll(0, deltaY, scrollConsumed, scrollOffset)) {
-                    deltaY -= scrollConsumed[1];
-                    vtev.offsetLocation(0, scrollOffset[1]);
-                    nestedYOffset += scrollOffset[1];
-                }
-                lastMotionY = y - scrollOffset[1];
-                final int oldY = pullRefreshLayout.targetView.getScrollY();
+                lastMotionY = y;
 
-                if (deltaY < 0) {
-                    isConsumedDragDown = true;
-                } else if (deltaY > 0) {
-                    isConsumedDragDown = false;
-                }
-                if ((pullRefreshLayout.moveDistance < 0 && isConsumedDragDown)
-                        || (pullRefreshLayout.moveDistance > 0 && !isConsumedDragDown)) {
-                    pullRefreshLayout.onNestedPreScroll(null, 0, deltaY, childConsumed);
-                    vtev.offsetLocation(0, childConsumed[1] - lastChildConsumedY);
-                    lastChildConsumedY = childConsumed[1];
-                }
+                pullRefreshLayout.onNestedPreScroll(null, 0, deltaY, childConsumed);
 
-                final int scrolledDeltaY = pullRefreshLayout.targetView.getScrollY() - oldY;
-                final int unconsumedY = deltaY - scrolledDeltaY;
+                int deltaYOffset = childConsumed[1] - lastChildConsumedY;
+                pullRefreshLayout.onNestedScroll(null, 0, 0, 0, deltaY - deltaYOffset);
 
-                if (pullRefreshLayout.dispatchNestedScroll(0, 0
-                        , (pullRefreshLayout.isTargetAbleScrollUp() && pullRefreshLayout.isTargetAbleScrollDown()
-                                && pullRefreshLayout.moveDistance == 0 ? deltaY : 0)
-                        , ((isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollUp())
-                                || (!isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollDown()))
-                                ? unconsumedY : 0
-                        , scrollOffset)) {
-                    lastMotionY -= scrollOffset[1];
-                    vtev.offsetLocation(0, scrollOffset[1]);
-                    nestedYOffset += scrollOffset[1];
-                }
-                if ((isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollUp()
-                        || (!isConsumedDragDown && !pullRefreshLayout.isTargetAbleScrollDown()))) {
-                    pullRefreshLayout.onNestedScroll(null, 0, 0, 0, scrollOffset[1] == 0 ? deltaY : 0);
-                }
-
+                ev.offsetLocation(0, deltaYOffset);
+                lastChildConsumedY = childConsumed[1];
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isLastMotionYSet) {
-                    flingWithNestedDispatch(-(int) velocityY);
+                if (isLastMotionYSet && (Math.abs(velocityY) > minimumFlingVelocity)) {
+                    pullRefreshLayout.onNestedPreFling(null, 0, -(int) velocityY);
                 }
                 pullRefreshLayout.onStopNestedScroll(null);
                 activePointerId = -1;
                 childConsumed[0] = 0;
                 childConsumed[1] = 0;
                 lastChildConsumedY = 0;
-                scrollOffset[1] = 0;
                 break;
         }
-        vtev.recycle();
+
     }
 
     /**
@@ -273,14 +230,6 @@ class GeneralPullHelper {
             velocityTracker = null;
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void flingWithNestedDispatch(int velocityY) {
-        if (!pullRefreshLayout.dispatchNestedPreFling(0, velocityY)) {
-            if ((Math.abs(velocityY) > minimumFlingVelocity)) {
-                pullRefreshLayout.onNestedPreFling(null, 0, velocityY);
-            }
         }
     }
 }
