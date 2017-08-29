@@ -112,11 +112,11 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
     public void onPullChange(float percent) {
         onPullHolding();
         // 判断是否处在 拖拽的状态
-        Log.e("onPullChange", "onPullChange: "+refreshLayout.isDragDown()+"   "+refreshLayout.isDragUp()+"   "+refreshLayout.isLoadMoreEnable());
+        Log.e("onPullChange", "onPullChange: " + refreshLayout.isDragDown() + "   " + refreshLayout.isDragUp() + "   " + refreshLayout.isLoadMoreEnable());
         if (refreshLayout.isDragDown() || refreshLayout.isDragUp() || !refreshLayout.isLoadMoreEnable()) {
             return;
         }
-        if (!refreshLayout.isTargetAbleScrollDown()&&refreshLayout.getRefreshState()!=2) {
+        if (!refreshLayout.isTargetAbleScrollDown() && refreshLayout.getRefreshState() != 2) {
             refreshLayout.autoLoading();
         }
     }
@@ -139,7 +139,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     @Override
     public void onPullFinish() {
-        Log.e("onPullFinish", "onPullFinish: "  );
+        Log.e("onPullFinish", "onPullFinish: ");
         if (refreshLayout.isLoadMoreEnable()) {
             tv.setText("loading finish");
             loadingView.smoothToHide();
