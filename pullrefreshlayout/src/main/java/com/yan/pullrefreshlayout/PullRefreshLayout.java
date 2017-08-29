@@ -14,6 +14,7 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -1065,8 +1066,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (nestedAble(target)) {
             abortScroller();
             cancelAllAnimation();
-            isNestedDirectorChange = false;
-            lastNestedDy = 0;
             overScrollState = 0;
             finalScrollDistance = -1;
             isOverScrollTrigger = false;
@@ -1086,7 +1085,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
 
-
     @Override
     public void onStopNestedScroll(View child) {
         Log.e("NestedScroll", "onStopNestedScroll: ");
@@ -1097,30 +1095,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
-    int lastNestedDy = 0;
-    boolean isNestedDirectorChange = false;
-
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         Log.e("NestedScroll", "onNestedPreScroll: " + dy);
         if (nestedAble(target)) {
             if (dy > 0 && moveDistance > 0) {
-                int moveY = -dy;
-                if (isNestedDirectorChange) {
-                    lastNestedDy = 0;
-                }
-                if (refreshState == 1 && !isNestedDirectorChange) {
-                    moveY = lastNestedDy - dy;
-                    lastNestedDy = dy;
-                }
-
                 if (moveDistance - dy < 0) {
                     consumed[1] += moveDistance;
                     onScroll(-moveDistance);
                     return;
                 }
                 consumed[1] += dy;
-                onScroll(moveY);
+                onScroll( -dy);
             } else if (dy < 0 && moveDistance < 0) {
                 if (moveDistance - dy > 0) {
                     consumed[1] += moveDistance;
@@ -1129,10 +1115,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 }
                 onScroll(-dy);
                 consumed[1] += dy;
-            } else {
-                consumed[1] += lastNestedDy;
             }
-
             final int[] parentConsumed = parentScrollConsumed;
             if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
                 consumed[0] += parentConsumed[0];
@@ -1145,7 +1128,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         Log.e("NestedScroll", "onNestedScroll: ");
         if (nestedAble(target)) {
-            isNestedDirectorChange = true;
             dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
             int dy = dyUnconsumed + parentOffsetInWindow[1];
             Log.e("NestedScroll", "onNestedScroll: " + dy);
