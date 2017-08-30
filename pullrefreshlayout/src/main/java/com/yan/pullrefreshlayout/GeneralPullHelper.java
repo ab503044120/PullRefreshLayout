@@ -170,8 +170,6 @@ class GeneralPullHelper {
 
                     int deltaYOffset = childConsumed[1] - lastChildConsumedY;
 
-                    Log.e("childConsumed", "dellTouchEvent: " + childConsumed[1] + "    " + (deltaY - deltaYOffset));
-
                     pullRefreshLayout.onScroll(deltaY - deltaYOffset);
 
                     ev.offsetLocation(0, childConsumed[2] == 1 ? deltaYOffset : childConsumed[1]);
