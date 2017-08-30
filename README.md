@@ -7,6 +7,7 @@
 header和状态切换演示gif
 <br/>
 
+![header和状态切换演示gif](gif/swipe_refresh.gif) 
 ![header和状态切换演示gif](gif/new_demo.gif) 
 
 <br/>
