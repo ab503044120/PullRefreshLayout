@@ -94,6 +94,19 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private boolean dispatchPullTouchAble = true;
 
+    /**
+     * move With
+     */
+    private boolean isMoveWithFooter = true;
+    private boolean isMoveWithContent = true;
+    private boolean isMoveWithHeader = true;
+
+    /**
+     * view front
+     */
+    private boolean isHeaderFront = false;
+    private boolean isFooterFront = false;
+
     //--------------------START|| values can modify in the lib only ||START------------------
 
     private int targetViewId = -1;
@@ -633,13 +646,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         refreshShowHelper.dellHeaderMoving(moveDistance);
         ViewCompat.setTranslationY(pullContentLayout, moveDistance);
-    }
-
-    @Override
-    protected int getChildDrawingOrder(int childCount, int i) {
-        Log.e("getChildDrawingOrder", "getChildDrawingOrder: "  );
-
-        return super.getChildDrawingOrder(childCount, i);
     }
 
     private void overScrollDell(int type, int offset) {
