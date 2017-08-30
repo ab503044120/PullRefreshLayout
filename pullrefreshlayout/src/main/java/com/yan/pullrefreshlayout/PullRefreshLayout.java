@@ -1221,18 +1221,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return true;
     }
 
-    private View getRefreshView(View v) {
-        ViewGroup.LayoutParams lp = v.getLayoutParams();
-        if (v.getParent() != null) {
-            ((ViewGroup) v.getParent()).removeView(v);
-        }
-        if (lp == null) {
-            lp = new LayoutParams(-1, -2);
-            v.setLayoutParams(lp);
-        }
-        return v;
-    }
-
     public void setHeaderView(View header) {
         if (headerView != null && headerView != header) {
             removeView(headerView);
@@ -1242,7 +1230,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return;
         }
         addView(getRefreshView(header));
-        refreshShowHelper.setHeaderShowGravity(-1);
+
+        if (!isHeaderFront) {
+            setViewFront(false, isFooterFront, null, footerView);
+        }
     }
 
     public void setFooterView(View footer) {
@@ -1254,7 +1245,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return;
         }
         addView(getRefreshView(footer));
-        refreshShowHelper.setFooterShowGravity(-1);
+
+        if (!isFooterFront) {
+            setViewFront(false, isHeaderFront, null, headerView);
+        }
     }
 
     public void setTargetView(View targetView) {
@@ -1339,15 +1333,39 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void setHeaderShowGravity(@RefreshShowHelper.ShowState int headerShowGravity) {
-        refreshShowHelper.setHeaderShowGravity(headerShowGravity);
+        refreshShowHelper.headerShowState = headerShowGravity;
+        requestLayout();
     }
 
     public void setFooterShowGravity(@RefreshShowHelper.ShowState int footerShowGravity) {
-        refreshShowHelper.setFooterShowGravity(footerShowGravity);
+        refreshShowHelper.footerShowState = footerShowGravity;
+        requestLayout();
+    }
+
+    public void setHeaderFront(boolean headerFront) {
+        if (isHeaderFront != headerFront) {
+            isHeaderFront = headerFront;
+            setViewFront(isHeaderFront, isFooterFront, headerView, footerView);
+        }
+    }
+
+    public void setFooterFront(boolean footerFront) {
+        if (isFooterFront != footerFront) {
+            isFooterFront = footerFront;
+            setViewFront(isFooterFront, isHeaderFront, footerView, headerView);
+        }
     }
 
     public void setMoveWithFooter(boolean moveWithFooter) {
-        this.moveWithFooter = moveWithFooter;
+        this.isMoveWithFooter = moveWithFooter;
+    }
+
+    public void setMoveWithContent(boolean moveWithContent) {
+        this.isMoveWithContent = moveWithContent;
+    }
+
+    public void setMoveWithHeader(boolean moveWithHeader) {
+        this.isMoveWithHeader = moveWithHeader;
     }
 
     public final void cancelTouchEvent() {
