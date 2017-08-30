@@ -197,7 +197,9 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.7.8 ： 调整由于onStartNestedScroll()先于onNestedPreFling()执行的二次handleAction
  <br/>
- version:1.8.5 ： 优化flingBack效果
+ version:1.8.5 ： 优化flingBack效果 
+ <br/>
+ version:1.8.5 ： 新增SwipeRefreshLayout效果,优化
  
 ## 4.demo用到的库
  loading 动画
