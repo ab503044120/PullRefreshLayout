@@ -31,37 +31,13 @@ public class RefreshShowHelper {
     public static final int STATE_PLACEHOLDER = 5;
     public static final int STATE_CENTER = 6;
 
-    private int headerShowState = STATE_FOLLOW;
-    private int footerShowState = STATE_FOLLOW;
+    int headerShowState = STATE_FOLLOW;
+    int footerShowState = STATE_FOLLOW;
 
     private PullRefreshLayout pullRefreshLayout;
 
     RefreshShowHelper(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
-    }
-
-    void setHeaderShowGravity(int headerShowGravity) {
-        if (headerShowGravity != -1) {
-            this.headerShowState = headerShowGravity;
-        }
-        if (headerShowState != RefreshShowHelper.STATE_FOLLOW) {
-            targetBringToFront();
-        }
-    }
-
-    void setFooterShowGravity(int footerShowGravity) {
-        if (footerShowGravity != -1) {
-            this.footerShowState = footerShowGravity;
-        }
-        if (footerShowState != RefreshShowHelper.STATE_FOLLOW) {
-            targetBringToFront();
-        }
-    }
-
-    private void targetBringToFront() {
-        if (pullRefreshLayout.targetView != null && pullRefreshLayout.targetView == pullRefreshLayout.pullContentLayout) {
-            pullRefreshLayout.targetView.bringToFront();
-        }
     }
 
     void dellHeaderMoving(int moveDistance) {
