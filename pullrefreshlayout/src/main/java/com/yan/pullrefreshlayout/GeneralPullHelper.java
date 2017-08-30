@@ -115,8 +115,11 @@ class GeneralPullHelper {
         finalMotionEvent[0] = ev;
 
         if (pullRefreshLayout.nestedScrollAble) {
-            if ((ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL)) {
-                pullRefreshLayout.onStopNestedScroll(pullRefreshLayout.targetView);
+            if ( ev.getActionMasked() == MotionEvent.ACTION_DOWN){
+                pullRefreshLayout.onStartNestedScroll();
+            }
+            if (ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL ) {
+                pullRefreshLayout.onStopNestedScroll(null);
             }
             return false;
         }

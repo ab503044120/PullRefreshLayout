@@ -14,6 +14,7 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -542,6 +543,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * @param distanceY move distance of Y
      */
     private void onScroll(float distanceY) {
+        Log.e("distanceY", "onScroll: " + distanceY);
         if (checkMoving(distanceY) || distanceY == 0) {
             return;
         }
@@ -561,6 +563,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             tempDistance = 0;
         }
         if ((pullLoadMoreEnable && tempDistance <= 0) || (pullRefreshEnable && tempDistance >= 0) || pullTwinkEnable) {
+            Log.e("moveChildren1", "onScroll: ");
             moveChildren(tempDistance);
         } else {
             moveDistance = 0;
@@ -623,6 +626,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * move children
      */
     public final void moveChildren(int distance) {
+        Log.e("moveChildren", "moveChildren: " + distance);
         moveDistance = distance;
         dellAutoLoading();
         if (moveWithFooter) {
@@ -977,6 +981,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                     footerView.setVisibility(GONE);
                 }
                 if (onRefreshListener != null && refreshWithAction) {
+
                     onRefreshListener.onRefresh();
                 }
             }
@@ -1012,6 +1017,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private final ValueAnimator.AnimatorUpdateListener headerAnimationUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
+            Log.e("moveChildren2", "onScroll: ");
+
             moveChildren((Integer) animation.getAnimatedValue());
             if (headerView != null && headerView instanceof OnPullListener) {
                 ((OnPullListener) headerView).onPullChange((float) moveDistance / refreshTriggerDistance);
@@ -1021,6 +1028,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final ValueAnimator.AnimatorUpdateListener footerAnimationUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
+            Log.e("moveChildren3", "onScroll: ");
             moveChildren((Integer) animation.getAnimatedValue());
             if (footerView != null && footerView instanceof OnPullListener) {
                 ((OnPullListener) footerView).onPullChange((float) moveDistance / loadTriggerDistance);
@@ -1068,6 +1076,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (nestedAble(target)) {
+            Log.e("onNestedPreScroll", "onNestedPreScroll: " + dy + "    " + moveDistance);
             if (dy > 0 && moveDistance > 0) {
                 if (moveDistance - dy < 0) {
                     consumed[1] += moveDistance;
@@ -1097,9 +1106,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         if (nestedAble(target)) {
+            Log.e("onNestedScroll", "onNestedScroll: " + dyUnconsumed + "    " + moveDistance);
             dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
             if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()
                     || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown()))) {
+                Log.e("onNestedScroll", "onNestedScroll: " + dyUnconsumed + "    " + moveDistance);
+
                 int dy = dyUnconsumed + parentOffsetInWindow[1];
                 dy = (int) (dy * dragDampingRatio);
                 onScroll(-dy);
