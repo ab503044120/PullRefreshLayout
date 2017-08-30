@@ -7,6 +7,7 @@
 header和状态切换演示gif
 <br/>
 
+![header和状态切换演示gif](gif/swipe_refresh.gif) 
 ![header和状态切换演示gif](gif/new_demo.gif) 
 
 <br/>
@@ -68,9 +69,12 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     
     refreshLayout.isDragUp();// 是否正在向上拖拽
     refreshLayout.isDragDown();// 是否正在向下拖拽
-    
-     refreshLayout.getRefreshState();// 得到当前的刷新状态 刷新中:1 加载中:2 无状态:0
-     refreshLayout.getOverScrollState();// 得到当前overScroll状态 头部下拉:1 尾部上拉:2 无状态:0
+    refreshLayout.isRefreshing();// 是否正在刷新
+    refreshLayout.isLoading();// 是否正在加载
+    refreshLayout.isOverScrollDown();// 是否正在向下越界回弹
+    refreshLayout.isOverScrollUp();// 是否正在向上越界回弹
+     
+    refreshLayout.getMoveDistance();// 得到refreshlayout的移动距离
      
     refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度 default 60dp
     refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度 default 60dp
@@ -79,10 +83,16 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断效果 见 BEHAIVOR2
    
     refreshLayout.setDispatchPullTouchAble(false);// 是否阻止pullrefreshLayout的默认事件分发(下拉滑动的逻辑)
-    refreshLayout.setMoveWithFooter(false); // footer 是否跟随滑动
+    refreshLayout.setFooterFront(true);// 设置footer前置 default false
+    refreshLayout.setHeaderFront(true);// 设置header前置 default false
+    refreshLayout.setMoveWithFooter(true);// 设置footer跟随移动 default true
+    refreshLayout.setMoveWithContent(true);// 设置直接子view跟随移动 default true
+    refreshLayout.setMoveWithHeader(true);// 设置header跟随移动 default true
+ 
+    refreshLayout.cancelAllAnimation();//取消所有正在执行的动画
+    refreshLayout.cancelTouchEvent();//主动执行ACTION_CANCEL事件
+  
     refreshLayout.moveChildren(0);// 移动子view
-    refreshLayout.cancelTouchEvent();// 主动触发ACTION_CANCEL
-    refreshLayout.getMoveDistance();// 得到refreshlayout的移动距离
    
     refreshLayout.setOnDragIntercept(PullRefreshLayout.OnDragIntercept);// 设置滑动判定 见 BEHAIVOR2
     public static class OnDragIntercept {
@@ -199,7 +209,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  <br/>
  version:1.8.5 ： 优化flingBack效果 
  <br/>
- version:1.8.5 ： 新增SwipeRefreshLayout效果,优化
+ version:1.8.6 ： 新增SwipeRefreshLayout效果,优化
  
 ## 4.demo用到的库
  loading 动画
