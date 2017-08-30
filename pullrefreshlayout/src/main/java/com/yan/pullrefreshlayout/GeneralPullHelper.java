@@ -98,7 +98,6 @@ class GeneralPullHelper {
                 actionDownPointY = ev.getY();
                 lastTouchY = ev.getY();
 
-
                 lastMotionY = (int) ev.getY();
                 activePointerId = ev.getPointerId(0);
                 break;
