@@ -14,7 +14,6 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -1092,8 +1091,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             dellScroll(-dy);
             consumed[1] += dy;
         }
-
-
     }
 
     void onScroll(int dy) {
