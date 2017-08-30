@@ -90,39 +90,8 @@ class GeneralPullHelper {
         touchSlop = configuration.getScaledTouchSlop();
     }
 
-    private void dellDirection(MotionEvent event) {
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            lastTouchY = event.getY();
-            return;
-        }
-        if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-            float tempY = event.getY();
-            if (tempY - lastTouchY > 0) {
-                dragState = 1;
-                isMovingDirectDown = true;
-            } else if (tempY - lastTouchY < 0) {
-                dragState = -1;
-                isMovingDirectDown = false;
-            }
-            lastTouchY = tempY;
-        } else if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
-            dragState = 0;
-        }
-    }
-
     boolean dispatchTouchEvent(MotionEvent ev, MotionEvent[] finalMotionEvent) {
-        dellDirection(ev);
         finalMotionEvent[0] = ev;
-
-        if (pullRefreshLayout.nestedScrollAble) {
-            if ( ev.getActionMasked() == MotionEvent.ACTION_DOWN){
-                pullRefreshLayout.onStartNestedScroll();
-            }
-            if (ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL ) {
-                pullRefreshLayout.onStopNestedScroll(null);
-            }
-            return false;
-        }
 
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -130,8 +99,25 @@ class GeneralPullHelper {
                 initVelocityTracker(ev);
                 actionDownPointX = ev.getX();
                 actionDownPointY = ev.getY();
+                lastTouchY = ev.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                /**
+                 * director dell
+                 */
+                float tempY = ev.getY();
+                if (tempY - lastTouchY > 0) {
+                    dragState = 1;
+                    isMovingDirectDown = true;
+                } else if (tempY - lastTouchY < 0) {
+                    dragState = -1;
+                    isMovingDirectDown = false;
+                }
+                lastTouchY = tempY;
+
+                /**
+                 * touch logic
+                 */
                 velocityTrackerCompute(ev);
                 float movingX = ev.getX() - actionDownPointX;
                 float movingY = ev.getY() - actionDownPointY;
@@ -151,6 +137,7 @@ class GeneralPullHelper {
                 cancelVelocityTracker();
                 velocityY = 0;
                 isLastMotionYSet = false;
+                dragState = 0;
                 break;
         }
         return false;
@@ -167,8 +154,7 @@ class GeneralPullHelper {
 
                 lastMotionY = (int) ev.getY();
                 activePointerId = ev.getPointerId(0);
-                pullRefreshLayout.onStartNestedScroll(null, null, 2);
-                pullRefreshLayout.onNestedScrollAccepted(null, null, 2);
+                pullRefreshLayout.onStartScroll();
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -181,20 +167,20 @@ class GeneralPullHelper {
                 int deltaY = lastMotionY - y;
                 lastMotionY = y;
 
-                pullRefreshLayout.onNestedPreScroll(null, 0, deltaY, childConsumed);
+                pullRefreshLayout.onPreScroll(deltaY, childConsumed);
 
                 int deltaYOffset = childConsumed[1] - lastChildConsumedY;
-                pullRefreshLayout.onNestedScroll(null, 0, 0, 0, deltaY - deltaYOffset);
+                pullRefreshLayout.onScroll(deltaY - deltaYOffset);
 
                 ev.offsetLocation(0, deltaYOffset);
                 lastChildConsumedY = childConsumed[1];
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                pullRefreshLayout.onStopScroll();
                 if (isLastMotionYSet && (Math.abs(velocityY) > minimumFlingVelocity)) {
-                    pullRefreshLayout.onNestedPreFling(null, 0, -(int) velocityY);
+                    pullRefreshLayout.onPreFling(-(int) velocityY);
                 }
-                pullRefreshLayout.onStopNestedScroll(null);
                 activePointerId = -1;
                 childConsumed[0] = 0;
                 childConsumed[1] = 0;
