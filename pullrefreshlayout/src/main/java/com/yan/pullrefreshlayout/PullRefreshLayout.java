@@ -14,7 +14,6 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -179,7 +178,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     //--------------------END|| values can modify int class only ||END------------------
     //--------------------END| values part |END------------------
 
-    private final RefreshShowHelper refreshShowHelper;
+    private final ShowGravity showGravity;
     private final GeneralPullHelper generalPullHelper;
 
     private OnRefreshListener onRefreshListener;
@@ -209,7 +208,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     public PullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        refreshShowHelper = new RefreshShowHelper(this);
+        showGravity = new ShowGravity(this);
         generalPullHelper = new GeneralPullHelper(this, context);
 
         parentHelper = new NestedScrollingParentHelper(this);
@@ -226,8 +225,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         pullTwinkEnable = ta.getBoolean(R.styleable.PullRefreshLayout_prl_twinkEnable, pullTwinkEnable);
         autoLoadingEnable = ta.getBoolean(R.styleable.PullRefreshLayout_prl_autoLoadingEnable, autoLoadingEnable);
 
-        refreshTriggerDistance = PullRefreshLayoutUtil.dipToPx(context, refreshTriggerDistance);
-        loadTriggerDistance = PullRefreshLayoutUtil.dipToPx(context, loadTriggerDistance);
+        refreshTriggerDistance = CommonUtils.dipToPx(context, refreshTriggerDistance);
+        loadTriggerDistance = CommonUtils.dipToPx(context, loadTriggerDistance);
         if (ta.hasValue(R.styleable.PullRefreshLayout_prl_refreshTriggerDistance)) {
             isHeaderHeightSet = true;
             refreshTriggerDistance = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_refreshTriggerDistance, refreshTriggerDistance);
@@ -243,10 +242,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
         overScrollAdjustValue = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollAdjustValue, overScrollAdjustValue);
         overScrollDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollDampingRatio, overScrollDampingRatio);
-        overScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_overScrollMaxTriggerOffset, PullRefreshLayoutUtil.dipToPx(context, overScrollMaxTriggerOffset));
+        overScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_overScrollMaxTriggerOffset, CommonUtils.dipToPx(context, overScrollMaxTriggerOffset));
 
-        refreshShowHelper.headerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, RefreshShowHelper.STATE_FOLLOW);
-        refreshShowHelper.footerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, RefreshShowHelper.STATE_FOLLOW);
+        showGravity.headerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, ShowGravity.STATE_FOLLOW);
+        showGravity.footerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, ShowGravity.STATE_FOLLOW);
 
         targetViewId = ta.getResourceId(R.styleable.PullRefreshLayout_prl_targetId, targetViewId);
 
@@ -257,7 +256,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private View initRefreshView(Context context, String className, int viewId) {
-        View v = PullRefreshLayoutUtil.parseClassName(context, className);
+        View v = CommonUtils.parseClassName(context, className);
         if (v == null) {
             if (viewId != -1) {
                 v = LayoutInflater.from(context).inflate(viewId, null, false);
@@ -293,11 +292,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public boolean isTargetAbleScrollUp() {
-        return PullRefreshLayoutUtil.canChildScrollUp(targetView);
+        return CommonUtils.canChildScrollUp(targetView);
     }
 
     public boolean isTargetAbleScrollDown() {
-        return PullRefreshLayoutUtil.canChildScrollDown(targetView);
+        return CommonUtils.canChildScrollDown(targetView);
     }
 
     @Override
@@ -421,8 +420,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             ((WebView) targetView).flingScroll(0, velocity);
         } else if (!nestedScrollAble && targetView instanceof RecyclerView && !isScrollAbleViewBackScroll) {
             ((RecyclerView) targetView).fling(0, velocity);
-        } else if (targetView instanceof RecyclerView && ((type == 2 && !PullRefreshLayoutUtil.canChildScrollUp(targetView))
-                || (type == 1 && !PullRefreshLayoutUtil.canChildScrollDown(targetView)))) {
+        } else if (targetView instanceof RecyclerView && ((type == 2 && !CommonUtils.canChildScrollUp(targetView))
+                || (type == 1 && !CommonUtils.canChildScrollDown(targetView)))) {
             overScrollDell(type, tempDistance);
             return true;
         }
@@ -478,7 +477,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        refreshShowHelper.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        showGravity.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
         layoutContentView();
     }
 
@@ -626,10 +625,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         moveDistance = distance;
         dellAutoLoading();
         if (isMoveWithFooter) {
-            refreshShowHelper.dellFooterMoving(moveDistance);
+            showGravity.dellFooterMoving(moveDistance);
         }
         if (isMoveWithHeader) {
-            refreshShowHelper.dellHeaderMoving(moveDistance);
+            showGravity.dellHeaderMoving(moveDistance);
         }
         if (isMoveWithContent) {
             ViewCompat.setTranslationY(pullContentLayout, moveDistance);
@@ -853,12 +852,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private long getAnimationTime(int moveDistance) {
-        float ratio = Math.min(1, Math.abs((float) moveDistance / PullRefreshLayoutUtil.getWindowHeight(getContext())));
+        float ratio = Math.min(1, Math.abs((float) moveDistance / CommonUtils.getWindowHeight(getContext())));
         return (long) (Math.max((1.0f - Math.pow((1.0f - ratio), 100)) * animationDuring, animationDuring / 2));
     }
 
     private long getOverScrollTime(int moveDistance) {
-        float ratio = Math.abs((float) moveDistance / PullRefreshLayoutUtil.getWindowHeight(getContext()));
+        float ratio = Math.abs((float) moveDistance / CommonUtils.getWindowHeight(getContext()));
         return (long) ((Math.pow(2000 * ratio, 0.5)) * overScrollAdjustValue);
     }
 
@@ -1068,6 +1067,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     void onPreScroll(int dy, int[] consumed) {
+        if (consumed.length == 3) {
+            consumed[2] = isMoveWithContent ? 1 : 0;
+        }
         if (dy > 0 && moveDistance > 0) {
             consumed[1] += distanceWhentouch;
             if (moveDistance - dy < 0) {
@@ -1348,19 +1350,19 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         autoLoadingEnable = ableAutoLoading;
     }
 
-    public void setRefreshShowGravity(@RefreshShowHelper.ShowState int headerShowGravity
-            , @RefreshShowHelper.ShowState int footerShowGravity) {
+    public void setRefreshShowGravity(@ShowGravity.ShowState int headerShowGravity
+            , @ShowGravity.ShowState int footerShowGravity) {
         setHeaderShowGravity(headerShowGravity);
         setFooterShowGravity(footerShowGravity);
     }
 
-    public void setHeaderShowGravity(@RefreshShowHelper.ShowState int headerShowGravity) {
-        refreshShowHelper.headerShowState = headerShowGravity;
+    public void setHeaderShowGravity(@ShowGravity.ShowState int headerShowGravity) {
+        showGravity.headerShowState = headerShowGravity;
         requestLayout();
     }
 
-    public void setFooterShowGravity(@RefreshShowHelper.ShowState int footerShowGravity) {
-        refreshShowHelper.footerShowState = footerShowGravity;
+    public void setFooterShowGravity(@ShowGravity.ShowState int footerShowGravity) {
+        showGravity.footerShowState = footerShowGravity;
         requestLayout();
     }
 
