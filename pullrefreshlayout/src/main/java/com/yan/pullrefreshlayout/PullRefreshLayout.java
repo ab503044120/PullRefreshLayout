@@ -1529,8 +1529,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return refreshState;
     }
 
-    public int getOverScrollState() {
-        return overScrollState;
+    public boolean isOverScrollUp() {
+        return overScrollState == 1;
+    }
+
+    public boolean isOverScrollDown() {
+        return overScrollState == 2;
     }
 
     public boolean isLoadMoreEnable() {
@@ -1546,11 +1550,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public boolean isRefreshing() {
-        return refreshState != 0;
+        return refreshState == 0 && startRefreshAnimator != null && startRefreshAnimator.isRunning() || refreshState == 1;
     }
 
-    public boolean isLayoutMoving() {
-        return moveDistance != 0;
+    public boolean isLoading() {
+        return refreshState == 0 && startLoadMoreAnimator != null && startLoadMoreAnimator.isRunning() || refreshState == 2;
     }
 
     public boolean isDragDown() {
