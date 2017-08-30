@@ -116,7 +116,5 @@ public class NestedActivity extends AppCompatActivity {
         datas.add(new SimpleItem(R.drawable.img4, "夏目友人帐"));
         datas.add(new SimpleItem(R.drawable.img5, "夏目友人帐"));
         datas.add(new SimpleItem(R.drawable.img6, "夏目友人帐"));
-
     }
-
 }
