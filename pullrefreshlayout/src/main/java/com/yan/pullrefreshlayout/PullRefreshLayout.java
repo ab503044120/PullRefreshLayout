@@ -542,8 +542,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      *
      * @param distanceY move distance of Y
      */
-    private void onScroll(float distanceY) {
-        Log.e("distanceY", "onScroll: " + distanceY);
+    private void dellScroll(float distanceY) {
         if (checkMoving(distanceY) || distanceY == 0) {
             return;
         }
@@ -563,7 +562,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             tempDistance = 0;
         }
         if ((pullLoadMoreEnable && tempDistance <= 0) || (pullRefreshEnable && tempDistance >= 0) || pullTwinkEnable) {
-            Log.e("moveChildren1", "onScroll: ");
             moveChildren(tempDistance);
         } else {
             moveDistance = 0;
@@ -1017,8 +1015,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      */
     private final ValueAnimator.AnimatorUpdateListener headerAnimationUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
-            Log.e("moveChildren2", "onScroll: ");
-
             moveChildren((Integer) animation.getAnimatedValue());
             if (headerView != null && headerView instanceof OnPullListener) {
                 ((OnPullListener) headerView).onPullChange((float) moveDistance / refreshTriggerDistance);
@@ -1028,7 +1024,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final ValueAnimator.AnimatorUpdateListener footerAnimationUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
-            Log.e("moveChildren3", "onScroll: ");
             moveChildren((Integer) animation.getAnimatedValue());
             if (footerView != null && footerView instanceof OnPullListener) {
                 ((OnPullListener) footerView).onPullChange((float) moveDistance / loadTriggerDistance);
@@ -1038,7 +1033,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final ValueAnimator.AnimatorUpdateListener overScrollAnimatorUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
-            onNestedScroll(null, 0, 0, 0, (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
+            onScroll((int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
         }
     };
 
@@ -1094,13 +1089,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         if (nestedAble(target)) {
-            abortScroller();
-            cancelAllAnimation();
-            overScrollState = 0;
-            finalScrollDistance = -1;
-            isOverScrollTrigger = false;
-            isHoldingFinishTrigger = false;
-            isScrollAbleViewBackScroll = false;
+          onStartScroll();
         }
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
@@ -1125,24 +1114,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (nestedAble(target)) {
-            Log.e("onNestedPreScroll", "onNestedPreScroll: " + dy + "    " + moveDistance);
-            if (dy > 0 && moveDistance > 0) {
-                if (moveDistance - dy < 0) {
-                    consumed[1] += moveDistance;
-                    onScroll(-moveDistance);
-                    return;
-                }
-                consumed[1] += dy;
-                onScroll(-dy);
-            } else if (dy < 0 && moveDistance < 0) {
-                if (moveDistance - dy > 0) {
-                    consumed[1] += moveDistance;
-                    onScroll(-moveDistance);
-                    return;
-                }
-                onScroll(-dy);
-                consumed[1] += dy;
-            }
+            onPreScroll(dy, consumed);
 
             final int[] parentConsumed = parentScrollConsumed;
             if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
@@ -1155,16 +1127,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         if (nestedAble(target)) {
-            Log.e("onNestedScroll", "onNestedScroll: " + dyUnconsumed + "    " + moveDistance);
             dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
-            if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()
-                    || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown()))) {
-                Log.e("onNestedScroll", "onNestedScroll: " + dyUnconsumed + "    " + moveDistance);
-
-                int dy = dyUnconsumed + parentOffsetInWindow[1];
-                dy = (int) (dy * dragDampingRatio);
-                onScroll(-dy);
-            }
+            onScroll(dyUnconsumed);
         }
     }
 
@@ -1175,15 +1139,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        if (flingAble() && nestedAble(target) && overScrollFlingState() != -1) {
-            removeDelayRunnable();
-            readyScroller();
-            abortScroller();
-            lastScrollY = 0;
-
-            scroller.fling(0, 0, 0, (int) velocityY, 0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            finalScrollDistance = getFinalOverScrollDistance();
-            ViewCompat.postInvalidateOnAnimation(this);
+        if (nestedAble(target)) {
+            onPreFling(velocityY);
         }
         return dispatchNestedPreFling(velocityX, velocityY);
     }
