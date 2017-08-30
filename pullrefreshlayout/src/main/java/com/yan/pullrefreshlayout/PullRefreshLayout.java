@@ -224,8 +224,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         setNestedScrollingEnabled(true);
 
         loadAttribute(context, attrs);
-        setHeaderView(headerView);
-        setFooterView(footerView);
     }
 
     private void loadAttribute(Context context, AttributeSet attrs) {
@@ -353,6 +351,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
                 if (targetView == null) {
                     targetView = pullContentLayout;
                 }
+
+                setHeaderView(headerView);
+                setFooterView(footerView);
                 return;
             }
         }
