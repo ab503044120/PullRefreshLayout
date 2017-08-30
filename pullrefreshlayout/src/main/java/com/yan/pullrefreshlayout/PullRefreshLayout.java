@@ -1239,6 +1239,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return true;
     }
 
+    private View getRefreshView(View v) {
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (v.getParent() != null) {
+            ((ViewGroup) v.getParent()).removeView(v);
+        }
+        if (lp == null) {
+            lp = new LayoutParams(-1, -2);
+            v.setLayoutParams(lp);
+        }
+        return v;
+    }
+
     public void setHeaderView(View header) {
         if (headerView != null && headerView != header) {
             removeView(headerView);
