@@ -1,10 +1,13 @@
 package com.yan.refreshloadlayouttest.testactivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.RefreshShowHelper;
@@ -46,15 +49,23 @@ public class NestedActivity2 extends AppCompatActivity {
     }
 
 
+    private float dipToPx(Context context, float value) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
+    }
+
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
         refreshLayout.setTwinkEnable(true);
         refreshLayout.setAutoLoadingEnable(false);
 
-        refreshLayout.setHeaderView(new MaterialHeader(getBaseContext(), refreshLayout));
+        refreshLayout.setRefreshTriggerDistance(300);
+        refreshLayout.setLoadTriggerDistance(300);
+        refreshLayout.setPullLimitDistance(500);
+        refreshLayout.setHeaderView(new MaterialHeader(getBaseContext(), 500 / 300));// 触发距离/拖动范围
         refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_FOLLOW);
         refreshLayout.setHeaderFront(true);
-        refreshLayout.setFooterView(new MaterialHeader(getBaseContext(), refreshLayout));
+        refreshLayout.setFooterView(new MaterialHeader(getBaseContext(), 2));
         refreshLayout.setFooterShowGravity(RefreshShowHelper.STATE_FOLLOW);
         refreshLayout.setFooterFront(true);
         refreshLayout.setMoveWithContent(false);

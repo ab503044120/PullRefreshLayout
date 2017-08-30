@@ -16,7 +16,7 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
     private MaterialProgressDrawable mDrawable;
     private float mScale = 1f;
     private boolean isHolding = false;
-    private PullRefreshLayout refreshLayout;
+    private float multiple;
 
     private Animation mScaleAnimation = new Animation() {
         @Override
@@ -32,9 +32,9 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
         initView();
     }
 
-    public MaterialHeader(Context context, PullRefreshLayout refreshLayout) {
+    public MaterialHeader(Context context, float multiple) {
         super(context);
-        this.refreshLayout = refreshLayout;
+        this.multiple = multiple;
         initView();
     }
 
@@ -86,8 +86,8 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
     @Override
     public void onPullChange(float percent) {
         if (isHolding) return;
-        percent = Math.abs(percent);
-        mDrawable.setAlpha(percent > 1 ? 255 : (int) (percent * 255));
+        percent = Math.abs(percent / multiple);
+        mDrawable.setAlpha((int) (percent * 255));
         mDrawable.showArrow(true);
         float strokeStart = ((percent) * .8f);
         mDrawable.setStartEndTrim(0f, Math.min(0.8f, strokeStart));

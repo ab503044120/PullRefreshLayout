@@ -14,6 +14,7 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -106,6 +107,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean isHeaderFront = false;
     private boolean isFooterFront = false;
 
+    private int distanceWhentouch;
+
     //--------------------START|| values can modify in the lib only ||START------------------
 
     private int targetViewId = -1;
@@ -172,11 +175,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     boolean nestedScrollAble = false;
 
     private boolean isAttachWindow = false;
-
-    /**
-     * final motion event
-     */
-    private final MotionEvent[] finalMotionEvent = new MotionEvent[1];
 
     //--------------------END|| values can modify int class only ||END------------------
     //--------------------END| values part |END------------------
@@ -1071,6 +1069,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     void onPreScroll(int dy, int[] consumed) {
         if (dy > 0 && moveDistance > 0) {
+            consumed[1] += distanceWhentouch;
             if (moveDistance - dy < 0) {
                 consumed[1] += moveDistance;
                 dellScroll(-moveDistance);
@@ -1079,6 +1078,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             consumed[1] += dy;
             dellScroll(-dy);
         } else if (dy < 0 && moveDistance < 0) {
+            consumed[1] += distanceWhentouch;
             if (moveDistance - dy > 0) {
                 consumed[1] += moveDistance;
                 dellScroll(-moveDistance);
@@ -1132,6 +1132,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         stopNestedScroll();
     }
 
+
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (nestedAble(target)) {
@@ -1149,7 +1150,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         if (nestedAble(target)) {
             dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
-
+            distanceWhentouch = 0;
             onScroll(dyUnconsumed + parentOffsetInWindow[1]);
         }
     }
@@ -1221,8 +1222,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (!dispatchPullTouchAble) {
             return super.dispatchTouchEvent(ev);
         }
-        generalPullHelper.dispatchTouchEvent(ev, finalMotionEvent);
-        super.dispatchTouchEvent(finalMotionEvent[0]);
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN && !isMoveWithContent) {
+            distanceWhentouch = nestedScrollAble ? moveDistance : 0;
+        }
+
+        generalPullHelper.dispatchTouchEvent(ev);
+        super.dispatchTouchEvent(ev);
         return true;
     }
 

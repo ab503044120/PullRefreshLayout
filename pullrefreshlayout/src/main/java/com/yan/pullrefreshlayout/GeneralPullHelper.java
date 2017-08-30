@@ -89,9 +89,7 @@ class GeneralPullHelper {
         touchSlop = configuration.getScaledTouchSlop();
     }
 
-    boolean dispatchTouchEvent(MotionEvent ev, MotionEvent[] finalMotionEvent) {
-        finalMotionEvent[0] = ev;
-
+    boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 dellTouchEvent(ev);
