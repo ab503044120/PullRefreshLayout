@@ -939,6 +939,18 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     }
 
+    private void setViewFront(boolean firstFront, boolean secondFront, View firstView, View secondView) {
+        if (firstFront) {
+            bringViewToFront(firstView);
+        } else {
+            bringViewToFront(pullContentLayout);
+
+            if (secondFront) {
+                bringViewToFront(secondView);
+            }
+        }
+    }
+
     /**
      * the fling may execute after onStopNestedScroll , so while overScrollBack try delay to handle action
      */
