@@ -11,7 +11,6 @@ import android.view.ViewConfiguration;
  * Created by yan on 2017/6/29.
  */
 class GeneralPullHelper {
-    private static final String TAG = "GeneralPullHelper";
     private final PullRefreshLayout pullRefreshLayout;
 
     /**
@@ -100,6 +99,10 @@ class GeneralPullHelper {
                 actionDownPointX = ev.getX();
                 actionDownPointY = ev.getY();
                 lastTouchY = ev.getY();
+
+
+                lastMotionY = (int) ev.getY();
+                activePointerId = ev.getPointerId(0);
                 break;
             case MotionEvent.ACTION_MOVE:
                 /**
@@ -144,10 +147,6 @@ class GeneralPullHelper {
     }
 
     private void dellTouchEvent(MotionEvent ev) {
-        if (pullRefreshLayout.nestedScrollAble) {
-            return;
-        }
-
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             nestedYOffset = 0;
@@ -155,29 +154,27 @@ class GeneralPullHelper {
         ev.offsetLocation(0, nestedYOffset);
         switch (actionMasked) {
             case MotionEvent.ACTION_DOWN: {
-
-                lastMotionY = (int) ev.getY();
-                activePointerId = ev.getPointerId(0);
                 pullRefreshLayout.onStartScroll();
                 break;
             }
             case MotionEvent.ACTION_MOVE:
-                if (activePointerId != ev.getPointerId(0)) {
-                    lastMotionY = (int) ev.getY();
-                    activePointerId = ev.getPointerId(0);
+                if (!pullRefreshLayout.nestedScrollAble) {
+                    if (activePointerId != ev.getPointerId(0)) {
+                        lastMotionY = (int) ev.getY();
+                        activePointerId = ev.getPointerId(0);
+                    }
+
+                    final int y = (int) ev.getY();
+                    int deltaY = lastMotionY - y;
+                    lastMotionY = y;
+                    pullRefreshLayout.onPreScroll(deltaY, childConsumed);
+
+                    int deltaYOffset = childConsumed[1] - lastChildConsumedY;
+                    pullRefreshLayout.onScroll(deltaY - deltaYOffset);
+
+                    ev.offsetLocation(0, deltaYOffset);
+                    lastChildConsumedY = childConsumed[1];
                 }
-
-                final int y = (int) ev.getY();
-                int deltaY = lastMotionY - y;
-                lastMotionY = y;
-
-                pullRefreshLayout.onPreScroll(deltaY, childConsumed);
-
-                int deltaYOffset = childConsumed[1] - lastChildConsumedY;
-                pullRefreshLayout.onScroll(deltaY - deltaYOffset);
-
-                ev.offsetLocation(0, deltaYOffset);
-                lastChildConsumedY = childConsumed[1];
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -191,7 +188,6 @@ class GeneralPullHelper {
                 lastChildConsumedY = 0;
                 break;
         }
-
     }
 
     /**
