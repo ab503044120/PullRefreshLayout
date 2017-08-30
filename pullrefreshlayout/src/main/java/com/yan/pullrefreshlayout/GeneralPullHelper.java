@@ -144,6 +144,10 @@ class GeneralPullHelper {
     }
 
     private void dellTouchEvent(MotionEvent ev) {
+        if (pullRefreshLayout.nestedScrollAble) {
+            return;
+        }
+
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             nestedYOffset = 0;

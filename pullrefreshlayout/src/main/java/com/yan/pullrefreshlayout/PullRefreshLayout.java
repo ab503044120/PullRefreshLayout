@@ -1037,7 +1037,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     };
 
-
     void onStartScroll() {
         abortScroller();
         cancelAllAnimation();
@@ -1071,7 +1070,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     void onScroll(int dy) {
         if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()) || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown())) {
             dy = (int) (dy * dragDampingRatio);
-            dellScroll(-dy);
+            dellScroll(dy);
+        }
+    }
+
+    void onStopScroll() {
+        if ((scroller != null && scroller.isFinished())) {
+            cancelHandleAction();
         }
     }
 
@@ -1089,7 +1094,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         if (nestedAble(target)) {
-          onStartScroll();
+            onStartScroll();
         }
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
@@ -1104,8 +1109,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public void onStopNestedScroll(View child) {
+        Log.e("onStopNestedScroll", "onStopNestedScroll: "+generalPullHelper.dragState );
         if (nestedAble(child)) {
-            cancelHandleAction();
+            onStopScroll();
             parentHelper.onStopNestedScroll(child);
             stopNestedScroll();
         }
