@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
  * Created by yan on 2017/7/7.
  * refresh show helper
  */
-public class RefreshShowHelper {
+public class ShowGravity {
 
     /**
      * @ShowState
@@ -36,7 +36,7 @@ public class RefreshShowHelper {
 
     private PullRefreshLayout pullRefreshLayout;
 
-    RefreshShowHelper(PullRefreshLayout pullRefreshLayout) {
+    ShowGravity(PullRefreshLayout pullRefreshLayout) {
         this.pullRefreshLayout = pullRefreshLayout;
     }
 

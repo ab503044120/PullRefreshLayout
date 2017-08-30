@@ -10,7 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.RefreshShowHelper;
+import com.yan.pullrefreshlayout.ShowGravity;
 import com.yan.refreshloadlayouttest.R;
 import com.yan.refreshloadlayouttest.widget.MaterialHeader;
 
@@ -63,10 +63,10 @@ public class NestedActivity2 extends AppCompatActivity {
         refreshLayout.setLoadTriggerDistance(300);
         refreshLayout.setPullLimitDistance(500);
         refreshLayout.setHeaderView(new MaterialHeader(getBaseContext(), 500 / 300));// 触发距离/拖动范围
-        refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_FOLLOW);
+        refreshLayout.setHeaderShowGravity(ShowGravity.STATE_FOLLOW);
         refreshLayout.setHeaderFront(true);
-        refreshLayout.setFooterView(new MaterialHeader(getBaseContext(), 2));
-        refreshLayout.setFooterShowGravity(RefreshShowHelper.STATE_FOLLOW);
+        refreshLayout.setFooterView(new MaterialHeader(getBaseContext(),  500 / 300));
+        refreshLayout.setFooterShowGravity(ShowGravity.STATE_FOLLOW);
         refreshLayout.setFooterFront(true);
         refreshLayout.setMoveWithContent(false);
 

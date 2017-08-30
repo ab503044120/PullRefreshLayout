@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.RefreshShowHelper;
+import com.yan.pullrefreshlayout.ShowGravity;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
 
@@ -46,7 +46,7 @@ public class CommonActivity1 extends AppCompatActivity {
 //        refreshLayout.setAdjustTwinkDuring(2);
 //        refreshLayout.setTwinkEnable(false);
         refreshLayout.setLoadMoreEnable(true);
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_FOLLOW, RefreshShowHelper.STATE_FOLLOW);
+        refreshLayout.setRefreshShowGravity(ShowGravity.STATE_FOLLOW, ShowGravity.STATE_FOLLOW);
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAutoLoadingEnable(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢

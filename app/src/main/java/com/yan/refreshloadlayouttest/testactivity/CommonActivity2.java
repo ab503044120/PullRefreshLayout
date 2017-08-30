@@ -2,7 +2,6 @@ package com.yan.refreshloadlayouttest.testactivity;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,7 +13,7 @@ import android.widget.ScrollView;
 
 import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.RefreshShowHelper;
+import com.yan.pullrefreshlayout.ShowGravity;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
 import com.yan.refreshloadlayouttest.widget.ClassicLoadView;
@@ -39,6 +38,9 @@ public class CommonActivity2 extends CommonActivity1 {
         refreshLayout.setAutoLoadingEnable(true);
         refreshLayout.setLoadMoreEnable(true);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
+        refreshLayout.setMoveWithContent(false);
+        refreshLayout.setHeaderFront(true);
+        refreshLayout.setHeaderShowGravity(ShowGravity.STATE_FOLLOW);
         refreshLayout.setFooterView(classicLoadView = new ClassicLoadView(getApplicationContext(), refreshLayout));
         refreshLayout.setLoadTriggerDistance((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
         refreshLayout.setTargetView(scrollView);

@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.RefreshShowHelper;
+import com.yan.pullrefreshlayout.ShowGravity;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
 
@@ -40,7 +40,7 @@ public class RefreshFragment extends Fragment {
         final PullRefreshLayout refreshLayout = (PullRefreshLayout) view.findViewById(R.id.refreshLayout);
         refreshLayout.setHeaderView(new HeaderOrFooter(getContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getContext(), "BallScaleRippleMultipleIndicator"));
-        refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER, RefreshShowHelper.STATE_CENTER);
+        refreshLayout.setRefreshShowGravity(ShowGravity.STATE_CENTER, ShowGravity.STATE_CENTER);
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
