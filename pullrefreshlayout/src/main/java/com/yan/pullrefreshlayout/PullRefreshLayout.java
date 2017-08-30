@@ -102,8 +102,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * move With
      */
     private boolean isMoveWithFooter = true;
-    private boolean isMoveWithContent = true;
     private boolean isMoveWithHeader = true;
+    private boolean isMoveWithContent = true;
 
     /**
      * view front
@@ -306,7 +306,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN && !isMoveWithContent) {
             distanceWhenTouch = nestedScrollAble ? moveDistance : 0;
         }
-
         generalPullHelper.dispatchTouchEvent(ev);
         super.dispatchTouchEvent(ev);
         return true;
