@@ -327,7 +327,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        refreshShowHelper.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        showGravity.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
         layoutContentView();
     }
 
@@ -415,7 +415,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             }
         }
     }
-
+ 
     /**
      * overScroll Back Dell
      *
@@ -460,7 +460,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         isScrollAbleViewBackScroll = true;
         return false;
     }
-
+ 
     private void autoLoadingTrigger() {
         if (!isAutoLoadingTrigger && autoLoadingEnable && refreshState == 0 && onRefreshListener != null) {
             isAutoLoadingTrigger = true;
@@ -919,11 +919,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public boolean isTargetAbleScrollUp() {
-        return PullRefreshLayoutUtil.canChildScrollUp(targetView);
+        return CommonUtils.canChildScrollUp(targetView);
     }
 
     public boolean isTargetAbleScrollDown() {
-        return PullRefreshLayoutUtil.canChildScrollDown(targetView);
+        return CommonUtils.canChildScrollDown(targetView);
     }
 
     /**
@@ -1025,10 +1025,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             onNestedScroll(null, 0, 0, 0, (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
         }
     };
-
-    /**
-     * ----------------| action dell method |----------------
-     */
 
     void onStartScroll() {
         abortScroller();
@@ -1306,10 +1302,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         moveDistance = distance;
         dellAutoLoading();
         if (isMoveWithFooter) {
-            refreshShowHelper.dellFooterMoving(moveDistance);
+            showGravity.dellFooterMoving(moveDistance);
         }
         if (isMoveWithHeader) {
-            refreshShowHelper.dellHeaderMoving(moveDistance);
+            showGravity.dellHeaderMoving(moveDistance);
         }
         if (isMoveWithContent) {
             ViewCompat.setTranslationY(pullContentLayout, moveDistance);
