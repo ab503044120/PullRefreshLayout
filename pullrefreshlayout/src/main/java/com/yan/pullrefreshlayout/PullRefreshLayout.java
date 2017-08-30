@@ -415,7 +415,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             }
         }
     }
- 
+
     /**
      * overScroll Back Dell
      *
@@ -460,7 +460,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         isScrollAbleViewBackScroll = true;
         return false;
     }
- 
+
     private void autoLoadingTrigger() {
         if (!isAutoLoadingTrigger && autoLoadingEnable && refreshState == 0 && onRefreshListener != null) {
             isAutoLoadingTrigger = true;
@@ -1041,6 +1041,10 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             consumed[2] = isMoveWithContent ? 1 : 0;
         }
         if (dy > 0 && moveDistance > 0) {
+            if (isTargetAbleScrollUp()) {
+                distanceWhenTouch = 0;
+            }
+
             consumed[1] += distanceWhenTouch;
             if (moveDistance - dy < 0) {
                 consumed[1] += moveDistance;
@@ -1050,6 +1054,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             consumed[1] += dy;
             dellScroll(-dy);
         } else if (dy < 0 && moveDistance < 0) {
+            if (isTargetAbleScrollDown()) {
+                distanceWhenTouch = 0;
+            }
             consumed[1] += distanceWhenTouch;
             if (moveDistance - dy > 0) {
                 consumed[1] += moveDistance;
@@ -1513,18 +1520,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     public final int getMoveDistance() {
         return moveDistance;
-    }
-
-    public int getRefreshState() {
-        if (refreshState == 0) {
-            if (startRefreshAnimator != null && startRefreshAnimator.isRunning()) {
-                return 1;
-            }
-            if (startLoadMoreAnimator != null && startLoadMoreAnimator.isRunning()) {
-                return 2;
-            }
-        }
-        return refreshState;
     }
 
     public boolean isOverScrollUp() {

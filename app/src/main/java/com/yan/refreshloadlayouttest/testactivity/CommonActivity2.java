@@ -38,9 +38,6 @@ public class CommonActivity2 extends CommonActivity1 {
         refreshLayout.setAutoLoadingEnable(true);
         refreshLayout.setLoadMoreEnable(true);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "SemiCircleSpinIndicator"));
-        refreshLayout.setMoveWithContent(false);
-        refreshLayout.setHeaderFront(true);
-        refreshLayout.setHeaderShowGravity(ShowGravity.STATE_FOLLOW);
         refreshLayout.setFooterView(classicLoadView = new ClassicLoadView(getApplicationContext(), refreshLayout));
         refreshLayout.setLoadTriggerDistance((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
         refreshLayout.setTargetView(scrollView);
