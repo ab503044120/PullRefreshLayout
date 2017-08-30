@@ -1042,6 +1042,55 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
     };
 
+
+    void onStartScroll() {
+        abortScroller();
+        cancelAllAnimation();
+        overScrollState = 0;
+        finalScrollDistance = -1;
+        isOverScrollTrigger = false;
+        isHoldingFinishTrigger = false;
+        isScrollAbleViewBackScroll = false;
+    }
+
+    void onPreScroll(int dy, int[] consumed) {
+        if (dy > 0 && moveDistance > 0) {
+            if (moveDistance - dy < 0) {
+                consumed[1] += moveDistance;
+                dellScroll(-moveDistance);
+                return;
+            }
+            consumed[1] += dy;
+            dellScroll(-dy);
+        } else if (dy < 0 && moveDistance < 0) {
+            if (moveDistance - dy > 0) {
+                consumed[1] += moveDistance;
+                dellScroll(-moveDistance);
+                return;
+            }
+            dellScroll(-dy);
+            consumed[1] += dy;
+        }
+    }
+
+    void onScroll(int dy) {
+        if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()) || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown())) {
+            dy = (int) (dy * dragDampingRatio);
+            dellScroll(-dy);
+        }
+    }
+
+    void onPreFling(float velocityY) {
+        if (flingAble() && overScrollFlingState() != -1) {
+            readyScroller();
+            abortScroller();
+            lastScrollY = 0;
+            scroller.fling(0, 0, 0, (int) velocityY, 0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            finalScrollDistance = getFinalOverScrollDistance();
+            ViewCompat.postInvalidateOnAnimation(this);
+        }
+    }
+
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         if (nestedAble(target)) {
