@@ -31,8 +31,8 @@ public class RefreshShowHelper {
     public static final int STATE_PLACEHOLDER = 5;
     public static final int STATE_CENTER = 6;
 
-      int headerShowState = STATE_FOLLOW;
-      int footerShowState = STATE_FOLLOW;
+    int headerShowState = STATE_FOLLOW;
+    int footerShowState = STATE_FOLLOW;
 
     private PullRefreshLayout pullRefreshLayout;
 
