@@ -224,8 +224,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         childHelper = new NestedScrollingChildHelper(this);
         setNestedScrollingEnabled(true);
 
-        setChildrenDrawingOrderEnabled(true);
-
         loadAttribute(context, attrs);
         setHeaderView(headerView);
         setFooterView(footerView);
@@ -257,12 +255,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         overScrollDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollDampingRatio, overScrollDampingRatio);
         overScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_overScrollMaxTriggerOffset, PullRefreshLayoutUtil.dipToPx(context, overScrollMaxTriggerOffset));
 
-        if (ta.hasValue(R.styleable.PullRefreshLayout_prl_headerShowGravity)) {
-            refreshShowHelper.setHeaderShowGravity(ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, RefreshShowHelper.STATE_FOLLOW));
-        }
-        if (ta.hasValue(R.styleable.PullRefreshLayout_prl_footerShowGravity)) {
-            refreshShowHelper.setFooterShowGravity(ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, RefreshShowHelper.STATE_FOLLOW));
-        }
+        refreshShowHelper.headerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, RefreshShowHelper.STATE_FOLLOW);
+        refreshShowHelper.footerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, RefreshShowHelper.STATE_FOLLOW);
 
         targetViewId = ta.getResourceId(R.styleable.PullRefreshLayout_prl_targetId, targetViewId);
 
