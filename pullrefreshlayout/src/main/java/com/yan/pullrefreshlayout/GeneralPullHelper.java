@@ -191,7 +191,7 @@ class GeneralPullHelper {
                 if (isLastMotionYSet && (Math.abs(velocityY) > minimumFlingVelocity)) {
                     pullRefreshLayout.onNestedPreFling(null, 0, -(int) velocityY);
                 }
-                pullRefreshLayout.cancelHandleAction();
+                pullRefreshLayout.onStopNestedScroll(null);
                 activePointerId = -1;
                 childConsumed[0] = 0;
                 childConsumed[1] = 0;
