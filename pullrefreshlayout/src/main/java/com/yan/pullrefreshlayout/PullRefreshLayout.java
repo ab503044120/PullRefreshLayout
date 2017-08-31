@@ -1122,6 +1122,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
+        parentScrollConsumed[1] = 0;
         stopNestedScroll();
     }
 

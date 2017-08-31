@@ -18,12 +18,17 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
     private float mScale = 1f;
     private boolean isHolding = false;
     private float multiple;
+    private PullRefreshLayout refreshLayout;
 
     private Animation mScaleAnimation = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
             mScale = 1f - interpolatedTime;
             mDrawable.setAlpha((int) (255 * mScale));
+            if (mScale == 0) {
+                setTranslationY(0);
+                refreshLayout.setMoveWithHeader(true);
+            }
             invalidate();
         }
     };
@@ -33,9 +38,10 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
         initView();
     }
 
-    public MaterialHeader(Context context, float multiple) {
+    public MaterialHeader(Context context, PullRefreshLayout refreshLayout, float multiple) {
         super(context);
         this.multiple = multiple;
+        this.refreshLayout = refreshLayout;
         initView();
     }
 
@@ -121,6 +127,7 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
     @Override
     public void onPullFinish() {
         mDrawable.stop();
+        refreshLayout.setMoveWithHeader(false);
         startAnimation(mScaleAnimation);
     }
 
@@ -129,5 +136,6 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
         isHolding = false;
         mScale = 1f;
         mDrawable.stop();
+        refreshLayout.setMoveWithHeader(true);
     }
 }

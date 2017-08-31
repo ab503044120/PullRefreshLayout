@@ -1,6 +1,6 @@
 # PullRefreshLayout
-[![Stable Version](https://img.shields.io/badge/Stable%20Version-1.8.5-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
-[![Latest Version](https://img.shields.io/badge/Latest%20Version-1.8.6-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
+[![Stable Version](https://img.shields.io/badge/Stable%20Version-1.8.7-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
+[![Latest Version](https://img.shields.io/badge/Latest%20Version-1.8.7-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/MinSdk-11%2B-green.svg)](https://android-arsenal.com/api?level=11) 
 [![Methods](https://img.shields.io/badge/Methods%20and%20size-359%20%7C%2036%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A1.8.4)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
@@ -20,7 +20,7 @@ header和状态切换演示gif
 <br/>
 ps:本库没有做解耦处理（那样会增加.class，大小也会增加），目的是使库足够小，而且本库功能目的明确，不必做无用功。
 
-## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.8.5-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
+## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-1.8.7-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
 compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 ## 2.说明  
