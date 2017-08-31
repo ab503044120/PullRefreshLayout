@@ -1106,13 +1106,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
-    public void onStopNestedScroll(View child) {
-        parentHelper.onStopNestedScroll(child);
-        stopNestedScroll();
-    }
-
-
-    @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (nestedAble(target)) {
             onPreScroll(dy, consumed);
@@ -1132,6 +1125,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             distanceWhenTouch = 0;
             onScroll(dyUnconsumed + parentOffsetInWindow[1]);
         }
+    }
+
+    @Override
+    public void onStopNestedScroll(View child) {
+        parentHelper.onStopNestedScroll(child);
+        stopNestedScroll();
     }
 
     @Override
