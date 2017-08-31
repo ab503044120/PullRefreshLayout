@@ -52,6 +52,11 @@ class GeneralPullHelper {
     private int lastChildConsumedY;
 
     /**
+     * moveOffsetY
+     */
+    private int moveOffsetY;
+
+    /**
      * active pointer id
      */
     private int activePointerId;
@@ -66,7 +71,7 @@ class GeneralPullHelper {
      */
     private int lastMotionY;
     /**
-     * last motion y
+     * pre Move Y
      */
     private float preMoveY;
 
@@ -182,16 +187,20 @@ class GeneralPullHelper {
                     pullRefreshLayout.onScroll(deltaY - deltaYOffset);
 
                     // -------------------| event reset |--------------------
-                    ev.offsetLocation(0, pullRefreshLayout.isMoveWithContent ? deltaYOffset : childConsumed[1]);
+                    ev.offsetLocation(0, moveOffsetY = pullRefreshLayout.isMoveWithContent ? deltaYOffset : childConsumed[1]);
                     ev.setLocation((int) ev.getX(), (int) ev.getY());
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                ev.offsetLocation(0, moveOffsetY);
+
                 pullRefreshLayout.onStopScroll();
                 if (isTriggerMoveEvent && (Math.abs(velocityY) > minimumFlingVelocity)) {
                     pullRefreshLayout.onPreFling(-(int) velocityY);
                 }
+
+                moveOffsetY = 0;
                 activePointerId = -1;
                 childConsumed[0] = 0;
                 childConsumed[1] = 0;

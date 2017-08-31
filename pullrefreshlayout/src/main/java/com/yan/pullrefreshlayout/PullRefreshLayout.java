@@ -822,21 +822,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         nestedScrollAble = target instanceof NestedScrollingChild;
     }
-
-    private void cancelHandleAction() {
-        removeDelayRunnable();
-        if (!pullTwinkEnable) {
-            handleAction();
-        } else if ((overScrollFlingState() == 1 || overScrollFlingState() == 2) && !isOverScrollTrigger) {
-            if (delayHandleActionRunnable == null) {
-                delayHandleActionRunnable = getDelayHandleActionRunnable();
-            }
-            postDelayed(delayHandleActionRunnable, 50);
-        } else if ((scroller != null && scroller.isFinished())) {
-            handleAction();
-        }
-    }
-
     private void removeDelayRunnable() {
         if (delayHandleActionRunnable != null) {
             removeCallbacks(delayHandleActionRunnable);
@@ -1064,8 +1049,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     void onStopScroll() {
-        if ((scroller != null && scroller.isFinished())) {
-            cancelHandleAction();
+        removeDelayRunnable();
+        if (!pullTwinkEnable) {
+            handleAction();
+        } else if ((overScrollFlingState() == 1 || overScrollFlingState() == 2) && !isOverScrollTrigger) {
+            if (delayHandleActionRunnable == null) {
+                delayHandleActionRunnable = getDelayHandleActionRunnable();
+            }
+            postDelayed(delayHandleActionRunnable, 50);
+        } else if ((scroller != null && scroller.isFinished())) {
+            handleAction();
         }
     }
 
