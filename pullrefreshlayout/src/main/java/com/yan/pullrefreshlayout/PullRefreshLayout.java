@@ -300,9 +300,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         throw new RuntimeException("PullRefreshLayout should have a child");
     }
+
     public void dispatchSuperTouchEvent(MotionEvent ev) {
         super.dispatchTouchEvent(ev);
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (!dispatchPullTouchAble) {
