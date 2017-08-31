@@ -4,6 +4,7 @@
     android:layout_margin="10dp">
 
     <ImageView
+        android:layout_marginTop="8dp"
         android:id="@+id/iv"
         android:src="#eab566"
         android:layout_width="match_parent"

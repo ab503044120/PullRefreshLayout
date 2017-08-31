@@ -88,6 +88,7 @@ public class MaterialHeader extends View implements PullRefreshLayout.OnPullList
     public void onPullChange(float percent) {
         if (isHolding) return;
         percent = Math.abs(percent / multiple);
+
         mDrawable.setAlpha((int) (percent * 255));
         mDrawable.showArrow(true);
         float strokeStart = ((percent) * .8f);

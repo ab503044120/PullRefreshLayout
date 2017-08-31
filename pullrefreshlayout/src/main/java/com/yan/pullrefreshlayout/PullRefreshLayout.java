@@ -11,6 +11,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ListViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -103,7 +104,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * move With
      */
     private boolean isMoveWithFooter = true;
-    private boolean isMoveWithContent = true;
+    boolean isMoveWithContent = true;
     private boolean isMoveWithHeader = true;
 
     /**
@@ -114,7 +115,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     //--------------------START|| values can modify in the lib only ||START------------------
 
-    private int distanceWhenTouch = 0;
     /**
      * current refreshing state 1:refresh 2:loadMore
      */
@@ -303,11 +303,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (!dispatchPullTouchAble) {
             return super.dispatchTouchEvent(ev);
         }
-        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN && !isMoveWithContent) {
-            distanceWhenTouch = nestedScrollAble ? moveDistance : 0;
-        }
         generalPullHelper.dispatchTouchEvent(ev);
         super.dispatchTouchEvent(ev);
+
         return true;
     }
 
@@ -426,9 +424,11 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if ((type == 1 && (finalScrollDistance > moveDistance)) || (type == 2 && finalScrollDistance < moveDistance)) {
             cancelAllAnimation();
             if ((type == 1 && moveDistance <= tempDistance) || (type == 2 && moveDistance >= tempDistance)) {
+                Log.e("parentScrollConsumed1", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
                 dellScroll(-moveDistance);
                 return kindsOfViewsToNormalDell(type, tempDistance);
             }
+            Log.e("parentScrollConsumed2", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
             dellScroll(-tempDistance);
             return false;
         } else {
@@ -1022,7 +1022,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     private final ValueAnimator.AnimatorUpdateListener overScrollAnimatorUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
-            onNestedScroll(null, 0, 0, 0, (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio));
+            int offsetY = (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio);
+            dispatchNestedScroll(0, 0, 0, offsetY, parentOffsetInWindow);
+            onScroll(offsetY + parentOffsetInWindow[1]);
         }
     };
 
@@ -1041,28 +1043,23 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             consumed[2] = isMoveWithContent ? 1 : 0;
         }
         if (dy > 0 && moveDistance > 0) {
-            if (isTargetAbleScrollUp()) {
-                distanceWhenTouch = 0;
-            }
-
-            consumed[1] += distanceWhenTouch;
             if (moveDistance - dy < 0) {
                 consumed[1] += moveDistance;
+                Log.e("parentScrollConsumed3", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
                 dellScroll(-moveDistance);
                 return;
             }
             consumed[1] += dy;
+            Log.e("parentScrollConsumed4", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
             dellScroll(-dy);
         } else if (dy < 0 && moveDistance < 0) {
-            if (isTargetAbleScrollDown()) {
-                distanceWhenTouch = 0;
-            }
-            consumed[1] += distanceWhenTouch;
             if (moveDistance - dy > 0) {
                 consumed[1] += moveDistance;
+                Log.e("parentScrollConsumed5", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
                 dellScroll(-moveDistance);
                 return;
             }
+            Log.e("parentScrollConsumed6", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
             dellScroll(-dy);
             consumed[1] += dy;
         }
@@ -1070,6 +1067,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     void onScroll(int dy) {
         if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()) || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown())) {
+            dy = Math.abs(parentScrollConsumed[1]) > Math.abs(dy) ? 0 : dy - parentScrollConsumed[1];
+
             dy = (int) (dy * dragDampingRatio);
             dellScroll(-dy);
         }
@@ -1108,12 +1107,15 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (nestedAble(target)) {
-            onPreScroll(dy, consumed);
+            if (isMoveWithContent) {
+                onPreScroll(dy, consumed);
+            }
 
             final int[] parentConsumed = parentScrollConsumed;
             if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
                 consumed[0] += parentConsumed[0];
                 consumed[1] += parentConsumed[1];
+
             }
         }
     }
@@ -1122,8 +1124,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         if (nestedAble(target)) {
             dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
-            distanceWhenTouch = 0;
-            onScroll(dyUnconsumed + parentOffsetInWindow[1]);
+            if (isMoveWithContent) {
+                onScroll(dyUnconsumed + parentOffsetInWindow[1]);
+            }
         }
     }
 
