@@ -67,7 +67,7 @@ public class CommonActivity3 extends Activity {
 //        refreshLayout.setRefreshEnable(false);
         refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineSpinFadeLoaderIndicator"));
-        refreshLayout.setRefreshShowGravity(ShowGravity.STATE_PLACEHOLDER_CENTER, ShowGravity.STATE_PLACEHOLDER_FOLLOW);
+        refreshLayout.setRefreshShowGravity(ShowGravity.PLACEHOLDER_CENTER, ShowGravity.PLACEHOLDER_FOLLOW);
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

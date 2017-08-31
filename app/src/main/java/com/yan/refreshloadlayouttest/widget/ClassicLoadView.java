@@ -38,7 +38,7 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
         super(context);
         this.refreshLayout = refreshLayout;
         this.refreshLayout.setFooterFront(true);
-        this.refreshLayout.setFooterShowGravity(ShowGravity.STATE_FOLLOW);
+        this.refreshLayout.setFooterShowGravity(ShowGravity.FOLLOW);
         // 设置 布局 为 match_parent
         setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
         setBackgroundColor(Color.WHITE);

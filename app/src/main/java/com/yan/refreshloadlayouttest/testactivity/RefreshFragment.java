@@ -40,7 +40,7 @@ public class RefreshFragment extends Fragment {
         final PullRefreshLayout refreshLayout = (PullRefreshLayout) view.findViewById(R.id.refreshLayout);
         refreshLayout.setHeaderView(new HeaderOrFooter(getContext(), "SemiCircleSpinIndicator"));
         refreshLayout.setFooterView(new HeaderOrFooter(getContext(), "BallScaleRippleMultipleIndicator"));
-        refreshLayout.setRefreshShowGravity(ShowGravity.STATE_CENTER, ShowGravity.STATE_CENTER);
+        refreshLayout.setRefreshShowGravity(ShowGravity.CENTER, ShowGravity.CENTER);
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {

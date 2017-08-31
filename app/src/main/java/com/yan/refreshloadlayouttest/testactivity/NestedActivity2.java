@@ -56,10 +56,10 @@ public class NestedActivity2 extends AppCompatActivity {
         refreshLayout.setLoadTriggerDistance(300);
         refreshLayout.setPullLimitDistance(500);
         refreshLayout.setHeaderView(new MaterialHeader(getBaseContext(),refreshLayout, 500F / 300));// 触发距离/拖动范围
-        refreshLayout.setHeaderShowGravity(ShowGravity.STATE_FOLLOW);
+        refreshLayout.setHeaderShowGravity(ShowGravity.FOLLOW);
         refreshLayout.setHeaderFront(true);
         refreshLayout.setFooterView(new MaterialHeader(getBaseContext(),refreshLayout, 500F/ 300));
-        refreshLayout.setFooterShowGravity(ShowGravity.STATE_FOLLOW);
+        refreshLayout.setFooterShowGravity(ShowGravity.FOLLOW);
         refreshLayout.setFooterFront(true);
         refreshLayout.setMoveWithContent(false);
 

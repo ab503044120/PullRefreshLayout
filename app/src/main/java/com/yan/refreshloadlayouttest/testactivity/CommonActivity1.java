@@ -46,7 +46,7 @@ public class CommonActivity1 extends AppCompatActivity {
 //        refreshLayout.setAdjustTwinkDuring(2);
 //        refreshLayout.setTwinkEnable(false);
         refreshLayout.setLoadMoreEnable(true);
-        refreshLayout.setRefreshShowGravity(ShowGravity.STATE_FOLLOW, ShowGravity.STATE_FOLLOW);
+        refreshLayout.setRefreshShowGravity(ShowGravity.FOLLOW, ShowGravity.FOLLOW);
 //        refreshLayout.setRefreshEnable(false);
 //        refreshLayout.setAutoLoadingEnable(true);
 //        refreshLayout.setDuringAdjustValue(10f);// 动画执行时间调节，越大动画执行越慢
