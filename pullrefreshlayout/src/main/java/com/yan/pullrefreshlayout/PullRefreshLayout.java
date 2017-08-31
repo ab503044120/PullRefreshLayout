@@ -11,11 +11,9 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ListViewCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -424,11 +422,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if ((type == 1 && (finalScrollDistance > moveDistance)) || (type == 2 && finalScrollDistance < moveDistance)) {
             cancelAllAnimation();
             if ((type == 1 && moveDistance <= tempDistance) || (type == 2 && moveDistance >= tempDistance)) {
-                Log.e("parentScrollConsumed1", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
                 dellScroll(-moveDistance);
                 return kindsOfViewsToNormalDell(type, tempDistance);
             }
-            Log.e("parentScrollConsumed2", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
             dellScroll(-tempDistance);
             return false;
         } else {
@@ -1039,27 +1035,20 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     void onPreScroll(int dy, int[] consumed) {
-        if (consumed.length == 3) {
-            consumed[2] = isMoveWithContent ? 1 : 0;
-        }
         if (dy > 0 && moveDistance > 0) {
             if (moveDistance - dy < 0) {
                 consumed[1] += moveDistance;
-                Log.e("parentScrollConsumed3", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
                 dellScroll(-moveDistance);
                 return;
             }
             consumed[1] += dy;
-            Log.e("parentScrollConsumed4", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
             dellScroll(-dy);
         } else if (dy < 0 && moveDistance < 0) {
             if (moveDistance - dy > 0) {
                 consumed[1] += moveDistance;
-                Log.e("parentScrollConsumed5", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
                 dellScroll(-moveDistance);
                 return;
             }
-            Log.e("parentScrollConsumed6", "onNestedPreScroll: " + parentScrollConsumed[1] + "    ");
             dellScroll(-dy);
             consumed[1] += dy;
         }

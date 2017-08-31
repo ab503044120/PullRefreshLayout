@@ -2,8 +2,6 @@ package com.yan.pullrefreshlayout;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.NestedScrollingChild;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
@@ -184,8 +182,8 @@ class GeneralPullHelper {
                     pullRefreshLayout.onScroll(deltaY - deltaYOffset);
 
                     // -------------------| event reset |--------------------
-                    ev.offsetLocation(0,   childConsumed[2] == 1 ? deltaYOffset : childConsumed[1]);
-                    ev.setLocation((int)ev.getX(),(int)ev.getY());
+                    ev.offsetLocation(0, pullRefreshLayout.isMoveWithContent ? deltaYOffset : childConsumed[1]);
+                    ev.setLocation((int) ev.getX(), (int) ev.getY());
                 }
                 break;
             case MotionEvent.ACTION_UP:
