@@ -50,7 +50,7 @@ class GeneralPullHelper {
     /**
      * motion event child consumed
      */
-    private int[] childConsumed = new int[3];
+    private int[] childConsumed = new int[2];
     private int lastChildConsumedY;
 
     /**
@@ -64,18 +64,9 @@ class GeneralPullHelper {
     private int activePointerId;
 
     /**
-     * nested y offset
-     */
-    private int nestedYOffset;
-
-    /**
      * last motion y
      */
     private int lastMotionY;
-    /**
-     * pre Move Y
-     */
-    private float preMoveY;
 
     /**
      * last touch y
@@ -100,7 +91,7 @@ class GeneralPullHelper {
         touchSlop = configuration.getScaledTouchSlop();
     }
 
-    boolean dispatchTouchEvent(MotionEvent ev) {
+    void dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 dellTouchEvent(ev);
@@ -132,15 +123,15 @@ class GeneralPullHelper {
                 velocityTrackerCompute(ev);
 
                 if (isTriggerMoveEvent) {
-                    return dellTouchEvent(ev);
+                    dellTouchEvent(ev);
+                    return;
                 }
 
                 float movingX = ev.getX() - actionDownPointX;
                 float movingY = ev.getY() - actionDownPointY;
                 if (((Math.sqrt(movingY * movingY + movingX * movingX) > touchSlop && Math.abs(movingY) > Math.abs(movingX)) || pullRefreshLayout.moveDistance != 0)) {
                     isTriggerMoveEvent = true;
-                    preMoveY = ev.getY();
-                    lastMotionY = (int) preMoveY;
+                    lastMotionY = (int) ev.getY();
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -150,18 +141,12 @@ class GeneralPullHelper {
                 isTriggerMoveEvent = false;
                 velocityY = 0;
                 dragState = 0;
-                preMoveY = 0;
                 break;
         }
-        return false;
     }
 
-    private boolean dellTouchEvent(MotionEvent ev) {
+    private void dellTouchEvent(MotionEvent ev) {
         int actionMasked = MotionEventCompat.getActionMasked(ev);
-        if (actionMasked == MotionEvent.ACTION_DOWN) {
-            nestedYOffset = 0;
-        }
-        ev.offsetLocation(0, nestedYOffset);
         switch (actionMasked) {
             case MotionEvent.ACTION_DOWN: {
                 pullRefreshLayout.onStartScroll();
@@ -170,8 +155,7 @@ class GeneralPullHelper {
             case MotionEvent.ACTION_MOVE:
                 if (!pullRefreshLayout.nestedScrollAble || !pullRefreshLayout.isMoveWithContent) {
                     if (activePointerId != ev.getPointerId(0)) {
-                        preMoveY = ev.getY();
-                        lastMotionY = (int) preMoveY;
+                        lastMotionY = (int) ev.getY();
                         activePointerId = ev.getPointerId(0);
                     }
 
@@ -189,8 +173,10 @@ class GeneralPullHelper {
                     pullRefreshLayout.onScroll(deltaY - deltaYOffset);
 
                     // -------------------| event reset |--------------------
-                    ev.offsetLocation(0, moveOffsetY = pullRefreshLayout.isMoveWithContent ? deltaYOffset : childConsumed[1]);
-                    ev.setLocation((int) ev.getX(), (int) ev.getY());
+                    if (!pullRefreshLayout.isMoveWithContent) {
+                        ev.offsetLocation(0, moveOffsetY = childConsumed[1]);
+                        ev.setLocation((int) ev.getX(), (int) ev.getY());
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -204,12 +190,10 @@ class GeneralPullHelper {
 
                 moveOffsetY = 0;
                 activePointerId = -1;
-                childConsumed[0] = 0;
                 childConsumed[1] = 0;
                 lastChildConsumedY = 0;
                 break;
         }
-        return false;
     }
 
     /**
