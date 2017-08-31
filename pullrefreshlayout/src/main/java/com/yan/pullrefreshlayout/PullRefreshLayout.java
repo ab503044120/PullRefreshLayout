@@ -102,8 +102,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * move With
      */
     private boolean isMoveWithFooter = true;
-    boolean isMoveWithContent = true;
     private boolean isMoveWithHeader = true;
+    boolean isMoveWithContent = true;
 
     /**
      * view front
@@ -148,7 +148,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
      * refreshing state trigger
      */
     private boolean isHoldingTrigger = false;
-    boolean isHoldingFinishTrigger = false;
+    private boolean isHoldingFinishTrigger = false;
     private boolean isResetTrigger = false;
     private boolean isOverScrollTrigger = false;
     private boolean isAutoLoadingTrigger = false;
