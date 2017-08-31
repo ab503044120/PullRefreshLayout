@@ -35,17 +35,19 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     /**
      * view children
+     * - use by showGravity to dell onLayout
      */
     View headerView;
     View footerView;
-    View targetView;
 
-    View pullContentLayout;
+    private View targetView;
+    private View pullContentLayout;
 
     //-------------------------START| values part |START-----------------------------
 
     /**
      * trigger distance
+     * - use by showGravity to control the layout move
      */
     int refreshTriggerDistance = 60;
     int loadTriggerDistance = 60;
@@ -100,6 +102,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     /**
      * move With
+     * isMoveWithContent:- use by generalHelper dell touch logic
      */
     private boolean isMoveWithFooter = true;
     private boolean isMoveWithHeader = true;
@@ -116,7 +119,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * current refreshing state 1:refresh 2:loadMore
      */
-    private volatile int refreshState = 0;
+    private int refreshState = 0;
 
     /**
      * last Scroll Y
@@ -131,8 +134,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     /**
      * drag move distance
+     * - use by generalHelper dell touch logic
      */
-    volatile int moveDistance = 0;
+    int moveDistance = 0;
 
     /**
      * final scroll distance
@@ -171,6 +175,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     /**
      * is nestedScrollAble
+     * - use by generalHelper to dell touch logic
      */
     boolean nestedScrollAble = false;
 
@@ -245,8 +250,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         overScrollDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_overScrollDampingRatio, overScrollDampingRatio);
         overScrollMaxTriggerOffset = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_overScrollMaxTriggerOffset, CommonUtils.dipToPx(context, overScrollMaxTriggerOffset));
 
-        showGravity.headerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, ShowGravity.STATE_FOLLOW);
-        showGravity.footerShowState = ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, ShowGravity.STATE_FOLLOW);
+        showGravity.headerShowGravity = ta.getInteger(R.styleable.PullRefreshLayout_prl_headerShowGravity, ShowGravity.FOLLOW);
+        showGravity.footerShowGravity = ta.getInteger(R.styleable.PullRefreshLayout_prl_footerShowGravity, ShowGravity.FOLLOW);
 
         targetViewId = ta.getResourceId(R.styleable.PullRefreshLayout_prl_targetId, targetViewId);
 
@@ -822,6 +827,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         nestedScrollAble = target instanceof NestedScrollingChild;
     }
+
     private void removeDelayRunnable() {
         if (delayHandleActionRunnable != null) {
             removeCallbacks(delayHandleActionRunnable);
@@ -1457,12 +1463,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     public void setHeaderShowGravity(@ShowGravity.ShowState int headerShowGravity) {
-        showGravity.headerShowState = headerShowGravity;
+        showGravity.headerShowGravity = headerShowGravity;
         requestLayout();
     }
 
     public void setFooterShowGravity(@ShowGravity.ShowState int footerShowGravity) {
-        showGravity.footerShowState = footerShowGravity;
+        showGravity.footerShowGravity = footerShowGravity;
         requestLayout();
     }
 

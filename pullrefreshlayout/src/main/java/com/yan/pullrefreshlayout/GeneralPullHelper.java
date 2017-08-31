@@ -27,11 +27,13 @@ class GeneralPullHelper {
 
     /**
      * is moving direct down
+     * - use by pullRefreshLayout to get moving direction
      */
     boolean isMovingDirectDown;
 
     /**
      * is touch direct down
+     * - use by pullRefreshLayout to get drag state
      */
     int dragState;
 
