@@ -12,6 +12,7 @@ import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -1030,7 +1031,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     void onPreScroll(int dy, int[] consumed) {
         if (dy > 0 && moveDistance > 0) {
-            if (moveDistance - dy < 0) {
+            if (dy > moveDistance) {
                 consumed[1] += moveDistance;
                 dellScroll(-moveDistance);
                 return;
@@ -1038,7 +1039,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             consumed[1] += dy;
             dellScroll(-dy);
         } else if (dy < 0 && moveDistance < 0) {
-            if (moveDistance - dy > 0) {
+            if (dy < moveDistance) {
                 consumed[1] += moveDistance;
                 dellScroll(-moveDistance);
                 return;

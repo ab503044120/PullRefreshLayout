@@ -54,11 +54,6 @@ class GeneralPullHelper {
     private int lastChildConsumedY;
 
     /**
-     * moveOffsetY
-     */
-    private int moveOffsetY;
-
-    /**
      * active pointer id
      */
     private int activePointerId;
@@ -92,10 +87,14 @@ class GeneralPullHelper {
     }
 
     void dispatchTouchEvent(MotionEvent ev) {
+        initVelocityTrackerIfNotExists();
+
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                velocityTracker.addMovement(ev);
+
                 dellTouchEvent(ev);
-                initVelocityTracker(ev);
+
                 actionDownPointX = ev.getX();
                 actionDownPointY = ev.getY();
                 lastTouchY = ev.getY();
@@ -117,16 +116,16 @@ class GeneralPullHelper {
                 }
                 lastTouchY = tempY;
 
-                /**
-                 * touch logic
-                 */
-                velocityTrackerCompute(ev);
-
                 if (isTriggerMoveEvent) {
+                    velocityTracker.addMovement(ev);
+
                     dellTouchEvent(ev);
                     return;
                 }
 
+                /**
+                 * touch logic
+                 */
                 float movingX = ev.getX() - actionDownPointX;
                 float movingY = ev.getY() - actionDownPointY;
                 if (((Math.sqrt(movingY * movingY + movingX * movingX) > touchSlop && Math.abs(movingY) > Math.abs(movingX)) || pullRefreshLayout.moveDistance != 0)) {
@@ -136,8 +135,12 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                velocityTracker.computeCurrentVelocity(1000, maximumVelocity);
+                velocityY = velocityTracker.getYVelocity();
+
+                recycleVelocityTracker();
+
                 dellTouchEvent(ev);
-                cancelVelocityTracker();
                 isTriggerMoveEvent = false;
                 velocityY = 0;
                 dragState = 0;
@@ -160,35 +163,28 @@ class GeneralPullHelper {
                     }
 
                     // --------------------| move offset |--------------------
-                    final int y = (int) ev.getY();
-                    int deltaY = lastMotionY - y;
-                    lastMotionY = y;
+                    int tempY = (int) ev.getY();
+                    int deltaY = lastMotionY - tempY;
+                    lastMotionY = tempY;
 
                     pullRefreshLayout.onPreScroll(deltaY, childConsumed);
-
-                    // ------------------| consume offset |-------------------
-                    int deltaYOffset = childConsumed[1] - lastChildConsumedY;
+                    pullRefreshLayout.onScroll(deltaY - (childConsumed[1] - lastChildConsumedY));
                     lastChildConsumedY = childConsumed[1];
-
-                    pullRefreshLayout.onScroll(deltaY - deltaYOffset);
 
                     // -------------------| event reset |--------------------
                     if (!pullRefreshLayout.isMoveWithContent) {
-                        ev.offsetLocation(0, moveOffsetY = childConsumed[1]);
-                        ev.setLocation((int) ev.getX(), (int) ev.getY());
+                        ev.setLocation(ev.getX(), (int) ev.getY() + childConsumed[1]);
                     }
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                ev.offsetLocation(0, moveOffsetY);
+                ev.offsetLocation(0, childConsumed[1]);
 
                 pullRefreshLayout.onStopScroll();
                 if (isTriggerMoveEvent && (Math.abs(velocityY) > minimumFlingVelocity)) {
                     pullRefreshLayout.onPreFling(-(int) velocityY);
                 }
-
-                moveOffsetY = 0;
                 activePointerId = -1;
                 childConsumed[1] = 0;
                 lastChildConsumedY = 0;
@@ -198,33 +194,18 @@ class GeneralPullHelper {
 
     /**
      * velocityTracker dell
-     *
-     * @param ev MotionEvent
      */
-    private void initVelocityTracker(MotionEvent ev) {
+
+    private void initVelocityTrackerIfNotExists() {
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain();
         }
-        velocityTracker.addMovement(ev);
     }
 
-    private void velocityTrackerCompute(MotionEvent ev) {
-        try {
-            velocityTracker.addMovement(ev);
-            velocityTracker.computeCurrentVelocity(1000, maximumVelocity);
-            velocityY = velocityTracker.getYVelocity();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void cancelVelocityTracker() {
-        try {
-            velocityTracker.clear();
+    private void recycleVelocityTracker() {
+        if (velocityTracker != null) {
             velocityTracker.recycle();
             velocityTracker = null;
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
