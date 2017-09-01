@@ -192,10 +192,6 @@ class GeneralPullHelper {
         }
     }
 
-    /**
-     * velocityTracker dell
-     */
-
     private void initVelocityTrackerIfNotExists() {
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain();
