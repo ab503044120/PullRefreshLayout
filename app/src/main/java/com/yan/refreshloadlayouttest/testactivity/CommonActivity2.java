@@ -47,7 +47,7 @@ public class CommonActivity2 extends CommonActivity1 {
         horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                isTouch[0] = !(event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL);
+                isTouch[0] = event.getActionMasked() == MotionEvent.ACTION_MOVE;
                 return false;
             }
         });
