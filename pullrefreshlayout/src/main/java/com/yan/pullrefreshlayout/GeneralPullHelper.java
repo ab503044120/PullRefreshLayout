@@ -106,7 +106,7 @@ class GeneralPullHelper {
                 /**
                  * director dell
                  */
-                float tempY = ev.getY();
+                float tempY = ev.getRawY();
                 if (tempY - lastTouchY > 0) {
                     dragState = 1;
                     isMovingDirectDown = true;
@@ -136,8 +136,7 @@ class GeneralPullHelper {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 velocityTracker.computeCurrentVelocity(1000, maximumVelocity);
-                velocityY = velocityTracker.getYVelocity();
-
+                velocityY = (isMovingDirectDown ? 1 : -1) * Math.abs(velocityTracker.getYVelocity());
                 recycleVelocityTracker();
 
                 dellTouchEvent(ev);
@@ -156,7 +155,7 @@ class GeneralPullHelper {
                 break;
             }
             case MotionEvent.ACTION_MOVE:
-                if (!pullRefreshLayout.nestedScrollAble || !pullRefreshLayout.isMoveWithContent) {
+                if (!pullRefreshLayout.isTargetNestedScrollingEnabled() || !pullRefreshLayout.isMoveWithContent) {
                     if (activePointerId != ev.getPointerId(0)) {
                         lastMotionY = (int) ev.getY();
                         activePointerId = ev.getPointerId(0);

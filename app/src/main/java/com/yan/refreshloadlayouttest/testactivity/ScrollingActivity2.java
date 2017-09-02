@@ -1,53 +1,79 @@
 package com.yan.refreshloadlayouttest.testactivity;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
 
+/**
+ * 微博列表
+ * code modify from SmartRefreshLayout
+ */
 public class ScrollingActivity2 extends AppCompatActivity {
-    private static final String TAG = "NestedActivity";
-    private PullRefreshLayout refreshLayout;
-    AppBarLayout appBarLayout;
-    private int verticalOffset;
-    private NestedScrollView nestedScrollView;
+
+    private int mOffset = 0;
+    private int mScrollY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling2);
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        nestedScrollView = (NestedScrollView) findViewById(R.id.nsv_scroll);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                finish();
             }
         });
-        initRefreshLayout();
-        setImages();
-        refreshLayout.postDelayed(new Runnable() {
+
+        final View parallax = findViewById(R.id.parallax);
+        final View buttonBar = findViewById(R.id.buttonBarLayout);
+        final NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.scrollView);
+        final PullRefreshLayout refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
+        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
-            public void run() {
-                refreshLayout.autoRefresh();
+            public void onRefresh() {
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.refreshComplete();
+                    }
+                },2000);
             }
-        }, 150);
+
+            @Override
+            public void onLoading() {
+
+            }
+        });
+        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            private int lastScrollY = 0;
+            private int h = 340;
+            private int color = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary) & 0x00ffffff;
+
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (lastScrollY < h) {
+                    scrollY = Math.min(h, scrollY);
+                    mScrollY = scrollY > h ? h : scrollY;
+                    buttonBar.setAlpha(1f * mScrollY / h);
+                    toolbar.setBackgroundColor(((255 * mScrollY / h) << 24) | color);
+                    parallax.setTranslationY(mOffset - mScrollY);
+                }
+                lastScrollY = scrollY;
+            }
+        });
+        buttonBar.setAlpha(0);
+        toolbar.setBackgroundColor(0);
+        setImages();
     }
 
     private void setImages() {
@@ -74,54 +100,4 @@ public class ScrollingActivity2 extends AppCompatActivity {
                 .into((ImageView) findViewById(R.id.iv7));
     }
 
-    private void initRefreshLayout() {
-        refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setTwinkEnable(true);
-        refreshLayout.setLoadMoreEnable(true);
-        refreshLayout.setTargetView(nestedScrollView);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator", Color.WHITE));
-        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator", Color.WHITE));
-        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListenerAdapter() {
-            @Override
-            public void onRefresh() {
-                Log.e(TAG, "refreshLayout onRefresh: ");
-                refreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLayout.refreshComplete();
-                    }
-                }, 3000);
-            }
-
-            @Override
-            public void onLoading() {
-                refreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLayout.loadMoreComplete();
-                    }
-                }, 3000);
-            }
-        });
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                ScrollingActivity2.this.verticalOffset = verticalOffset;
-            }
-        });
-        refreshLayout.setOnDragIntercept(
-                new PullRefreshLayout.OnDragInterceptAdapter() {
-                    @Override
-                    public boolean onHeaderDownIntercept() {
-                        return !refreshLayout.isMovingDirectDown() || verticalOffset == 0;
-                    }
-
-                    @Override
-                    public boolean onFooterUpIntercept() {
-                        Log.e(TAG, "onFooterUpIntercept: " + refreshLayout.isMovingDirectDown() + "   " + verticalOffset + "   " + appBarLayout.getTotalScrollRange());
-                        return refreshLayout.isMovingDirectDown() || verticalOffset == -appBarLayout.getTotalScrollRange();
-                    }
-                }
-        );
-    }
 }

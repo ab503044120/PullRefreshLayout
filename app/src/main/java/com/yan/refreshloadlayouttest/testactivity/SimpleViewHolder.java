@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yan.refreshloadlayouttest.R;
 
@@ -20,5 +21,11 @@ public class SimpleViewHolder extends RecyclerView.ViewHolder {
         super(view);
         tv = (TextView) view.findViewById(R.id.id_num);
         iv = (ImageView) view.findViewById(R.id.iv);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "you just touched me", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -36,6 +36,15 @@ public class HeaderOrFooter extends PullRefreshView {
         loadingView.setIndicatorColor(color);
     }
 
+    public HeaderOrFooter(Context context) {
+        super(context);
+        initView();
+        color = ContextCompat.getColor(context, R.color.colorPrimary);
+        this.animationName = "LineScaleIndicator";
+        loadingView.setIndicator(animationName);
+        loadingView.setIndicatorColor(color);
+    }
+
     public HeaderOrFooter(Context context, String animationName) {
         super(context);
         color = ContextCompat.getColor(context, R.color.colorPrimary);
@@ -67,12 +76,6 @@ public class HeaderOrFooter extends PullRefreshView {
     @Override
     protected void initView() {
         tv = (TextView) findViewById(R.id.title);
-        tv.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "you just touched me", Toast.LENGTH_SHORT).show();
-            }
-        });
         loadingView = (AVLoadingIndicatorView) findViewById(R.id.loading_view);
     }
 

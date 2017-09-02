@@ -92,10 +92,10 @@ public class NestedActivity extends AppCompatActivity {
                         }
                         datas.add(new SimpleItem(R.drawable.img4, "夏目友人帐"));
                         adapter.notifyItemInserted(datas.size());
-
                         refreshLayout.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                // 阻止refreshLayout的默认事件分发
                                 recyclerView.scrollBy(0, -refreshLayout.getMoveDistance());
                                 classicLoadView.startBackAnimation();
                             }

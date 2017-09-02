@@ -11,12 +11,13 @@ import com.bumptech.glide.Glide;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.refreshloadlayouttest.R;
+import com.yan.refreshloadlayouttest.widget.NestedFrameLayout;
 
 /**
  * Created by Administrator on 2017/7/16 0016.
  */
 
-public class PlaceHolderHeader extends FrameLayout implements PullRefreshLayout.OnPullListener {
+public class PlaceHolderHeader extends NestedFrameLayout implements PullRefreshLayout.OnPullListener {
     public PlaceHolderHeader(@NonNull Context context) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.refresh_view_big, this, true);

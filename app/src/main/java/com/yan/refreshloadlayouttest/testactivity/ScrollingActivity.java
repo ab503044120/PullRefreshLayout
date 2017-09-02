@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +16,8 @@ import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
+
+import java.util.ArrayList;
 
 public class ScrollingActivity extends AppCompatActivity {
     private static final String TAG = "NestedActivity";
@@ -32,7 +37,7 @@ public class ScrollingActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        setImages();
+        initRecyclerView();
         initRefreshLayout();
         refreshLayout.postDelayed(new Runnable() {
             @Override
@@ -41,29 +46,22 @@ public class ScrollingActivity extends AppCompatActivity {
             }
         }, 150);
     }
-    private void setImages() {
-        Glide.with(this)
-                .load(R.drawable.img1)
-                .into((ImageView) findViewById(R.id.iv1));
-        Glide.with(this)
-                .load(R.drawable.img2)
-                .into((ImageView) findViewById(R.id.iv2));
-        Glide.with(this)
-                .load(R.drawable.img3)
-                .into((ImageView) findViewById(R.id.iv3));
-        Glide.with(this)
-                .load(R.drawable.img4)
-                .into((ImageView) findViewById(R.id.iv4));
-        Glide.with(this)
-                .load(R.drawable.img5)
-                .into((ImageView) findViewById(R.id.iv5));
-        Glide.with(this)
-                .load(R.drawable.img6)
-                .into((ImageView) findViewById(R.id.iv6));
-        Glide.with(this)
-                .load(R.drawable.loading_bg)
-                .into((ImageView) findViewById(R.id.iv7));
+
+    private void initRecyclerView() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_data);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ArrayList<SimpleItem> datas = new ArrayList<>();
+        datas.add(new SimpleItem(R.drawable.img1, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img2, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img3, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img4, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img5, "夏目友人帐"));
+        datas.add(new SimpleItem(R.drawable.img6, "夏目友人帐"));
+        SimpleAdapter adapter = new SimpleAdapter(this, datas);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
+
     private void initRefreshLayout() {
         refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
         refreshLayout.setLoadMoreEnable(true);

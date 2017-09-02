@@ -5,10 +5,13 @@
         <attr name="prl_loadMoreEnable" format="boolean" />
         <attr name="prl_twinkEnable" format="boolean" />
         <attr name="prl_autoLoadingEnable" format="boolean" />
+        <attr name="prl_headerFront" format="boolean" />
+        <attr name="prl_footerFront" format="boolean" />
 
         <attr name="prl_refreshTriggerDistance" format="dimension" />
         <attr name="prl_loadTriggerDistance" format="dimension" />
-        <attr name="prl_pullLimitDistance" format="dimension" />
+        <attr name="prl_pullDownLimitDistance" format="dimension" />
+        <attr name="prl_pullUpLimitDistance" format="dimension" />
         <attr name="prl_overScrollMaxTriggerOffset" format="dimension" />
 
         <attr name="prl_dragDampingRatio" format="float" />

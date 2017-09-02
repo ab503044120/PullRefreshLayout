@@ -4,18 +4,16 @@ import android.content.Context;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.FrameLayout;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 
 /**
  * Created by yan on 2017/4/11.
  */
-public class PullRefreshView extends FrameLayout implements PullRefreshLayout.OnPullListener {
+public class PullRefreshView extends NestedFrameLayout implements PullRefreshLayout.OnPullListener {
     private static final String TAG = "PullView";
 
     public PullRefreshView(Context context) {

@@ -79,7 +79,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
      
     refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度 default 60dp
     refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度 default 60dp
-    refreshLayout.setPullLimitDistance(400);// 拖拽最大范围，为-1时拖拽范围不受限制 default -1
+    refreshLayout.setPullUpLimitDistance(400);// 向上拖拽最大范围，为-1时拖拽范围不受限制 default 0
+    refreshLayout.setPullDownLimitDistance(400);// 向下拖拽最大范围，为-1时拖拽范围不受限制 default 0
 
     refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断效果 见 BEHAIVOR2
    
@@ -140,7 +141,10 @@ compile 'com.yan:pullrefreshlayout:(↖)'
         app:prl_loadTriggerDistance="70dp"
         app:prl_overScrollDampingRatio="0.2"
         app:prl_overScrollMaxTriggerOffset="80dp"
-        app:prl_pullLimitDistance="150dp"
+        app:prl_pullDownLimitDistance="150dp"
+        app:prl_pullUpLimitDistance="150dp"
+        app:prl_headerFront="true"
+        app:prl_footerFront="true"
         app:prl_targetId="@+id/recyclerView"
         app:prl_refreshEnable="true"
         app:prl_refreshTriggerDistance="90dp"

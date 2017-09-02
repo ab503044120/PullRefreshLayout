@@ -55,7 +55,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     /**
      * max drag distance
      */
-    private int pullLimitDistance = -1;
+    private int pullDownLimitDistance = 0;
+    private int pullUpLimitDistance = 0;
 
     /**
      * animation without overScroll total during
@@ -174,10 +175,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private boolean isScrollAbleViewBackScroll = false;
 
     /**
-     * is nestedScrollAble
-     * - use by generalHelper to dell touch logic
+     * is isTargetNested
      */
-    boolean nestedScrollAble = false;
+    private boolean isTargetNested = false;
 
     private boolean isAttachWindow = false;
 
@@ -230,6 +230,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         pullLoadMoreEnable = ta.getBoolean(R.styleable.PullRefreshLayout_prl_loadMoreEnable, pullLoadMoreEnable);
         pullTwinkEnable = ta.getBoolean(R.styleable.PullRefreshLayout_prl_twinkEnable, pullTwinkEnable);
         autoLoadingEnable = ta.getBoolean(R.styleable.PullRefreshLayout_prl_autoLoadingEnable, autoLoadingEnable);
+        isHeaderFront = ta.getBoolean(R.styleable.PullRefreshLayout_prl_headerFront, isHeaderFront);
+        isFooterFront = ta.getBoolean(R.styleable.PullRefreshLayout_prl_footerFront, isFooterFront);
 
         refreshTriggerDistance = CommonUtils.dipToPx(context, refreshTriggerDistance);
         loadTriggerDistance = CommonUtils.dipToPx(context, loadTriggerDistance);
@@ -241,7 +243,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             isFooterHeightSet = true;
             loadTriggerDistance = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_loadTriggerDistance, loadTriggerDistance);
         }
-        pullLimitDistance = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_pullLimitDistance, pullLimitDistance);
+        pullDownLimitDistance = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_pullDownLimitDistance, pullDownLimitDistance);
+        pullUpLimitDistance = ta.getDimensionPixelOffset(R.styleable.PullRefreshLayout_prl_pullUpLimitDistance, pullUpLimitDistance);
 
         animationDuring = ta.getInt(R.styleable.PullRefreshLayout_prl_animationDuring, animationDuring);
         dragDampingRatio = ta.getFloat(R.styleable.PullRefreshLayout_prl_dragDampingRatio, dragDampingRatio);
@@ -454,7 +457,7 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             ((ScrollView) targetView).fling(velocity);
         } else if (targetView instanceof WebView && !isScrollAbleViewBackScroll) {
             ((WebView) targetView).flingScroll(0, velocity);
-        } else if (!nestedScrollAble && targetView instanceof RecyclerView && !isScrollAbleViewBackScroll) {
+        } else if (targetView instanceof RecyclerView && !isTargetNested && !isScrollAbleViewBackScroll) {
             ((RecyclerView) targetView).fling(0, velocity);
         } else if (targetView instanceof RecyclerView && ((type == 2 && !CommonUtils.canChildScrollUp(targetView))
                 || (type == 1 && !CommonUtils.canChildScrollDown(targetView)))) {
@@ -558,13 +561,17 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         }
         int tempDistance = (int) (moveDistance + distanceY);
 
-        if (pullLimitDistance != -1) {
-            tempDistance = Math.min(tempDistance, pullLimitDistance);
-            tempDistance = Math.max(tempDistance, -pullLimitDistance);
+        if (pullDownLimitDistance != 0) {
+            tempDistance = Math.min(tempDistance, pullDownLimitDistance);
         } else {
             tempDistance = Math.min(getHeight() + refreshTriggerDistance, tempDistance);
+        }
+        if (pullUpLimitDistance != 0) {
+            tempDistance = Math.max(tempDistance, -pullUpLimitDistance);
+        } else {
             tempDistance = Math.max(-getHeight() - loadTriggerDistance, tempDistance);
         }
+
         if (!pullTwinkEnable && ((refreshState == 1 && tempDistance < 0) || (refreshState == 2 && tempDistance > 0))) {
             if (moveDistance == 0) {
                 return;
@@ -823,12 +830,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         View target = targetView;
         while (target != pullContentLayout) {
             if (!(target instanceof NestedScrollingChild)) {
-                nestedScrollAble = false;
+                isTargetNested = false;
                 return;
             }
             target = (View) target.getParent();
         }
-        nestedScrollAble = target instanceof NestedScrollingChild;
+        isTargetNested = (target instanceof NestedScrollingChild);
     }
 
     private void removeDelayRunnable() {
@@ -869,7 +876,16 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     }
 
     private boolean nestedAble(View target) {
-        return nestedScrollAble || !(target instanceof NestedScrollingChild);
+        return isTargetNestedScrollingEnabled() || !(target instanceof NestedScrollingChild);
+    }
+
+    /**
+     * - use by generalHelper to dell touch logic
+     *
+     * @return
+     */
+    boolean isTargetNestedScrollingEnabled() {
+        return isTargetNested && ViewCompat.isNestedScrollingEnabled(targetView);
     }
 
     private boolean flingAble() {
@@ -1013,7 +1029,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     private final ValueAnimator.AnimatorUpdateListener overScrollAnimatorUpdate = new ValueAnimator.AnimatorUpdateListener() {
         public void onAnimationUpdate(ValueAnimator animation) {
             int offsetY = (int) ((Integer) animation.getAnimatedValue() * overScrollDampingRatio);
-            dispatchNestedScroll(0, 0, 0, offsetY, parentOffsetInWindow);
+            if (ViewCompat.isNestedScrollingEnabled(targetView)) {
+                dispatchNestedScroll(0, 0, 0, offsetY, parentOffsetInWindow);
+            }
             onScroll(offsetY + parentOffsetInWindow[1]);
         }
     };
@@ -1050,8 +1068,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     void onScroll(int dy) {
         if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()) || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown())) {
-            dy = Math.abs(parentScrollConsumed[1]) > Math.abs(dy) ? 0 : dy - parentScrollConsumed[1];
-
             dy = (int) (dy * dragDampingRatio);
             dellScroll(-dy);
         }
@@ -1124,7 +1140,6 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
     @Override
     public void onStopNestedScroll(View child) {
         parentHelper.onStopNestedScroll(child);
-        parentScrollConsumed[1] = 0;
         stopNestedScroll();
     }
 
@@ -1431,8 +1446,12 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         this.loadTriggerDistance = loadTriggerDistance;
     }
 
-    public void setPullLimitDistance(int pullLimitDistance) {
-        this.pullLimitDistance = pullLimitDistance;
+    public void setPullDownLimitDistance(int pullDownLimitDistance) {
+        this.pullDownLimitDistance = pullDownLimitDistance;
+    }
+
+    public void setPullUpLimitDistance(int pullUpLimitDistance) {
+        this.pullUpLimitDistance = pullUpLimitDistance;
     }
 
     public void setOverScrollAdjustValue(float overScrollAdjustValue) {
