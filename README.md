@@ -15,8 +15,9 @@ header和状态切换演示gif
 ![演示gif](gif/demo.gif) 
 
 ## 1.概述
+####本库的主要特点:和与其他回弹刷新库相比更加真实的回弹效果、即使控件不可滑动,也有惯性缓冲效果(ps:如何触发——比如下拉到一定距离不放，往回滑动，即可看到效果)
 对所有基础控件(包括，嵌套滑动例如RecyclerView、NestedScrollView，普通的TextView、ListView、ScrollerView、LinearLayout等)提供下拉刷新、上拉加载的支持
-，且实现无痕过度，和与其他库相比更真实的回弹效果，随意定制header和footer，移动的或者不可以动的，完全不受限制（动画可以onPullChange()完全自主设置）。
+，且实现无痕过度，和与其他库相比更真实的回弹效果(（即使不是滑动控件）也有惯性缓冲效果)，随意定制header和footer，移动的或者不可以动的，完全不受限制（动画可以onPullChange()完全自主设置）。
 <br/>
 ps:本库没有做解耦处理（那样会增加.class，大小也会增加），目的是使库足够小，而且本库功能目的明确，不必做无用功。
 
@@ -27,14 +28,14 @@ compile 'com.yan:pullrefreshlayout:(↖)'
 支持所有基础控件
 <br/>
 <br/>
-#### loading 出现效果默认(STATE_PLACEHOLDER、STATE_FOLLOW、STATE_PLACEHOLDER_FOLLOW、STATE_CENTER、STATE_PLACEHOLDER_CENTER、STATE_FOLLOW_CENTER、STATE_CENTER_FOLLOW)
-![STATE_PLACEHOLDER](gif/placeholder.gif)
-![STATE_FOLLOW](gif/follow.gif)
-![STATE_PLACEHOLDER_FOLLOW](gif/placeholder_follow.gif)
-![STATE_PLACEHOLDER_CENTER](gif/placeholder_center.gif)
-![STATE_CENTER](gif/center.gif)
-![STATE_FOLLOW_CENTER](gif/follow_center.gif)
-![STATE_CENTER_FOLLOW](gif/center_follow.gif)
+#### loading 出现效果默认(PLACEHOLDER、FOLLOW、PLACEHOLDER_FOLLOW、CENTER、PLACEHOLDER_CENTER、FOLLOW_CENTER、CENTER_FOLLOW)
+![PLACEHOLDER](gif/placeholder.gif)
+![FOLLOW](gif/follow.gif)
+![PLACEHOLDER_FOLLOW](gif/placeholder_follow.gif)
+![PLACEHOLDER_CENTER](gif/placeholder_center.gif)
+![CENTER](gif/center.gif)
+![FOLLOW_CENTER](gif/follow_center.gif)
+![CENTER_FOLLOW](gif/center_follow.gif)
 
 ```
 //-控件设置-
@@ -106,13 +107,13 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     
     /**
     * 设置header或者footer的的出现方式,默认7种方式
-    * STATE_FOLLOW, STATE_PLACEHOLDER_FOLLOW, STATE_PLACEHOLDER_CENTER
-    * , STATE_CENTER, STATE_CENTER_FOLLOW, STATE_FOLLOW_CENTER
-    * ,STATE_PLACEHOLDER
+    * FOLLOW, PLACEHOLDER_FOLLOW, PLACEHOLDER_CENTER
+    * , CENTER, CENTER_FOLLOW, FOLLOW_CENTER
+    * ,PLACEHOLDER
     */
-    refreshLayout.setRefreshShowGravity(RefreshShowHelper.STATE_CENTER,RefreshShowHelper.STATE_CENTER);
-    refreshLayout.setHeaderShowGravity(RefreshShowHelper.STATE_CENTER)// header出现动画
-    refreshLayout.setFooterShowGravity(RefreshShowHelper.STATE_CENTER)// footer出现动画
+    refreshLayout.setRefreshShowGravity(RefreshShowHelper.CENTER,RefreshShowHelper.CENTER);
+    refreshLayout.setHeaderShowGravity(RefreshShowHelper.CENTER)// header出现动画
+    refreshLayout.setFooterShowGravity(RefreshShowHelper.CENTER)// footer出现动画
     // PullRefreshLayout.OnPullListener
         public interface OnPullListener {
             // 刷新或加载过程中位置相刷新或加载触发位置的百分比，时刻调用
@@ -129,7 +130,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
         app:prl_autoLoadingEnable="false"
         app:prl_dragDampingRatio="0.6"
         app:prl_animationDuring="300"
-        app:prl_footerShowGravity="stateFollow"
+        app:prl_footerShowGravity="follow"
         app:prl_footerViewId="@layout/header_or_footer"
         app:prl_headerViewId="@layout/header_or_footer"
         app:prl_headerClass="com.yan.refreshloadlayouttest.testactivity.PlaceHolderHeader"

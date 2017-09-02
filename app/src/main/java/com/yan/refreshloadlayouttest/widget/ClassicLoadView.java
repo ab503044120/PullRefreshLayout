@@ -82,7 +82,6 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
         objectAnimator.setFloatValues(getY(), getY() - moveDistance);
         objectAnimator.start();
 
-        onPullFinish();
     }
 
     public void loadFinish() {
