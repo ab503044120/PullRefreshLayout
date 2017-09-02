@@ -148,5 +148,6 @@ public class ClassicLoadView extends FrameLayout implements PullRefreshLayout.On
 
     @Override
     public void onPullReset() {
+        Log.e("onPullReset", "onPullReset: ");
     }
 }
