@@ -330,6 +330,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         if (footerView != null && !isFooterHeightSet) {
             loadTriggerDistance = footerView.getMeasuredHeight();
         }
+
+        if (pullDownLimitDistance == 0) {
+            pullDownLimitDistance = getMeasuredHeight();
+        }
+        if (pullUpLimitDistance == 0) {
+            pullUpLimitDistance = getMeasuredHeight();
+        }
     }
 
     @Override
@@ -560,17 +567,8 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
             return;
         }
         int tempDistance = (int) (moveDistance + distanceY);
-
-        if (pullDownLimitDistance != 0) {
-            tempDistance = Math.min(tempDistance, pullDownLimitDistance);
-        } else {
-            tempDistance = Math.min(getHeight() + refreshTriggerDistance, tempDistance);
-        }
-        if (pullUpLimitDistance != 0) {
-            tempDistance = Math.max(tempDistance, -pullUpLimitDistance);
-        } else {
-            tempDistance = Math.max(-getHeight() - loadTriggerDistance, tempDistance);
-        }
+        tempDistance = Math.min(tempDistance, pullDownLimitDistance);
+        tempDistance = Math.max(tempDistance, -pullUpLimitDistance);
 
         if (!pullTwinkEnable && ((refreshState == 1 && tempDistance < 0) || (refreshState == 2 && tempDistance > 0))) {
             if (moveDistance == 0) {
@@ -1068,7 +1066,13 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     void onScroll(int dy) {
         if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()) || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown())) {
-            dy = (int) (dy * dragDampingRatio);
+            if (dy < 0 && pullDownLimitDistance != 0 && moveDistance - dy > pullDownLimitDistance * dragDampingRatio) {
+                dy = (int) (dy * (1 - (moveDistance / (float) pullDownLimitDistance)));
+            } else if (dy > 0 && pullUpLimitDistance != 0 && -moveDistance + dy > pullUpLimitDistance * dragDampingRatio) {
+                dy = (int) (dy * (1 - (-moveDistance / (float) pullUpLimitDistance)));
+            } else {
+                dy = (int) (dy * dragDampingRatio);
+            }
             dellScroll(-dy);
         }
     }
