@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.refreshloadlayouttest.R;
 import com.yan.refreshloadlayouttest.widget.PhoenixHeader;
+import com.yan.refreshloadlayouttest.widget.fungame.FunGameBattleCityHeader;
+import com.yan.refreshloadlayouttest.widget.fungame.FunGameHitBlockHeader;
 
 import static android.content.ContentValues.TAG;
 
@@ -72,6 +74,12 @@ public class RefreshFragment extends Fragment {
         switch (getArguments().getInt("index")) {
             case 1:
                 refreshLayout.setHeaderView(new PhoenixHeader(getContext(), refreshLayout));
+                break;
+            case 2:
+                refreshLayout.setHeaderView(new FunGameHitBlockHeader(getContext(), refreshLayout));
+                break;
+          case 3:
+                refreshLayout.setHeaderView(new FunGameBattleCityHeader(getContext(), refreshLayout));
                 break;
         }
     }

@@ -1,13 +1,18 @@
 # PullRefreshLayout
-[![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.2-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
-[![Latest Version](https://img.shields.io/badge/Latest%20Version-2.0.2-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
+[![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.3-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
+[![Latest Version](https://img.shields.io/badge/Latest%20Version-2.0.3-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/MinSdk-11%2B-green.svg)](https://android-arsenal.com/api?level=11) 
 [![Methods](https://img.shields.io/badge/Methods%20and%20size-393%20%7C%2036%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A2.0.2)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
 header和状态切换演示gif
 <br/>
 
-![header和状态切换演示gif](gif/swipe_refresh.gif) 
+![header和状态切换演示gif](gif/swipe_refresh.gif)
+
+fun header 来自from https://github.com/scwang90/SmartRefreshLayout
+<br/>
+
+![header和状态切换演示gif](gif/fun_header.gif) 
 ![header和状态切换演示gif](gif/new_demo.gif) 
 
 <br/>
@@ -21,7 +26,7 @@ header和状态切换演示gif
 <br/>
 ps:本库没有做解耦处理（那样会增加.class，大小也会增加），目的是使库足够小，而且本库功能目的明确，不必做无用功。
 
-## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.2-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
+## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.3-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
 compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 ## 2.说明  
@@ -224,6 +229,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  version:2.0.0 ： 新增SwipeRefreshLayout效果,优化
  <br/>
  version:2.0.2 ： 新增viewpager实例
+ <br/>
+ version:2.0.3 ： dragState 状态调整
  
 ## 4.demo用到的库
  loading 动画
