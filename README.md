@@ -6,14 +6,13 @@
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
 header和状态切换演示gif
 <br/>
-
 ![header和状态切换演示gif](gif/swipe_refresh.gif)
+![header和状态切换演示gif](gif/new_demo.gif) 
 
 fun header 来自from https://github.com/scwang90/SmartRefreshLayout
 <br/>
 
 ![header和状态切换演示gif](gif/fun_header.gif) 
-![header和状态切换演示gif](gif/new_demo.gif) 
 
 <br/>
 
