@@ -1,8 +1,8 @@
 # PullRefreshLayout
-[![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.1-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
-[![Latest Version](https://img.shields.io/badge/Latest%20Version-2.0.1-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
+[![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.2-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
+[![Latest Version](https://img.shields.io/badge/Latest%20Version-2.0.2-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/MinSdk-11%2B-green.svg)](https://android-arsenal.com/api?level=11) 
-[![Methods](https://img.shields.io/badge/Methods%20and%20size-371%20%7C%2035%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A2.0.0)
+[![Methods](https://img.shields.io/badge/Methods%20and%20size-393%20%7C%2036%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.yan%3Apullrefreshlayout%3A2.0.2)
 ### [DEMO下载](https://github.com/genius158/PullRefreshLayout/raw/master/demo.apk)
 header和状态切换演示gif
 <br/>
@@ -21,14 +21,14 @@ header和状态切换演示gif
 <br/>
 ps:本库没有做解耦处理（那样会增加.class，大小也会增加），目的是使库足够小，而且本库功能目的明确，不必做无用功。
 
-## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.1-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
+## gradle  [![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.2-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout)  ↘
 compile 'com.yan:pullrefreshlayout:(↖)'
 <br/>
 ## 2.说明  
 支持所有基础控件
 <br/>
 <br/>
-#### loading 出现效果默认(PLACEHOLDER、FOLLOW、PLACEHOLDER_FOLLOW、CENTER、PLACEHOLDER_CENTER、FOLLOW_CENTER、CENTER_FOLLOW)
+#### loading 出现效果默认(PLACEHOLDER、FOLLOW、PLACEHOLDER_FOLLOW、CENTER、PLACEHOLDER_CENTER、FOLLOW_CENTER、CENTER_FOLLOW、FOLLOW_PLACEHOLDER)
 ![PLACEHOLDER](gif/placeholder.gif)
 ![FOLLOW](gif/follow.gif)
 ![PLACEHOLDER_FOLLOW](gif/placeholder_follow.gif)
@@ -74,15 +74,20 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     refreshLayout.isLoading();// 是否正在加载
     refreshLayout.isOverScrollDown();// 是否正在向下越界回弹
     refreshLayout.isOverScrollUp();// 是否正在向上越界回弹
+    
+    refreshLayout.isHoldingTrigger();// 是否已经触发刷新或加载
+    refreshLayout.isHoldingFinishTrigger();// 是否已经触发刷新或加载完毕
      
     refreshLayout.getMoveDistance();// 得到refreshlayout的移动距离
+    refreshlayout.getRefreshTriggerDistance();// 得到下拉刷新的触发距离
+    refreshlayout.getLoadingTriggerDistance();// 得到上拉加载的触发距离
      
     refreshLayout.setRefreshTriggerDistance(200);// 设置下拉刷新触发位置，默认为header的高度 default 60dp
     refreshLayout.setLoadTriggerDistance(200);// 设置上拉加载触发位置，默认为footer的高度 default 60dp
-    refreshLayout.setPullUpLimitDistance(400);// 向上拖拽最大范围，为-1时拖拽范围不受限制 default 0
-    refreshLayout.setPullDownLimitDistance(400);// 向下拖拽最大范围，为-1时拖拽范围不受限制 default 0
+    refreshLayout.setPullUpLimitDistance(400);// 向上拖拽最大范围，默认控件高度
+    refreshLayout.setPullDownLimitDistance(400);// 向下拖拽最大范围，默认控件高度
 
-    refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断效果 见 BEHAIVOR2
+    refreshLayout.setTargetView(nestedScrollView);// 设置目标view，可以改变滑动判断
    
     refreshLayout.setDispatchPullTouchAble(false);// 是否阻止pullrefreshLayout的默认事件分发(下拉滑动的逻辑)
     refreshLayout.setFooterFront(true);// 设置footer前置 default false
@@ -108,9 +113,10 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     
     /**
     * 设置header或者footer的的出现方式,默认7种方式
-    * FOLLOW, PLACEHOLDER_FOLLOW, PLACEHOLDER_CENTER
-    * , CENTER, CENTER_FOLLOW, FOLLOW_CENTER
-    * ,PLACEHOLDER
+    * FOLLOW,FOLLOW_PLACEHOLDER, PLACEHOLDER_FOLLOW
+    * , FOLLOW_CENTER, PLACEHOLDER_CENTER
+    * , CENTER, CENTER_FOLLOW
+    * , PLACEHOLDER
     */
     refreshLayout.setRefreshShowGravity(RefreshShowHelper.CENTER,RefreshShowHelper.CENTER);
     refreshLayout.setHeaderShowGravity(RefreshShowHelper.CENTER)// header出现动画
@@ -216,6 +222,8 @@ compile 'com.yan:pullrefreshlayout:(↖)'
  
  <br/>
  version:2.0.0 ： 新增SwipeRefreshLayout效果,优化
+ <br/>
+ version:2.0.2 ： 新增viewpager实例
  
 ## 4.demo用到的库
  loading 动画

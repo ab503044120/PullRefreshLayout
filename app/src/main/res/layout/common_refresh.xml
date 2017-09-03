@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:prl_headerShowGravity="placeholder"
-    app:prl_pullUpLimitDistance="2250dp"
+    app:prl_pullUpLimitDistance="250dp"
     app:prl_targetId="@id/sv">
 
     <FrameLayout

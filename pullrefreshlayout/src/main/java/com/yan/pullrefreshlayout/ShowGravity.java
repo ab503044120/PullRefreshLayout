@@ -14,10 +14,9 @@ public class ShowGravity {
     /**
      * @ShowState
      */
-    @IntDef({FOLLOW, FOLLOW_PLACEHOLDER, PLACEHOLDER_FOLLOW
-            , PLACEHOLDER_CENTER, CENTER
-            , CENTER_FOLLOW, FOLLOW_CENTER
-            , PLACEHOLDER
+    @IntDef({FOLLOW, FOLLOW_PLACEHOLDER, FOLLOW_CENTER
+            , PLACEHOLDER, PLACEHOLDER_FOLLOW, PLACEHOLDER_CENTER
+            , CENTER, CENTER_FOLLOW
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShowState {
