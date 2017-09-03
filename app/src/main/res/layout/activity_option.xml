@@ -12,127 +12,149 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/ll_container"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="60dp"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_margin="20dp"
+            app:cardBackgroundColor="#39ffffff">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/ll_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="60dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="带头部的recyclerView"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="带头部的recyclerView"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
 
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="SwipeRefreshLayout Style"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="SwipeRefreshLayout Style"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
 
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
-
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="支持普通的view刷新(TextView、ViewGroup)"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="支持普通的view刷新(TextView、ViewGroup)"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
 
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="支持ScrollView(例子带横向滑动)"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="支持ScrollView(例子带横向滑动)"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
 
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="支持ListView刷新"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="支持ListView刷新"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
 
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="单纯的回弹"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="单纯的回弹"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
 
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="behavior"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="behavior"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
 
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:foreground="?selectableItemBackgroundBorderless">
-
-                <TextView
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="behavior2"
-                    android:textColor="#212121" />
-            </android.support.v7.widget.CardView>
-        </LinearLayout>
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="behavior2"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="60dp"
+                    android:layout_marginTop="10dp"
+                    android:foreground="?selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="ViewPager"
+                        android:textColor="#212121" />
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
     </ScrollView>
 </com.yan.pullrefreshlayout.PullRefreshLayout>

@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:prl_pullDownLimitDistance="200dp"
+    app:prl_pullUpLimitDistance="200dp"
     tools:context="com.yan.refreshloadlayouttest.testactivity.ScrollingActivity"
     tools:showIn="@layout/activity_scrolling">
 

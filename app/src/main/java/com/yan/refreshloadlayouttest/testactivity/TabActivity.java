@@ -62,10 +62,9 @@ public class TabActivity extends AppCompatActivity {
             }
         });
         final List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new RefreshFragment());
-
-        fragments.add(new RefreshFragment());
-        fragments.add(new RefreshFragment());
+        fragments.add(RefreshFragment.getInstance(1));
+        fragments.add(RefreshFragment.getInstance(1));
+        fragments.add(RefreshFragment.getInstance(1));
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

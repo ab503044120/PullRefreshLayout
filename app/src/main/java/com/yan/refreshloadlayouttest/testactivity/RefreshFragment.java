@@ -1,18 +1,17 @@
 package com.yan.refreshloadlayouttest.testactivity;
 
-
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.pullrefreshlayout.ShowGravity;
-import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
+import com.yan.refreshloadlayouttest.widget.PhoenixHeader;
 
 import static android.content.ContentValues.TAG;
 
@@ -20,7 +19,15 @@ import static android.content.ContentValues.TAG;
  * A simple {@link Fragment} subclass.
  */
 public class RefreshFragment extends Fragment {
+    View root;
 
+    public static RefreshFragment getInstance(int index) {
+        RefreshFragment refreshFragment = new RefreshFragment();
+        Bundle args = new Bundle();
+        args.putInt("index", index);
+        refreshFragment.setArguments(args);
+        return refreshFragment;
+    }
 
     public RefreshFragment() {
         // Required empty public constructor
@@ -30,24 +37,23 @@ public class RefreshFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_refresh, container, false);
+        if (root == null) {
+            root = inflater.inflate(R.layout.fragment_refresh, container, false);
+            init();
+        }
+        return root;
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        final PullRefreshLayout refreshLayout = (PullRefreshLayout) view.findViewById(R.id.refreshLayout);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getContext(), "SemiCircleSpinIndicator"));
-        refreshLayout.setFooterView(new HeaderOrFooter(getContext(), "BallScaleRippleMultipleIndicator"));
-        refreshLayout.setRefreshShowGravity(ShowGravity.CENTER, ShowGravity.CENTER);
+    private void init() {
+        final PullRefreshLayout refreshLayout = (PullRefreshLayout) root.findViewById(R.id.refreshLayout);
+        initHeader(refreshLayout);
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 refreshLayout.autoRefresh();
             }
         }, 200);
-        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListenerAdapter() {
             @Override
             public void onRefresh() {
                 Log.e(TAG, "refreshLayout onRefresh: ");
@@ -58,17 +64,40 @@ public class RefreshFragment extends Fragment {
                     }
                 }, 3000);
             }
-
-            @Override
-            public void onLoading() {
-                Log.e(TAG, "refreshLayout onLoading: ");
-                refreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLayout.loadMoreComplete();
-                    }
-                }, 3000);
-            }
         });
+        setImages();
     }
+
+    private void initHeader(PullRefreshLayout refreshLayout) {
+        switch (getArguments().getInt("index")) {
+            case 1:
+                refreshLayout.setHeaderView(new PhoenixHeader(getContext(), refreshLayout));
+                break;
+        }
+    }
+
+    private void setImages() {
+        Glide.with(this)
+                .load(R.drawable.img1)
+                .into((ImageView) root.findViewById(R.id.iv1));
+        Glide.with(this)
+                .load(R.drawable.img2)
+                .into((ImageView) root.findViewById(R.id.iv2));
+        Glide.with(this)
+                .load(R.drawable.img3)
+                .into((ImageView) root.findViewById(R.id.iv3));
+        Glide.with(this)
+                .load(R.drawable.img4)
+                .into((ImageView) root.findViewById(R.id.iv4));
+        Glide.with(this)
+                .load(R.drawable.img5)
+                .into((ImageView) root.findViewById(R.id.iv5));
+        Glide.with(this)
+                .load(R.drawable.img6)
+                .into((ImageView) root.findViewById(R.id.iv6));
+        Glide.with(this)
+                .load(R.drawable.loading_bg)
+                .into((ImageView) root.findViewById(R.id.iv7));
+    }
+
 }

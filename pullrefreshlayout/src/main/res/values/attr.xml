@@ -29,21 +29,24 @@
 
         <attr name="prl_headerShowGravity" format="enum">
             <enum name="follow" value="0" />
-            <enum name="placeholder_follow" value="1" />
-            <enum name="placeholder_center" value="2" />
-            <enum name="center_follow" value="3" />
-            <enum name="follow_center" value="4" />
-            <enum name="placeholder" value="5" />
+            <enum name="follow_placeholder" value="1" />
+            <enum name="follow_center" value="2" />
+            <enum name="placeholder" value="3" />
+            <enum name="placeholder_follow" value="4" />
+            <enum name="placeholder_center" value="5" />
             <enum name="center" value="6" />
+            <enum name="center_follow" value="7" />
         </attr>
+
         <attr name="prl_footerShowGravity" format="enum">
             <enum name="follow" value="0" />
-            <enum name="placeholder_follow" value="1" />
-            <enum name="placeholder_center" value="2" />
-            <enum name="center_follow" value="3" />
-            <enum name="follow_center" value="4" />
-            <enum name="placeholder" value="5" />
+            <enum name="follow_placeholder" value="1" />
+            <enum name="follow_center" value="2" />
+            <enum name="placeholder" value="3" />
+            <enum name="placeholder_follow" value="4" />
+            <enum name="placeholder_center" value="5" />
             <enum name="center" value="6" />
+            <enum name="center_follow" value="7" />
         </attr>
     </declare-styleable>
 

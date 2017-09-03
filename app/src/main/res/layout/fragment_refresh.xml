@@ -4,5 +4,5 @@
     android:layout_height="match_parent"
     tools:context="com.yan.refreshloadlayouttest.testactivity.RefreshFragment">
 
-    <include layout="@layout/common_activity2" />
+    <include layout="@layout/common_refresh" />
 </FrameLayout>

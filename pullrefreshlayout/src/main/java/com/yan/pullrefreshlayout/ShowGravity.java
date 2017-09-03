@@ -14,7 +14,7 @@ public class ShowGravity {
     /**
      * @ShowState
      */
-    @IntDef({FOLLOW, PLACEHOLDER_FOLLOW
+    @IntDef({FOLLOW, FOLLOW_PLACEHOLDER, PLACEHOLDER_FOLLOW
             , PLACEHOLDER_CENTER, CENTER
             , CENTER_FOLLOW, FOLLOW_CENTER
             , PLACEHOLDER
@@ -24,12 +24,13 @@ public class ShowGravity {
     }
 
     public static final int FOLLOW = 0;
-    public static final int PLACEHOLDER_FOLLOW = 1;
-    public static final int PLACEHOLDER_CENTER = 2;
-    public static final int CENTER_FOLLOW = 3;
-    public static final int FOLLOW_CENTER = 4;
-    public static final int PLACEHOLDER = 5;
+    public static final int FOLLOW_PLACEHOLDER = 1;
+    public static final int FOLLOW_CENTER = 2;
+    public static final int PLACEHOLDER = 3;
+    public static final int PLACEHOLDER_FOLLOW = 4;
+    public static final int PLACEHOLDER_CENTER = 5;
     public static final int CENTER = 6;
+    public static final int CENTER_FOLLOW = 7;
 
     /**
      * show gravity
@@ -50,18 +51,15 @@ public class ShowGravity {
                 case FOLLOW:
                     pullRefreshLayout.headerView.setTranslationY(moveDistance);
                     break;
-                case CENTER:
-                    pullRefreshLayout.headerView.setTranslationY(moveDistance / 2);
+                case FOLLOW_PLACEHOLDER:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
+                            .refreshTriggerDistance ? moveDistance : pullRefreshLayout
+                            .refreshTriggerDistance);
                     break;
                 case FOLLOW_CENTER:
                     pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
                             .refreshTriggerDistance ? moveDistance : pullRefreshLayout.refreshTriggerDistance
                             + (moveDistance - pullRefreshLayout.refreshTriggerDistance) / 2);
-                    break;
-                case CENTER_FOLLOW:
-                    pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
-                            .refreshTriggerDistance ? moveDistance / 2 : moveDistance
-                            - pullRefreshLayout.refreshTriggerDistance / 2);
                     break;
                 case PLACEHOLDER_CENTER:
                     pullRefreshLayout.headerView.setTranslationY(moveDistance <=
@@ -73,6 +71,14 @@ public class ShowGravity {
                             .refreshTriggerDistance ? 0 : moveDistance
                             - pullRefreshLayout.refreshTriggerDistance);
                     break;
+                case CENTER:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance / 2);
+                    break;
+                case CENTER_FOLLOW:
+                    pullRefreshLayout.headerView.setTranslationY(moveDistance <= pullRefreshLayout
+                            .refreshTriggerDistance ? moveDistance / 2 : moveDistance
+                            - pullRefreshLayout.refreshTriggerDistance / 2);
+                    break;
             }
         }
     }
@@ -83,18 +89,15 @@ public class ShowGravity {
                 case FOLLOW:
                     pullRefreshLayout.footerView.setTranslationY(moveDistance);
                     break;
-                case CENTER:
-                    pullRefreshLayout.footerView.setTranslationY(moveDistance / 2);
+                case FOLLOW_PLACEHOLDER:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance >= -pullRefreshLayout
+                            .loadTriggerDistance ? moveDistance : -pullRefreshLayout
+                            .loadTriggerDistance);
                     break;
                 case FOLLOW_CENTER:
                     pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
                             .loadTriggerDistance ? -pullRefreshLayout.loadTriggerDistance
                             + (pullRefreshLayout.loadTriggerDistance + moveDistance) / 2 : moveDistance);
-                    break;
-                case CENTER_FOLLOW:
-                    pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
-                            .loadTriggerDistance ? moveDistance + pullRefreshLayout
-                            .loadTriggerDistance / 2 : moveDistance / 2);
                     break;
                 case PLACEHOLDER_CENTER:
                     pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
@@ -105,6 +108,14 @@ public class ShowGravity {
                     pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
                             .loadTriggerDistance ? moveDistance + pullRefreshLayout
                             .loadTriggerDistance : 0);
+                    break;
+                case CENTER:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance / 2);
+                    break;
+                case CENTER_FOLLOW:
+                    pullRefreshLayout.footerView.setTranslationY(moveDistance <= -pullRefreshLayout
+                            .loadTriggerDistance ? moveDistance + pullRefreshLayout
+                            .loadTriggerDistance / 2 : moveDistance / 2);
                     break;
             }
         }
@@ -117,6 +128,7 @@ public class ShowGravity {
             PullRefreshLayout.LayoutParams lp = (PullRefreshLayout.LayoutParams) pullRefreshLayout.headerView.getLayoutParams();
             switch (headerShowGravity) {
                 case FOLLOW:
+                case FOLLOW_PLACEHOLDER:
                 case FOLLOW_CENTER:
                     pullRefreshLayout.headerView.layout(paddingLeft + lp.leftMargin
                             , top + lp.topMargin + paddingTop - pullRefreshLayout.headerView.getMeasuredHeight()
@@ -146,6 +158,7 @@ public class ShowGravity {
             PullRefreshLayout.LayoutParams lp = (PullRefreshLayout.LayoutParams) pullRefreshLayout.footerView.getLayoutParams();
             switch (footerShowGravity) {
                 case FOLLOW:
+                case FOLLOW_PLACEHOLDER:
                 case FOLLOW_CENTER:
                     pullRefreshLayout.footerView.layout(lp.leftMargin + paddingLeft
                             , bottom + lp.topMargin + paddingTop
