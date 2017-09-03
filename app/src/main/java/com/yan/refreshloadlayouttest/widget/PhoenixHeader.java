@@ -278,6 +278,14 @@ public class PhoenixHeader extends View implements PullRefreshLayout.OnPullListe
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (isRefreshing) {
+            startAnimation(mAnimation);
+        }
+    }
+
+    @Override
     public void onPullChange(float percent) {
         mRotate = mPercent = percent;
         mHeaderHeight = pullRefreshLayout.getRefreshTriggerDistance();
