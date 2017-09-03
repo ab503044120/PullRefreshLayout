@@ -1,4 +1,4 @@
-# PullRefreshLayout
+# PullRefreshLayout(这是一个专注回弹和手势操作无阻塞的刷新库)
 [![Stable Version](https://img.shields.io/badge/Stable%20Version-2.0.3-brightgreen.svg)](https://github.com/genius158/PullRefreshLayout) 
 [![Latest Version](https://img.shields.io/badge/Latest%20Version-2.0.3-FFD54F.svg)](https://bintray.com/yan157/maven/pullrefreshlayout/_latestVersion) 
 [![MinSdk](https://img.shields.io/badge/MinSdk-11%2B-green.svg)](https://android-arsenal.com/api?level=11) 
