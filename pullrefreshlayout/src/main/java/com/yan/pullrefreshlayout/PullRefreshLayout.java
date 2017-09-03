@@ -1596,6 +1596,14 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
         return moveDistance;
     }
 
+    public int getRefreshTriggerDistance() {
+        return refreshTriggerDistance;
+    }
+
+    public int getLoadTriggerDistance() {
+        return loadTriggerDistance;
+    }
+
     public boolean isOverScrollUp() {
         return overScrollState == 1;
     }
