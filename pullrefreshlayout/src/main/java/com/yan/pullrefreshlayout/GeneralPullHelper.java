@@ -132,6 +132,8 @@ class GeneralPullHelper {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                dragState = 0;// get know the touchState first
+
                 velocityTracker.computeCurrentVelocity(1000, maximumVelocity);
                 velocityY = (isMovingDirectDown ? 1 : -1) * Math.abs(velocityTracker.getYVelocity());
                 recycleVelocityTracker();
@@ -140,7 +142,6 @@ class GeneralPullHelper {
 
                 isTriggerMoveEvent = false;
                 velocityY = 0;
-                dragState = 0;
                 break;
         }
     }
