@@ -1,5 +1,6 @@
 package com.yan.refreshloadlayouttest.testactivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,15 +9,14 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
-import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
-import com.yan.refreshloadlayouttest.widget.fungame.FunGameHitBlockHeader;
+import com.yan.refreshloadlayouttest.widget.house.StoreHouseHeader;
 
 import java.util.ArrayList;
 
@@ -40,7 +40,7 @@ public class ScrollingActivity extends AppCompatActivity {
         });
         initRecyclerView();
         initRefreshLayout();
-        refreshLayout.setHeaderView(new FunGameHitBlockHeader(getBaseContext(), refreshLayout));
+
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -64,29 +64,27 @@ public class ScrollingActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
+    private float dipToPx(float value) {
+        DisplayMetrics metrics = getBaseContext().getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
+    }
+
     private void initRefreshLayout() {
-        refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
-        refreshLayout.setLoadMoreEnable(true);
-        refreshLayout.setHeaderView(new HeaderOrFooter(getBaseContext(), "BallClipRotatePulseIndicator"));
-        refreshLayout.setFooterView(new HeaderOrFooter(getBaseContext(), "LineScaleIndicator"));
-        refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+        this.refreshLayout = (PullRefreshLayout) findViewById(R.id.refreshLayout);
+        findViewById(R.id.container).setBackgroundColor(Color.parseColor("#333333"));
+        StoreHouseHeader header = new StoreHouseHeader(getBaseContext());
+        header.setPadding(0, (int) dipToPx(20), 0, (int) dipToPx(20));
+        header.initWithString("PullRefreshLayout");
+        refreshLayout.setHeaderView(header);
+
+        this.refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListenerAdapter() {
             @Override
             public void onRefresh() {
                 Log.e(TAG, "refreshLayout onRefresh: ");
-                refreshLayout.postDelayed(new Runnable() {
+                ScrollingActivity.this.refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        refreshLayout.refreshComplete();
-                    }
-                }, 3000);
-            }
-
-            @Override
-            public void onLoading() {
-                refreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLayout.loadMoreComplete();
+                        ScrollingActivity.this.refreshLayout.refreshComplete();
                     }
                 }, 3000);
             }
