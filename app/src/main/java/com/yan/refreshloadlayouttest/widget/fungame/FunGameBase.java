@@ -1,6 +1,7 @@
 package com.yan.refreshloadlayouttest.widget.fungame;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
@@ -30,7 +31,7 @@ public class FunGameBase extends FrameLayout implements PullRefreshLayout.OnPull
 
     private void initView(Context context) {
         mScreenHeightPixels = context.getResources().getDisplayMetrics().heightPixels;
-        mHeaderHeight = (int) (mScreenHeightPixels * 0.2f);
+        mHeaderHeight = (int) (mScreenHeightPixels * 0.16f);
         refreshLayout.setRefreshTriggerDistance(mHeaderHeight);
         refreshLayout.setHeaderShowGravity(ShowGravity.FOLLOW);
     }
@@ -46,7 +47,7 @@ public class FunGameBase extends FrameLayout implements PullRefreshLayout.OnPull
 
     @Override
     public void onPullChange(float percent) {
-        if (mManualOperation && refreshLayout.isHoldingFinishTrigger() && !refreshLayout.isDragUp() && !refreshLayout.isDragDown()) {
+        if (percent <= 1 && mManualOperation && refreshLayout.isHoldingFinishTrigger() && !refreshLayout.isDragUp() && !refreshLayout.isDragDown()) {
             onPullFinish();
         }
         if (mManualOperation) {

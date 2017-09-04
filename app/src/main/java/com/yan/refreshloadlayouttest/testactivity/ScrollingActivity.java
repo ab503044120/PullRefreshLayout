@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.refreshloadlayouttest.HeaderOrFooter;
 import com.yan.refreshloadlayouttest.R;
+import com.yan.refreshloadlayouttest.widget.fungame.FunGameHitBlockHeader;
 
 import java.util.ArrayList;
 
@@ -39,6 +40,7 @@ public class ScrollingActivity extends AppCompatActivity {
         });
         initRecyclerView();
         initRefreshLayout();
+        refreshLayout.setHeaderView(new FunGameHitBlockHeader(getBaseContext(), refreshLayout));
         refreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {

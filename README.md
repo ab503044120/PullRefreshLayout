@@ -116,7 +116,7 @@ compile 'com.yan:pullrefreshlayout:(↖)'
     }
     
     /**
-    * 设置header或者footer的的出现方式,默认7种方式
+    * 设置header或者footer的的出现方式,默认8种方式
     * FOLLOW,FOLLOW_PLACEHOLDER, PLACEHOLDER_FOLLOW
     * , FOLLOW_CENTER, PLACEHOLDER_CENTER
     * , CENTER, CENTER_FOLLOW

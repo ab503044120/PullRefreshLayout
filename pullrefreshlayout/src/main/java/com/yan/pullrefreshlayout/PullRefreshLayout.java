@@ -14,6 +14,7 @@ import android.support.v4.widget.ListViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -1126,9 +1127,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     void onScroll(int dy) {
         if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()) || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown())) {
-            if (dy < 0 && pullDownLimitDistance != 0 && moveDistance - dy > pullDownLimitDistance * dragDampingRatio) {
+            if (dy < 0 && pullDownLimitDistance != 0 && moveDistance - dy > pullDownLimitDistance * dragDampingRatio && dragDampingRatio < 1) {
                 dy = (int) (dy * (1 - (moveDistance / (float) pullDownLimitDistance)));
-            } else if (dy > 0 && pullUpLimitDistance != 0 && -moveDistance + dy > pullUpLimitDistance * dragDampingRatio) {
+            } else if (dy > 0 && pullUpLimitDistance != 0 && -moveDistance + dy > pullUpLimitDistance * dragDampingRatio && dragDampingRatio < 1) {
                 dy = (int) (dy * (1 - (-moveDistance / (float) pullUpLimitDistance)));
             } else {
                 dy = (int) (dy * dragDampingRatio);

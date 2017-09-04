@@ -87,8 +87,6 @@ public class FunGameHitBlockHeader extends FunGameView {
 
     private int speed;
 
-    private PullRefreshLayout refreshLayout;
-
     public FunGameHitBlockHeader(Context context, PullRefreshLayout pullRefreshLayout) {
         super(context, pullRefreshLayout);
         this.refreshLayout = pullRefreshLayout;
