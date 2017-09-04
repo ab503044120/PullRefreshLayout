@@ -1127,9 +1127,9 @@ public class PullRefreshLayout extends ViewGroup implements NestedScrollingParen
 
     void onScroll(int dy) {
         if ((generalPullHelper.isMovingDirectDown && !isTargetAbleScrollUp()) || (!generalPullHelper.isMovingDirectDown && !isTargetAbleScrollDown())) {
-            if (dy < 0 && pullDownLimitDistance != 0 && moveDistance - dy > pullDownLimitDistance * dragDampingRatio && dragDampingRatio < 1) {
+            if (dy < 0 && dragDampingRatio < 1 && pullDownLimitDistance != 0 && moveDistance - dy > pullDownLimitDistance * dragDampingRatio) {
                 dy = (int) (dy * (1 - (moveDistance / (float) pullDownLimitDistance)));
-            } else if (dy > 0 && pullUpLimitDistance != 0 && -moveDistance + dy > pullUpLimitDistance * dragDampingRatio && dragDampingRatio < 1) {
+            } else if (dy > 0 && dragDampingRatio < 1 && pullUpLimitDistance != 0 && -moveDistance + dy > pullUpLimitDistance * dragDampingRatio) {
                 dy = (int) (dy * (1 - (-moveDistance / (float) pullUpLimitDistance)));
             } else {
                 dy = (int) (dy * dragDampingRatio);

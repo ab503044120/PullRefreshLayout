@@ -1,11 +1,10 @@
 package com.yan.refreshloadlayouttest.widget.fungame;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.FrameLayout;
 
 import com.yan.pullrefreshlayout.PullRefreshLayout;
 import com.yan.pullrefreshlayout.ShowGravity;
+import com.yan.refreshloadlayouttest.widget.NestedFrameLayout;
 
 
 /**
@@ -13,7 +12,7 @@ import com.yan.pullrefreshlayout.ShowGravity;
  * Created by SCWANG on 2017/6/17.
  */
 
-public class FunGameBase extends FrameLayout implements PullRefreshLayout.OnPullListener {
+public class FunGameBase extends NestedFrameLayout implements PullRefreshLayout.OnPullListener {
 
     //<editor-fold desc="Field">
     protected int mHeaderHeight;
